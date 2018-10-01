@@ -1,0 +1,8 @@
+ Usage:  $ mine-sweeper	[--exit] [--help] [--license] [--usage]
+			[--verbose=LEVEL] [--version]
+			[--rows=ROWS] [--columns=COLS] [--file=FILE]
+			[--iface=IFACE] [--proportion=PROPORTION]
+			[--start=START_MODE]
+
+
+ Type '$ mine-sweeper --help' for a full description.
