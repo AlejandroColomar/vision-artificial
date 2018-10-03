@@ -21,11 +21,12 @@
  ******* enums ****************************************************************
  ******************************************************************************/
 	enum	Img_Iface_Action {
-		IMG_IFACE_ACT_FOO,
+		IMG_IFACE_ACT_FOO = 0,
 
-		IMG_IFACE_ACT_INVERT,
+		IMG_IFACE_ACT_INVERT = 1000,
+		IMG_IFACE_ACT_BGR2GRAY,
 
-		IMG_IFACE_ACT_APPLY,
+		IMG_IFACE_ACT_APPLY = 4000,
 		IMG_IFACE_ACT_SAVE,
 		IMG_IFACE_ACT_DISCARD
 	};

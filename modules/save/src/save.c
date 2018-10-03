@@ -130,6 +130,12 @@ void	save_image_file	(void)
 		snprintf(file_name, FILENAME_MAX, "%s/%s", saved_path, saved_name);
 	}
 
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "%s", saved_name);
+	user_iface_log.lvl[user_iface_log.len]	= 2;
+	(user_iface_log.len)++;
+
+
 	/* Write to a new file */
 	cvSaveImage(file_name, image, NULL);
 }

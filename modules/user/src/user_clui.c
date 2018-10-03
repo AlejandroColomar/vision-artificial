@@ -146,6 +146,9 @@ static	int	usr_input	(void)
 		case '0':
 			action	= USER_IFACE_ACT_INVERT;
 			break;
+		case '1':
+			action	= USER_IFACE_ACT_BGR2GRAY;
+			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
 			break;

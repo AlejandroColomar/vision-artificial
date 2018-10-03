@@ -14,22 +14,28 @@ SRC_DIR = $(IMG_DIR)/src/
 
 # dependencies
 
-_ALL	= image.o img_iface.o
+_ALL	= img_cv.o img_iface.o
 ALL	= $(_ALL) img_mod.o
 
-IMG_INC_SAVE	= save.h
-IMG_INC		= image.h
-IMG_DEPS	= $(SRC_DIR)/image.c \
-			$(patsubst %,$(INC_DIR)/%,$(IMG_INC)) \
-			$(patsubst %,$(SAVE_INC_DIR)/%,$(IMG_INC_SAVE))
-IMG_INC_DIRS	= -I $(INC_DIR) \
-			-I $(SAVE_INC_DIR) \
+IMGCV_INC_USR	= user_iface.h
+IMGCV_INC	= img_cv.h
+IMGCV_DEPS	= $(SRC_DIR)/img_cv.c \
+			$(patsubst %,$(INC_DIR)/%,$(IMGCV_INC)) \
+			$(patsubst %,$(USR_INC_DIR)/%,$(IMGCV_INC_USR))
+IMGCV_INC_DIRS	= -I $(INC_DIR) \
+			-I $(USR_INC_DIR) \
 			-I $(LIBALX_INC_DIR)
 
-IMGI_INC	= img_iface.h	image.h
+IMGI_INC_SAVE	= save.h
+IMGI_INC_USR	= user_iface.h
+IMGI_INC	= img_iface.h	img_cv.h
 IMGI_DEPS	= $(SRC_DIR)/img_iface.c \
-			$(patsubst %,$(INC_DIR)/%,$(IMGI_INC))
-IMGI_INC_DIRS = -I $(INC_DIR)
+			$(patsubst %,$(INC_DIR)/%,$(IMGI_INC)) \
+			$(patsubst %,$(SAVE_INC_DIR)/%,$(IMGI_INC_SAVE)) \
+			$(patsubst %,$(USR_INC_DIR)/%,$(IMGI_INC_USR))
+IMGI_INC_DIRS = -I $(INC_DIR) \
+			-I $(SAVE_INC_DIR) \
+			-I $(USR_INC_DIR)
 
 # target: dependencies
 #	action
@@ -43,10 +49,10 @@ img_mod.o: $(_ALL)
 	@echo  ""
 
 
-image.s: $(IMG_DEPS)
-	$(Q)$(CC) $(CFLAGS) $(IMG_INC_DIRS) -S $< -o $@
+img_cv.s: $(IMGCV_DEPS)
+	$(Q)$(CC) $(CFLAGS) $(IMGCV_INC_DIRS) -S $< -o $@
 	@echo  "	CC	$@"
-image.o: image.s
+img_cv.o: img_cv.s
 	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
 

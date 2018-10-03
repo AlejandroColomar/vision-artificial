@@ -74,8 +74,8 @@ int	user_tui		(const char *title, const char *subtitle)
 {
 	int	action;
 
-	show_log(title, subtitle);
 	show_help();
+	show_log(title, subtitle);
 	action	= usr_input();
 
 	return	action;
@@ -130,9 +130,21 @@ static	void	show_log	(const char *title, const char *subtitle)
 static	void	log_loop	(void)
 {
 	int	i;
+	int	i_0;
+	int	l;
+	int	l_0;
 
-	for (i = 0; i < user_iface_log.len; i++) {
-		mvwprintw(win_log, i+1, 0, user_iface_log.line[i]);
+	if ((user_iface_log.len - 21) > 0) {
+		i_0	= user_iface_log.len - 21;
+		l_0	= 1;
+		mvwprintw(win_log, 1, 10, "...");
+	} else {
+		i_0	= 0;
+		l_0	= 0;
+	}
+
+	for (i = i_0, l = l_0; i < user_iface_log.len; i++, l++) {
+		mvwprintw(win_log, (1 + l), (1 + 4 * user_iface_log.lvl[i]), user_iface_log.line[i]);
 	}
 }
 
@@ -188,6 +200,9 @@ static	int	usr_input	(void)
 		case '0':
 			action	= USER_IFACE_ACT_INVERT;
 			break;
+		case '1':
+			action	= USER_IFACE_ACT_BGR2GRAY;
+			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
 			break;
@@ -230,13 +245,14 @@ static	void	show_help	(void)
 
 	r	= 0;
 	c	= 0;
-	mvwprintw(win_help, r++, c, "Apply:	Space");
-	mvwprintw(win_help, r++, c, "Save:	%c", 's');
+	mvwprintw(win_help, r++, c, "Apply:		Space");
+	mvwprintw(win_help, r++, c, "Save:		%c", 's');
 	mvwprintw(win_help, r++, c, "Discard:	Backspace");
-	mvwprintw(win_help, r++, c, "Functions:	%cX", 'f');
-	mvwprintw(win_help, r++, c, "	 - Invert:	%c0", 'f');
-	mvwprintw(win_help, r++, c, "Exercises:	%cX", 'e');
-	mvwprintw(win_help, r++, c, "Quit:	%c", 'c');
+	mvwprintw(win_help, r++, c, "Functions:");
+	mvwprintw(win_help, r++, c, " - Invert:	%s", "f0");
+	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s", "f1");
+	mvwprintw(win_help, r++, c, "Exercises:");
+	mvwprintw(win_help, r++, c, "Quit:		%c", 'q');
 
 	/* Refresh */
 	wrefresh(win_help);

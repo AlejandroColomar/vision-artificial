@@ -1,18 +1,7 @@
-Usage: $ mine-sweeper [OPTION...]
+Usage: $ vision-artificial [OPTION...]
 
-	-a, --rows=ROWS			set number of rows
-	-b, --columns=COLS		set number of columns
-	-f, --file=FILE			set game file
-	-i, --iface=IFACE		set game interface
-	-p, --proportion=PROPORTION	set proportion of mines
-
- Main modes of operation:
-	-s, --start=START_MODE		set start mode
-	-x, --exit			exit after using command line options
-						(don't start menu)
-
- Controlling formatted output:
-	-V, --verbose=LEVEL		set verbose level
+	-f, --file=FILE			set image file
+	-i, --iface=IFACE		set program interface
 
  Other:
 	-L, --license			display license
@@ -20,22 +9,17 @@ Usage: $ mine-sweeper [OPTION...]
 	-u, --usage			give a short usage message
 	-v, --version			print program version
 
- Only for DEVEL (disabled in normal release):
-	-r, --rand-seed=SEED		set seed for rand (DEVEL; DISABLED)
-
 MANDATORY or [OPTIONAL] arguments to long options are also mandatory or optional
 for any corresponding short options.
 
 
  Examples:
-	$ mine-sweeper
-	$ mine-sweeper --version
-	$ mine-sweeper --license
-	$ mine-sweeper -i 1
-	$ mine-sweeper -a 5 -b 15 -p 0.1
-	$ mine-sweeper -a 15 -b 20 -p 0.3 -s 1 -x
-	$ mine-sweeper -f ../files/saved/saved_000.mine -s 2 -x
+	$ vision-artificial
+	$ vision-artificial --version
+	$ vision-artificial --license
+	$ vision-artificial -i 1
+	$ vision-artificial -f <file>
 
 
 Report bugs to: 1903716@gmail.com
-mine-sweeper home page: <https://github.com/AlejandroColomar/mine-sweeper/>
+vision-artificial home page: <https://github.com/AlejandroColomar/vision-artificial/>

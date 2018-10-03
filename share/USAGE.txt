@@ -1,8 +1,5 @@
- Usage:  $ mine-sweeper	[--exit] [--help] [--license] [--usage]
-			[--verbose=LEVEL] [--version]
-			[--rows=ROWS] [--columns=COLS] [--file=FILE]
-			[--iface=IFACE] [--proportion=PROPORTION]
-			[--start=START_MODE]
+ Usage:  $ vision-artificial	[--help] [--license] [--usage] [--version]
+				[--file=FILE] [--iface=IFACE]
 
 
- Type '$ mine-sweeper --help' for a full description.
+ Type '$ vision-artificial --help' for a full description.

@@ -11,10 +11,16 @@
  *	*	*	*	*	*	*	*	*	*/
 		/* opencv */
 	#include <cv.h>
+		/* snprintf() */
+	#include <stdio.h>
+		/* zbar */
+	#include <zbar.h>
 
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Other	*	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
+		/* user_iface_log */
+	#include "user_iface.h"
 		/* load_image_file() */
 	#include "save.h"
 
@@ -94,6 +100,11 @@ struct _IplImage	*img_act	(int action)
  *	*	*	*	*	*	*	*	*	*/
 static	void	img_invert	(void)
 {
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Invert color");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
 	int	step;
 	int	chan;
 	char	*data;
@@ -120,12 +131,22 @@ static	void	img_invert	(void)
  *	*	*	*	*	*	*	*	*	*/
 static	void	img_apply	(void)
 {
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Apply changes");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
 	cvReleaseImage(&image_copy_old);
 	image_copy_old	= cvCloneImage(image_copy_tmp);
 }
 
 static	void	img_save	(void)
 {
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save as...");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
 	/* Write into image (save.c) */
 	cvReleaseImage(&image);
 	image	= cvCloneImage(image_copy_old);
@@ -135,6 +156,11 @@ static	void	img_save	(void)
 
 static	void	img_discard	(void)
 {
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Discard changes");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
 	cvReleaseImage(&image_copy_tmp);
 	image_copy_tmp	= cvCloneImage(image_copy_old);
 }

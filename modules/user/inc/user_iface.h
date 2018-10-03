@@ -18,6 +18,13 @@
 
 
 /******************************************************************************
+ ******* macros ***************************************************************
+ ******************************************************************************/
+	# define	LOG_LEN		(1024)
+	# define	LOG_LINE_LEN	(35)
+
+
+/******************************************************************************
  ******* enums ****************************************************************
  ******************************************************************************/
 	enum	Player_Iface_Mode {
@@ -27,15 +34,16 @@
 	};
 
 	enum	Player_Iface_Action {
-		USER_IFACE_ACT_FOO,
+		USER_IFACE_ACT_FOO = 0,
 
-		USER_IFACE_ACT_INVERT,
+		USER_IFACE_ACT_INVERT = 1000,
+		USER_IFACE_ACT_BGR2GRAY,
 
-		USER_IFACE_ACT_APPLY,
+		USER_IFACE_ACT_APPLY = 4000,
 		USER_IFACE_ACT_SAVE,
 		USER_IFACE_ACT_DISCARD,
 
-		USER_IFACE_ACT_QUIT
+		USER_IFACE_ACT_QUIT = 5000
 	};
 
 
@@ -44,7 +52,8 @@
  ******************************************************************************/
 	struct	User_Iface_Log {
 		int	len;
-		char	line [35] [20];
+		char	line [LOG_LEN] [LOG_LINE_LEN];
+		int	lvl [LOG_LEN];
 	};
 
 
