@@ -117,26 +117,18 @@ static	int	usr_input	(void)
 		action	= USER_IFACE_ACT_APPLY;
 		break;
 
-	case 's':
-		action	= USER_IFACE_ACT_SAVE;
-		break;
-
 		/* ASCII 0x08 is BS */
 	case 0x7F:
 	case 0x08:
 		action	= USER_IFACE_ACT_DISCARD;
 		break;
 
-	case 'x':
-		/* Special sequence "xyzzy" */
-		if (ch[1] == 'y') {
-			if (ch[2] == 'z') {
-			if (ch[3] == 'z') {
-			if (ch[4] == 'y') {
-				action =	USER_IFACE_ACT_FOO;
-			}
-			}
-			}
+	case 'e':
+		/* Exercises from class */
+		switch (ch[1]) {
+		default:
+			action	= USER_IFACE_ACT_FOO;
+			break;
 		}
 		break;
 
@@ -155,17 +147,33 @@ static	int	usr_input	(void)
 		}
 		break;
 
-	case 'e':
-		/* Exercises from class */
-		switch (ch[1]) {
-		default:
-			action	= USER_IFACE_ACT_FOO;
-			break;
-		}
+	case 'l':
+		action	= USER_IFACE_ACT_LOAD_MEM;
+		break;
+
+	case 'm':
+		action	= USER_IFACE_ACT_SAVE_MEM;
 		break;
 
 	case 'q':
 		action	= USER_IFACE_ACT_QUIT;
+		break;
+
+	case 's':
+		action	= USER_IFACE_ACT_SAVE_FILE;
+		break;
+
+	case 'x':
+		/* Special sequence "xyzzy" */
+		if (ch[1] == 'y') {
+			if (ch[2] == 'z') {
+			if (ch[3] == 'z') {
+			if (ch[4] == 'y') {
+				action =	USER_IFACE_ACT_FOO;
+			}
+			}
+			}
+		}
 		break;
 
 	default:

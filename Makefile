@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 VERSION		= 0
-PATCHLEVEL	= .2
+PATCHLEVEL	= .3
 SUBLEVEL	= 
 EXTRAVERSION	=
 NAME		=
@@ -119,6 +119,7 @@ export	LD
 # cflags
 CFLAGS_STD	= -std=c11
 CFLAGS_CV	= `pkg-config --cflags opencv`
+CFLAGS_ZBAR	= `pkg-config --cflags zbar`
 
 CFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
 CFLAGS_D       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
@@ -126,7 +127,7 @@ CFLAGS_D       += -D 'SHARE_DIR="$(SHARE_DIR)"'
 CFLAGS_D       += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
 CFLAGS_D       += -D 'VAR_DIR="$(VAR_DIR)"'
 
-CFLAGS	= $(CFLAGS_STD) $(CFLAGS_D) $(CFLAGS_CV)
+CFLAGS	= $(CFLAGS_STD) $(CFLAGS_D) $(CFLAGS_CV) $(CFLAGS_ZBAR)
 
 export	CFLAGS
 
@@ -134,8 +135,9 @@ export	CFLAGS
 # libs
 LIBS_CURSES	= -l ncurses
 LIBS_CV		= `pkg-config --libs opencv`
+LIBS_ZBAR	= `pkg-config --libs zbar`
 
-LIBS		= $(LIBS_CURSES) $(LIBS_CV)
+LIBS		= $(LIBS_CURSES) $(LIBS_CV) $(LIBS_ZBAR)
 
 export	LIBS
 

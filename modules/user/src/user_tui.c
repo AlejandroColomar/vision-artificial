@@ -163,14 +163,77 @@ static	int	usr_input	(void)
 		action	= USER_IFACE_ACT_APPLY;
 		break;
 
-	case 's':
-		action	= USER_IFACE_ACT_SAVE;
-		break;
-
 		/* ASCII 0x08 is BS */
 	case KEY_BACKSPACE:
 	case 0x08:
 		action	= USER_IFACE_ACT_DISCARD;
+		break;
+
+	case 'e':
+		/* Exercises from class */
+		ch = wgetch(win_log);
+
+		switch (ch) {
+		default:
+			action	= USER_IFACE_ACT_FOO;
+			break;
+		}
+		break;
+
+	case 'f':
+		/* Use simple funtions */
+		ch = wgetch(win_log);
+
+		switch (ch) {
+		case '1':
+			/* img_cv */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_INVERT;
+				break;
+			case '1':
+				action	= USER_IFACE_ACT_BGR2GRAY;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '2':
+			/* img_zbar */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_DECODE;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		default:
+			action	= USER_IFACE_ACT_FOO;
+			break;
+		}
+		break;
+
+	case 'l':
+		action	= USER_IFACE_ACT_LOAD_MEM;
+		break;
+
+	case 'm':
+		action	= USER_IFACE_ACT_SAVE_MEM;
+		break;
+
+	case 'q':
+		action	= USER_IFACE_ACT_QUIT;
+		break;
+
+	case 's':
+		action	= USER_IFACE_ACT_SAVE_FILE;
 		break;
 
 	case 'x':
@@ -190,38 +253,6 @@ static	int	usr_input	(void)
 			}
 			}
 		}
-		break;
-
-	case 'f':
-		/* Use simple funtions */
-		ch = wgetch(win_log);
-
-		switch (ch) {
-		case '0':
-			action	= USER_IFACE_ACT_INVERT;
-			break;
-		case '1':
-			action	= USER_IFACE_ACT_BGR2GRAY;
-			break;
-		default:
-			action	= USER_IFACE_ACT_FOO;
-			break;
-		}
-		break;
-
-	case 'e':
-		/* Exercises from class */
-		ch = wgetch(win_log);
-
-		switch (ch) {
-		default:
-			action	= USER_IFACE_ACT_FOO;
-			break;
-		}
-		break;
-
-	case 'q':
-		action	= USER_IFACE_ACT_QUIT;
 		break;
 
 	default:
@@ -245,14 +276,17 @@ static	void	show_help	(void)
 
 	r	= 0;
 	c	= 0;
-	mvwprintw(win_help, r++, c, "Apply:		Space");
-	mvwprintw(win_help, r++, c, "Save:		%c", 's');
-	mvwprintw(win_help, r++, c, "Discard:	Backspace");
+	mvwprintw(win_help, r++, c, "Apply:		%s",	"Space");
+	mvwprintw(win_help, r++, c, "Discard:	%s",		"Backspace");
+	mvwprintw(win_help, r++, c, "Save to mem:	%c",	'm');
+	mvwprintw(win_help, r++, c, "Load from mem:	%c",	'l');
+	mvwprintw(win_help, r++, c, "Save to file:	%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
-	mvwprintw(win_help, r++, c, " - Invert:	%s", "f0");
-	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s", "f1");
+	mvwprintw(win_help, r++, c, " - Invert:	%s",		"f10");
+	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f11");
+	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, "Exercises:");
-	mvwprintw(win_help, r++, c, "Quit:		%c", 'q');
+	mvwprintw(win_help, r++, c, "Quit:		%c",	'q');
 
 	/* Refresh */
 	wrefresh(win_help);

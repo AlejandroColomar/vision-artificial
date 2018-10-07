@@ -21,148 +21,102 @@
  *	*	*	*	*	*	*	*	*	*/
 		/* user_iface_log */
 	#include "user_iface.h"
-		/* load_image_file() */
-	#include "save.h"
 
-	#include "image.h"
+	#include "img_zbar.h"
 
 
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-static	struct _IplImage	*image_copy_old;
-static	struct _IplImage	*image_copy_tmp;
+int			img_zb_code_n;
+struct Img_ZB_Code	img_zb_code [CODES_MAX];
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-	/* Examples */
-static	void	img_invert	(void);
-	/* Apply / Save / Discard */
-static	void	img_apply	(void);
-static	void	img_save	(void);
-static	void	img_discard	(void);
+static	void	img_zb_decode	(struct _IplImage  *imgptr);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-struct _IplImage	*img_load	(void)
-{
-	load_image_file();
-
-	/* Make a static copy of image */
-	cvReleaseImage(&image_copy_old);
-	image_copy_old	= cvCloneImage(image);
-	cvReleaseImage(&image_copy_tmp);
-	image_copy_tmp	= cvCloneImage(image);
-
-	return	image_copy_tmp;
-}
-
-void			img_cleanup	(void)
-{
-	cvReleaseImage(&image_copy_old);
-	cvReleaseImage(&image_copy_tmp);
-}
-
-struct _IplImage	*img_act	(int action)
+void	img_zb_act	(struct _IplImage  **imgptr2, int action)
 {
 	switch (action) {
-	case IMG_ACT_INVERT:
-		img_invert();
-		break;
-
-	case IMG_ACT_APPLY:
-		img_apply();
-		break;
-
-	case IMG_ACT_SAVE:
-		img_save();
-		break;
-
-	case IMG_ACT_DISCARD:
-		img_discard();
+	case IMG_ZB_ACT_DECODE:
+		img_zb_decode(*imgptr2);
 		break;
 	}
-
-	return	image_copy_tmp;
 }
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Examples	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-static	void	img_invert	(void)
+static	void	img_zb_decode	(struct _IplImage  *imgptr)
 {
+
+	struct _IplImage		*imgtmp;
+	struct zbar_image_scanner_s	*scanner;
+	struct zbar_image_s		*image_zb;
+
+	/* Make a copy of imgptr so that it isn't modified by zbar */
+	imgtmp	= cvCloneImage(imgptr);
+
+	/* create & configure a reader */
+	scanner	= zbar_image_scanner_create();
+	zbar_image_scanner_set_config(scanner, 0, ZBAR_CFG_ENABLE, 1);
+
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Invert color");
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Detect codes");
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
-	int	step;
-	int	chan;
-	char	*data;
+	/* wrap image data */
+	image_zb	= zbar_image_create();
+	zbar_image_set_format(image_zb, *(int*)"GREY");
+	zbar_image_set_size(image_zb, imgtmp->width, imgtmp->height);
+	zbar_image_set_data(image_zb, (void *)(imgtmp->imageData),
+					(imgtmp->width * imgtmp->height),
+					NULL);
 
-	step	= image_copy_tmp->widthStep;
-	chan	= image_copy_tmp->nChannels;
-	data	= image_copy_tmp->imageData;
-
+	/* scan the image for barcodes */
 	int	i;
-	int	j;
-	int	k;
+	img_zb_code_n	= zbar_scan_image(scanner, image_zb);
+	if (!img_zb_code_n){
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"No barcode detected");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
 
-	for (i = 0; i < image_copy_tmp->height; i++) {
-		for (j = 0; j < image_copy_tmp->width; j++) {
-			for (k = 0; k < image_copy_tmp->nChannels; k++) {
-				data[i*step + j*chan + k]	= ~data[i*step + j*chan + k];
-			}
+	} else {
+		/* extract results */
+		img_zb_code[0].symbol	= zbar_image_first_symbol(image_zb);
+		for (i = 0; i < CODES_MAX && img_zb_code[i].symbol; i++) {
+			/* Write results into array */
+			img_zb_code[i].type	= zbar_symbol_get_type(img_zb_code[i].symbol);
+			img_zb_code[i].sym_name	= zbar_get_symbol_name(img_zb_code[i].type);
+			img_zb_code[i].data	= zbar_symbol_get_data(img_zb_code[i].symbol);
+
+			/* Write results into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"%s -- '%s'",
+							img_zb_code[i].sym_name,
+							img_zb_code[i].data);
+			user_iface_log.lvl[user_iface_log.len]	= 1;
+			(user_iface_log.len)++;
+
+			/* Load next symbol */
+			img_zb_code[i+1].symbol	= zbar_symbol_next(img_zb_code[i].symbol);
 		}
 	}
-}
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Apply / Save / Discard	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-static	void	img_apply	(void)
-{
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Apply changes");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
-	cvReleaseImage(&image_copy_old);
-	image_copy_old	= cvCloneImage(image_copy_tmp);
-}
-
-static	void	img_save	(void)
-{
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save as...");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
-	/* Write into image (save.c) */
-	cvReleaseImage(&image);
-	image	= cvCloneImage(image_copy_old);
-
-	save_image_file();
-}
-
-static	void	img_discard	(void)
-{
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Discard changes");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
-	cvReleaseImage(&image_copy_tmp);
-	image_copy_tmp	= cvCloneImage(image_copy_old);
+	// clean up
+	zbar_image_destroy(image_zb);
+	zbar_image_scanner_destroy(scanner);
+	cvReleaseImage(&imgtmp);
 }
 
 

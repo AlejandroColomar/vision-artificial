@@ -22,10 +22,18 @@
 		/* user_iface_log */
 	#include "user_iface.h"
 
-		/* img_act() */
+		/* img_cv_act() */
 	#include "img_cv.h"
+		/* img_zb_act() */
+	#include "img_zbar.h"
 
 	#include "img_iface.h"
+
+
+/******************************************************************************
+ ******* macros ***************************************************************
+ ******************************************************************************/
+	# define	IMG_MEM_SIZE	(10)
 
 
 /******************************************************************************
@@ -34,6 +42,7 @@
 static	struct _IplImage	*image_copy_old;
 static	struct _IplImage	*image_copy_tmp;
 static	struct _IplImage	*image_copy_usr;
+static	struct _IplImage	*image_mem [10];
 
 
 /******************************************************************************
@@ -42,15 +51,27 @@ static	struct _IplImage	*image_copy_usr;
 	/* Actions */
 static	void	img_iface_action	(int action);
 static	void	img_iface_invert	(void);
+static	void	img_iface_decode	(void);
 static	void	img_iface_bgr2gray	(void);
 static	void	img_iface_apply		(void);
-static	void	img_iface_save		(void);
 static	void	img_iface_discard	(void);
+static	void	img_iface_save_mem	(void);
+static	void	img_iface_load_mem	(void);
+static	void	img_iface_save_file	(void);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
+void			img_iface_cleanup_main	(void)
+{
+	int	i;
+
+	for (i = 0; i < IMG_MEM_SIZE; i++) {
+		cvReleaseImage(&image_mem[i]);
+	}
+}
+
 struct _IplImage	*img_iface_load		(void)
 {
 	load_image_file();
@@ -103,15 +124,26 @@ static	void	img_iface_action	(int action)
 		img_iface_bgr2gray();
 		break;
 
+	/* img_zbar */
+	case IMG_IFACE_ACT_DECODE:
+		img_iface_decode();
+		break;
+
 	/* img_iface */
 	case IMG_IFACE_ACT_APPLY:
 		img_iface_apply();
 		break;
-	case IMG_IFACE_ACT_SAVE:
-		img_iface_save();
-		break;
 	case IMG_IFACE_ACT_DISCARD:
 		img_iface_discard();
+		break;
+	case IMG_IFACE_ACT_SAVE_MEM:
+		img_iface_save_mem();
+		break;
+	case IMG_IFACE_ACT_LOAD_MEM:
+		img_iface_load_mem();
+		break;
+	case IMG_IFACE_ACT_SAVE_FILE:
+		img_iface_save_file();
 		break;
 
 	default:
@@ -122,22 +154,18 @@ static	void	img_iface_action	(int action)
 
 static	void	img_iface_invert	(void)
 {
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Invert color");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
-	(user_iface_log.len)++;
-
 	/* Filter: invert color */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_INVERT);
 }
 
+static	void	img_iface_decode	(void)
+{
+	/* Decode */
+	img_zb_act(&image_copy_tmp, IMG_ZB_ACT_DECODE);
+}
+
 static	void	img_iface_bgr2gray	(void)
 {
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "BGR -> Gray");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
-	(user_iface_log.len)++;
-
 	/* Filter: invert color */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_BGR2GRAY);
 }
@@ -154,24 +182,6 @@ static	void	img_iface_apply		(void)
 	image_copy_old	= cvCloneImage(image_copy_tmp);
 }
 
-static	void	img_iface_save		(void)
-{
-	/* Apply changes before saving */
-	img_iface_apply();
-
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save as...");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
-	(user_iface_log.len)++;
-
-	/* Write into image struct (save.c) */
-	cvReleaseImage(&image);
-	image	= cvCloneImage(image_copy_old);
-
-	/* Save into file */
-	save_image_file();
-}
-
 static	void	img_iface_discard	(void)
 {
 	/* Write into log */
@@ -182,6 +192,68 @@ static	void	img_iface_discard	(void)
 	/* Discard tmp image copy */
 	cvReleaseImage(&image_copy_tmp);
 	image_copy_tmp	= cvCloneImage(image_copy_old);
+}
+
+static	void	img_iface_save_mem	(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save to memory");
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+
+	/* Apply changes before saving */
+	img_iface_apply();
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save to mem_%i", 0);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Write into mem */
+	cvReleaseImage(&image_mem[0]);
+	image_mem[0]	= cvCloneImage(image_copy_old);
+}
+
+static	void	img_iface_load_mem	(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Load from memory");
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+
+	/* Discard tmp image copy */
+	cvReleaseImage(&image_copy_tmp);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Load from mem_%i", 0);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Load from mem */
+	image_copy_tmp	= cvCloneImage(image_mem[0]);
+}
+
+static	void	img_iface_save_file	(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save to file");
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+
+	/* Apply changes before saving */
+	img_iface_apply();
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save as...");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Write into image struct (save.c) */
+	cvReleaseImage(&image);
+	image	= cvCloneImage(image_copy_old);
+
+	/* Save into file */
+	save_image_file();
 }
 
 

@@ -12,6 +12,9 @@ ABOUT_INC_DIR	= $(ABOUT_DIR)/inc/
 CTRL_DIR	= $(MODULES_DIR)/ctrl/
 CTRL_INC_DIR	= $(CTRL_DIR)/inc/
 
+IMG_DIR		= $(MODULES_DIR)/image/
+IMG_INC_DIR	= $(IMG_DIR)/inc/
+
 MENU_DIR	= $(MODULES_DIR)/menu/
 MENU_INC_DIR	= $(MENU_DIR)/inc/
 
@@ -30,6 +33,7 @@ ALL = main.o
 MAIN_INC_LIBALX	= alx_ncur.h
 MAIN_INC_ABOUT	= about.h
 MAIN_INC_CTRL	= start.h
+MAIN_INC_IMG	= img_iface.h
 MAIN_INC_MENU	= parser.h menu_iface.h
 MAIN_INC_SAVE	= save.h
 MAIN_INC_USR	= user_iface.h
@@ -37,12 +41,14 @@ MAIN_DEPS	= $(SRC_DIR)/main.c \
 			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MAIN_INC_LIBALX)) \
 			$(patsubst %,$(ABOUT_INC_DIR)/%,$(MAIN_INC_ABOUT)) \
 			$(patsubst %,$(CTRL_INC_DIR)/%,$(MAIN_INC_CTRL)) \
+			$(patsubst %,$(IMG_INC_DIR)/%,$(MAIN_INC_IMG)) \
 			$(patsubst %,$(MENU_INC_DIR)/%,$(MAIN_INC_MENU)) \
 			$(patsubst %,$(SAVE_INC_DIR)/%,$(MAIN_INC_SAVE)) \
 			$(patsubst %,$(USR_INC_DIR)/%,$(MAIN_INC_USR))
 MAIN_INC_DIRS	= -I $(LIBALX_INC_DIR) \
 			-I $(ABOUT_INC_DIR) \
 			-I $(CTRL_INC_DIR) \
+			-I $(IMG_INC_DIR) \
 			-I $(MENU_INC_DIR) \
 			-I $(SAVE_INC_DIR) \
 			-I $(USR_INC_DIR)

@@ -19,6 +19,7 @@
 
 		/* about_init() & print_cpright() */
 	#include "about.h"
+	#include "img_iface.h"
 	#include "menu_iface.h"
 	#include "user_iface.h"
 	#include "parser.h"
@@ -75,6 +76,9 @@ void	init_all	(int *argc, char *(*argv[]))
 
 void	cleanup		(void)
 {
+	/* Clean img buffers */
+	img_iface_cleanup_main();
+
 	/* End curses */
 	alx_resume_curses();
 	alx_end_curses();

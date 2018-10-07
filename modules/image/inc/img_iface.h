@@ -26,15 +26,20 @@
 		IMG_IFACE_ACT_INVERT = 1000,
 		IMG_IFACE_ACT_BGR2GRAY,
 
+		IMG_IFACE_ACT_DECODE = 2000,
+
 		IMG_IFACE_ACT_APPLY = 4000,
-		IMG_IFACE_ACT_SAVE,
-		IMG_IFACE_ACT_DISCARD
+		IMG_IFACE_ACT_DISCARD,
+		IMG_IFACE_ACT_SAVE_MEM,
+		IMG_IFACE_ACT_LOAD_MEM,
+		IMG_IFACE_ACT_SAVE_FILE
 	};
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
+	void			img_iface_cleanup_main	(void);
 	struct _IplImage	*img_iface_load		(void);
 	void			img_iface_cleanup	(void);
 	struct _IplImage	*img_iface_act		(int action);
