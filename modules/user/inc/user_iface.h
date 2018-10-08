@@ -36,18 +36,28 @@
 	enum	Player_Iface_Action {
 		USER_IFACE_ACT_FOO = 0,
 
-		USER_IFACE_ACT_INVERT = 1000,
+		USER_IFACE_ACT_CV = 0x0100,
+		USER_IFACE_ACT_INVERT,
+		USER_IFACE_ACT_ROTATE,
 		USER_IFACE_ACT_BGR2GRAY,
+		USER_IFACE_ACT_COMPONENT,
 
-		USER_IFACE_ACT_DECODE = 2000,
+		USER_IFACE_ACT_ZB = 0x0200,
+		USER_IFACE_ACT_DECODE,
 
-		USER_IFACE_ACT_APPLY = 4000,
+		USER_IFACE_ACT_OCR = 0x0400,
+		USER_IFACE_ACT_READ,
+
+		USER_IFACE_ACT_IMGI = 0x0800,
+		USER_IFACE_ACT_APPLY,
 		USER_IFACE_ACT_DISCARD,
 		USER_IFACE_ACT_SAVE_MEM,
 		USER_IFACE_ACT_LOAD_MEM,
 		USER_IFACE_ACT_SAVE_FILE,
 
-		USER_IFACE_ACT_QUIT = 5000
+		USER_IFACE_ACT_USRI = 0x1000,
+		USER_IFACE_ACT_SHOW_OCR,
+		USER_IFACE_ACT_QUIT
 	};
 
 
@@ -75,6 +85,8 @@ void	user_iface_init		(void);
 void	user_iface_cleanup	(void);
 void	user_iface		(struct _IplImage  *imgptr);
 void	user_iface_save_name	(const char *filepath, char *filename, int destsize);
+int64_t	user_iface_getint	(double m, int64_t def, double M,
+				const char *title, const char *help);
 
 
 /******************************************************************************

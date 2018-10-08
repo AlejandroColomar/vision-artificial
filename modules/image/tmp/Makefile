@@ -14,7 +14,7 @@ SRC_DIR = $(IMG_DIR)/src/
 
 # dependencies
 
-_ALL	= img_cv.o img_zbar.o img_iface.o
+_ALL	= img_cv.o img_zbar.o img_ocr.o img_iface.o
 ALL	= $(_ALL) img_mod.o
 
 IMGCV_INC_USR	= user_iface.h
@@ -35,9 +35,18 @@ IMGZB_INC_DIRS	= -I $(INC_DIR) \
 			-I $(USR_INC_DIR) \
 			-I $(LIBALX_INC_DIR)
 
+IMGOCR_INC_USR	= user_iface.h
+IMGOCR_INC	= img_ocr.h
+IMGOCR_DEPS	= $(SRC_DIR)/img_ocr.c \
+			$(patsubst %,$(INC_DIR)/%,$(IMGOCR_INC)) \
+			$(patsubst %,$(USR_INC_DIR)/%,$(IMGOCR_INC_USR))
+IMGOCR_INC_DIRS	= -I $(INC_DIR) \
+			-I $(USR_INC_DIR) \
+			-I $(LIBALX_INC_DIR)
+
 IMGI_INC_SAVE	= save.h
 IMGI_INC_USR	= user_iface.h
-IMGI_INC	= img_iface.h	img_cv.h img_zbar.h
+IMGI_INC	= img_iface.h	img_cv.h img_zbar.h img_ocr.h
 IMGI_DEPS	= $(SRC_DIR)/img_iface.c \
 			$(patsubst %,$(INC_DIR)/%,$(IMGI_INC)) \
 			$(patsubst %,$(SAVE_INC_DIR)/%,$(IMGI_INC_SAVE)) \
@@ -69,6 +78,13 @@ img_zbar.s: $(IMGZB_DEPS)
 	$(Q)$(CC) $(CFLAGS) $(IMGZB_INC_DIRS) -S $< -o $@
 	@echo  "	CC	$@"
 img_zbar.o: img_zbar.s
+	$(Q)$(AS) $< -o $@
+	@echo  "	AS	$@"
+
+img_ocr.s: $(IMGOCR_DEPS)
+	$(Q)$(CC) $(CFLAGS) $(IMGOCR_INC_DIRS) -S $< -o $@
+	@echo  "	CC	$@"
+img_ocr.o: img_ocr.s
 	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
 

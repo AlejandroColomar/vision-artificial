@@ -5,6 +5,7 @@
 # directories
 
 LIBALX_INC_DIR	= $(LIBALX_DIR)/inc/
+IMG_INC_DIR	= $(IMG_DIR)/inc/
 
 IMG_INC_DIR	= $(IMG_DIR)/inc/
 MENU_INC_DIR	= $(MENU_DIR)/inc/
@@ -31,12 +32,15 @@ UCLUI_DEPS	= $(SRC_DIR)/user_clui.c \
 UCLUI_INC_DIRS	= -I $(INC_DIR)
 
 UTUI_INC_LIBALX	= alx_ncur.h
+UTUI_INC_IMG	= img_ocr.h
 UTUI_INC	= user_tui.h	user_iface.h
 UTUI_DEPS	= $(SRC_DIR)/user_tui.c \
 			$(patsubst %,$(INC_DIR)/%,$(UTUI_INC)) \
-			$(patsubst %,$(LIBALX_INC_DIR)/%,$(UTUI_INC_LIBALX))
+			$(patsubst %,$(LIBALX_INC_DIR)/%,$(UTUI_INC_LIBALX)) \
+			$(patsubst %,$(IMG_INC_DIR)/%,$(UTUI_INC_IMG))
 UTUI_INC_DIRS	= -I $(INC_DIR) \
-				-I $(LIBALX_INC_DIR)
+				-I $(LIBALX_INC_DIR) \
+				-I $(IMG_INC_DIR)
 
 # target: dependencies
 #	action

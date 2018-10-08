@@ -9,6 +9,7 @@
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Standard	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
+	#include <inttypes.h>
 		/* WINDOW & wgetch() & KEY_... & ... */
 	#include <ncurses.h>
 
@@ -17,6 +18,9 @@
  *	*	*	*	*	*	*	*	*	*/
 		/* alx_..._curses() & alx_ncur_prn_...() */
 	#include "alx_ncur.h"
+
+		/*img_ocr_text */
+	#include "img_ocr.h"
 
 		/* user_iface_log */
 	#include "user_iface.h"
@@ -70,6 +74,14 @@ void	user_tui_init		(void)
 	noecho();
 }
 
+void	user_tui_cleanup	(void)
+{
+	/* Del wins & return to terminal mode */
+	alx_win_del(win_log);
+	alx_win_del(win_help);
+	alx_pause_curses();
+}
+
 int	user_tui		(const char *title, const char *subtitle)
 {
 	int	action;
@@ -94,12 +106,29 @@ void	user_tui_save_name	(const char *filepath, char *filename, int destsize)
 			"Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff");
 }
 
-void	user_tui_cleanup	(void)
+int64_t	user_tui_getint		(double m, int64_t def, double M,
+				const char *title, const char *help)
 {
-	/* Del wins & return to terminal mode */
-	alx_win_del(win_log);
-	alx_win_del(win_help);
+	/* Input box */
+	int	w;
+	int	r;
+	w	= 75;
+	r	= 10;
+
+	/* Request int */
+	int64_t	i;
+	i	= alx_w_getint(w, r, title, m, def, M, help);
+	return	i;
+}
+
+void	user_tui_show_ocr	(void)
+{
 	alx_pause_curses();
+
+	printf("%s", img_ocr_text);
+	getchar();
+
+	alx_resume_curses();
 }
 
 
@@ -194,7 +223,13 @@ static	int	usr_input	(void)
 				action	= USER_IFACE_ACT_INVERT;
 				break;
 			case '1':
+				action	= USER_IFACE_ACT_ROTATE;
+				break;
+			case '2':
 				action	= USER_IFACE_ACT_BGR2GRAY;
+				break;
+			case '3':
+				action	= USER_IFACE_ACT_COMPONENT;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -208,6 +243,19 @@ static	int	usr_input	(void)
 			switch (ch) {
 			case '0':
 				action	= USER_IFACE_ACT_DECODE;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '3':
+			/* img_ocr */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_READ;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -234,6 +282,20 @@ static	int	usr_input	(void)
 
 	case 's':
 		action	= USER_IFACE_ACT_SAVE_FILE;
+		break;
+
+	case 'u':
+		/* User iface actions */
+		ch = wgetch(win_log);
+
+		switch (ch) {
+		case '1':
+			action	= USER_IFACE_ACT_SHOW_OCR;
+			break;
+		default:
+			action	= USER_IFACE_ACT_FOO;
+			break;
+		}
 		break;
 
 	case 'x':
@@ -282,10 +344,15 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Load from mem:	%c",	'l');
 	mvwprintw(win_help, r++, c, "Save to file:	%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
-	mvwprintw(win_help, r++, c, " - Invert:	%s",		"f10");
-	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f11");
+	mvwprintw(win_help, r++, c, " - Invert:	%s",	"f10");
+	mvwprintw(win_help, r++, c, " - Rotate:	%s",	"f11");
+	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f12");
+	mvwprintw(win_help, r++, c, " - Component:	%s",	"f13");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
+	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
 	mvwprintw(win_help, r++, c, "Exercises:");
+	mvwprintw(win_help, r++, c, "Other:");
+	mvwprintw(win_help, r++, c, " - Show OCR:	%s",	"u1");
 	mvwprintw(win_help, r++, c, "Quit:		%c",	'q');
 
 	/* Refresh */

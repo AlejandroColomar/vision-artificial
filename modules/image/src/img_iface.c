@@ -26,6 +26,8 @@
 	#include "img_cv.h"
 		/* img_zb_act() */
 	#include "img_zbar.h"
+		/* OCR */
+	#include "img_ocr.h"
 
 	#include "img_iface.h"
 
@@ -51,8 +53,11 @@ static	struct _IplImage	*image_mem [10];
 	/* Actions */
 static	void	img_iface_action	(int action);
 static	void	img_iface_invert	(void);
-static	void	img_iface_decode	(void);
+static	void	img_iface_rotate	(void);
 static	void	img_iface_bgr2gray	(void);
+static	void	img_iface_component	(void);
+static	void	img_iface_decode	(void);
+static	void	img_iface_read		(void);
 static	void	img_iface_apply		(void);
 static	void	img_iface_discard	(void);
 static	void	img_iface_save_mem	(void);
@@ -120,13 +125,24 @@ static	void	img_iface_action	(int action)
 	case IMG_IFACE_ACT_INVERT:
 		img_iface_invert();
 		break;
+	case IMG_IFACE_ACT_ROTATE:
+		img_iface_rotate();
+		break;
 	case IMG_IFACE_ACT_BGR2GRAY:
 		img_iface_bgr2gray();
+		break;
+	case IMG_IFACE_ACT_COMPONENT:
+		img_iface_component();
 		break;
 
 	/* img_zbar */
 	case IMG_IFACE_ACT_DECODE:
 		img_iface_decode();
+		break;
+
+	/* img_ocr */
+	case IMG_IFACE_ACT_READ:
+		img_iface_read();
 		break;
 
 	/* img_iface */
@@ -158,16 +174,42 @@ static	void	img_iface_invert	(void)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_INVERT);
 }
 
-static	void	img_iface_decode	(void)
+static	void	img_iface_rotate	(void)
 {
-	/* Decode */
-	img_zb_act(&image_copy_tmp, IMG_ZB_ACT_DECODE);
+	/* Rotate */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ROTATE);
 }
 
 static	void	img_iface_bgr2gray	(void)
 {
 	/* Filter: invert color */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_BGR2GRAY);
+	if (image_copy_tmp->nChannels == 3) {
+		img_cv_act(&image_copy_tmp, IMG_CV_ACT_BGR2GRAY);
+	}
+}
+
+static	void	img_iface_component	(void)
+{
+	/* Filter: extract component */
+	if (image_copy_tmp->nChannels == 3) {
+		img_cv_act(&image_copy_tmp, IMG_CV_ACT_COMPONENT);
+	}
+}
+
+static	void	img_iface_decode	(void)
+{
+	/* Decode */
+//	if (image_copy_tmp->nChannels == 3) {
+		img_zb_act(&image_copy_tmp, IMG_ZB_ACT_DECODE);
+//	}
+}
+
+static	void	img_iface_read		(void)
+{
+	/* OCR */
+//	if (image_copy_tmp->nChannels == 1) {
+		img_ocr_act(&image_copy_tmp, IMG_OCR_ACT_READ);
+//	}
 }
 
 static	void	img_iface_apply		(void)

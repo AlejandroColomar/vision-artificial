@@ -120,6 +120,7 @@ export	LD
 CFLAGS_STD	= -std=c11
 CFLAGS_CV	= `pkg-config --cflags opencv`
 CFLAGS_ZBAR	= `pkg-config --cflags zbar`
+CFLAGS_TESS	= `pkg-config --cflags tesseract`
 
 CFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
 CFLAGS_D       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
@@ -127,7 +128,7 @@ CFLAGS_D       += -D 'SHARE_DIR="$(SHARE_DIR)"'
 CFLAGS_D       += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
 CFLAGS_D       += -D 'VAR_DIR="$(VAR_DIR)"'
 
-CFLAGS	= $(CFLAGS_STD) $(CFLAGS_D) $(CFLAGS_CV) $(CFLAGS_ZBAR)
+CFLAGS	= $(CFLAGS_STD) $(CFLAGS_D) $(CFLAGS_CV) $(CFLAGS_ZBAR) $(CFLAGS_TESS)
 
 export	CFLAGS
 
@@ -136,8 +137,9 @@ export	CFLAGS
 LIBS_CURSES	= -l ncurses
 LIBS_CV		= `pkg-config --libs opencv`
 LIBS_ZBAR	= `pkg-config --libs zbar`
+LIBS_TESS	= `pkg-config --libs tesseract`
 
-LIBS		= $(LIBS_CURSES) $(LIBS_CV) $(LIBS_ZBAR)
+LIBS		= $(LIBS_CURSES) $(LIBS_CV) $(LIBS_ZBAR) $(LIBS_TESS)
 
 export	LIBS
 
