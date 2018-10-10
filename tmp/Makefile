@@ -30,24 +30,21 @@ SRC_DIR		= $(MAIN_DIR)/src/
 
 ALL = main.o
 
-MAIN_INC_LIBALX	= alx_ncur.h
-MAIN_INC_ABOUT	= about.h
-MAIN_INC_CTRL	= start.h
-MAIN_INC_IMG	= img_iface.h
-MAIN_INC_MENU	= parser.h menu_iface.h
-MAIN_INC_SAVE	= save.h
-MAIN_INC_USR	= user_iface.h
-MAIN_DEPS	= $(SRC_DIR)/main.c \
+MAIN_INC_LIBALX	= alx_ncur.hpp
+MAIN_INC_ABOUT	= about.hpp
+MAIN_INC_IMG	= img_iface.hpp
+MAIN_INC_MENU	= parser.hpp menu_iface.hpp
+MAIN_INC_SAVE	= save.hpp
+MAIN_INC_USR	= user_iface.hpp
+MAIN_DEPS	= $(SRC_DIR)/main.cpp \
 			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MAIN_INC_LIBALX)) \
 			$(patsubst %,$(ABOUT_INC_DIR)/%,$(MAIN_INC_ABOUT)) \
-			$(patsubst %,$(CTRL_INC_DIR)/%,$(MAIN_INC_CTRL)) \
 			$(patsubst %,$(IMG_INC_DIR)/%,$(MAIN_INC_IMG)) \
 			$(patsubst %,$(MENU_INC_DIR)/%,$(MAIN_INC_MENU)) \
 			$(patsubst %,$(SAVE_INC_DIR)/%,$(MAIN_INC_SAVE)) \
 			$(patsubst %,$(USR_INC_DIR)/%,$(MAIN_INC_USR))
 MAIN_INC_DIRS	= -I $(LIBALX_INC_DIR) \
 			-I $(ABOUT_INC_DIR) \
-			-I $(CTRL_INC_DIR) \
 			-I $(IMG_INC_DIR) \
 			-I $(MENU_INC_DIR) \
 			-I $(SAVE_INC_DIR) \
@@ -60,8 +57,8 @@ MAIN_INC_DIRS	= -I $(LIBALX_INC_DIR) \
 all: $(ALL)
 
 main.s: $(MAIN_DEPS)
-	$(Q)$(CC) $(CFLAGS) $(MAIN_INC_DIRS) -S $< -o $@
-	@echo  "	CC	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(MAIN_INC_DIRS) -S $< -o $@
+	@echo  "	CXX	$@"
 main.o: main.s
 	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"

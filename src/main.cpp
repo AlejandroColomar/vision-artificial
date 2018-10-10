@@ -6,24 +6,21 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Standard C ----------------------------------------------------------------*/
 		/* getchar() */
-	#include <stdio.h>
+	#include <cstdio>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-	#include "alx_ncur.h"
+/* libalx --------------------------------------------------------------------*/
+	#include "alx_ncur.hpp"
 
+/* Project -------------------------------------------------------------------*/
 		/* about_init() & print_cpright() */
-	#include "about.h"
-	#include "img_iface.h"
-	#include "menu_iface.h"
-	#include "user_iface.h"
-	#include "parser.h"
-	#include "save.h"
+	#include "about.hpp"
+	#include "img_iface.hpp"
+	#include "menu_iface.hpp"
+	#include "user_iface.hpp"
+	#include "parser.hpp"
+	#include "save.hpp"
 
 
 /******************************************************************************

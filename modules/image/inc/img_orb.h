@@ -6,65 +6,40 @@
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# ifndef		VA_IMG_IFACE_H
-	# define	VA_IMG_IFACE_H
+# ifndef		VA_IMG_ORB_H
+	# define	VA_IMG_ORB_H
 
 
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
 /* Packages ------------------------------------------------------------------*/
-		/* struct IplImage */
+		/* struct _IplImage */
 	#include <cv.h>
 
 
 /******************************************************************************
  ******* enums ****************************************************************
  ******************************************************************************/
-	enum	Img_Iface_Action {
-		IMG_IFACE_ACT_FOO = 0,
+	enum	Img_ORB_Action {
+		IMG_ORB_ACT_FOO = 0,
 
-		IMG_IFACE_ACT_CV = 0x0100,
-		IMG_IFACE_ACT_INVERT,
-		IMG_IFACE_ACT_BGR2GRAY,
-		IMG_IFACE_ACT_COMPONENT,
-		IMG_IFACE_ACT_THRESHOLD,
-		IMG_IFACE_ACT_ROTATE,
-
-		IMG_IFACE_ACT_ZB = 0x0200,
-		IMG_IFACE_ACT_DECODE,
-
-		IMG_IFACE_ACT_OCR = 0x0400,
-		IMG_IFACE_ACT_READ,
-
-		IMG_IFACE_ACT_ORB = 0x0800,
-		IMG_IFACE_ACT_ALIGN,
-
-		IMG_IFACE_ACT_IMGI = 0x1000,
-		IMG_IFACE_ACT_APPLY,
-		IMG_IFACE_ACT_DISCARD,
-		IMG_IFACE_ACT_SAVE_MEM,
-		IMG_IFACE_ACT_LOAD_MEM,
-		IMG_IFACE_ACT_SAVE_REF,
-
-		IMG_IFACE_ACT_SAVE = 0x2000,
-		IMG_IFACE_ACT_SAVE_FILE
+		IMG_ORB_ACT_ORB = 0x0800,
+		IMG_ORB_ACT_ALIGN
 	};
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void			img_iface_cleanup_main	(void);
-	struct _IplImage	*img_iface_load		(void);
-	void			img_iface_cleanup	(void);
-	struct _IplImage	*img_iface_act		(int action);
+	void	img_orb_act	(struct _IplImage  *pattern,
+				struct _IplImage  **imgptr2, int action);
 
 
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# endif			/* img_iface.h */
+# endif			/* img_orb.h */
 
 
 /******************************************************************************

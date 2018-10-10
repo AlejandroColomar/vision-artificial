@@ -14,7 +14,7 @@
  ******* headers **************************************************************
  ******************************************************************************/
 	/* struct IplImage */
-	#include "cv.h"
+	#include <cv.h>
 
 
 /******************************************************************************
@@ -25,9 +25,10 @@
 
 		IMG_CV_ACT_CV = 0x0100,
 		IMG_CV_ACT_INVERT,
-		IMG_CV_ACT_ROTATE,
 		IMG_CV_ACT_BGR2GRAY,
-		IMG_CV_ACT_COMPONENT
+		IMG_CV_ACT_COMPONENT,
+		IMG_CV_ACT_THRESHOLD,
+		IMG_CV_ACT_ROTATE
 	};
 
 

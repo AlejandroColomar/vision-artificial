@@ -223,13 +223,16 @@ static	int	usr_input	(void)
 				action	= USER_IFACE_ACT_INVERT;
 				break;
 			case '1':
-				action	= USER_IFACE_ACT_ROTATE;
-				break;
-			case '2':
 				action	= USER_IFACE_ACT_BGR2GRAY;
 				break;
-			case '3':
+			case '2':
 				action	= USER_IFACE_ACT_COMPONENT;
+				break;
+			case '3':
+				action	= USER_IFACE_ACT_THRESHOLD;
+				break;
+			case '4':
+				action	= USER_IFACE_ACT_ROTATE;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -262,6 +265,19 @@ static	int	usr_input	(void)
 				break;
 			}
 			break;
+		case '4':
+			/* img_orb */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_ALIGN;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
 			break;
@@ -278,6 +294,10 @@ static	int	usr_input	(void)
 
 	case 'q':
 		action	= USER_IFACE_ACT_QUIT;
+		break;
+
+	case 'r':
+		action	= USER_IFACE_ACT_SAVE_REF;
 		break;
 
 	case 's':
@@ -342,14 +362,17 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Discard:	%s",		"Backspace");
 	mvwprintw(win_help, r++, c, "Save to mem:	%c",	'm');
 	mvwprintw(win_help, r++, c, "Load from mem:	%c",	'l');
+	mvwprintw(win_help, r++, c, "Save to ref:	%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:	%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
 	mvwprintw(win_help, r++, c, " - Invert:	%s",	"f10");
-	mvwprintw(win_help, r++, c, " - Rotate:	%s",	"f11");
-	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f12");
-	mvwprintw(win_help, r++, c, " - Component:	%s",	"f13");
+	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f11");
+	mvwprintw(win_help, r++, c, " - Component:	%s",	"f12");
+	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f13");
+	mvwprintw(win_help, r++, c, " - Rotate:	%s",	"f14");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
+	mvwprintw(win_help, r++, c, " - Align:	%s",	"f40");
 	mvwprintw(win_help, r++, c, "Exercises:");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:	%s",	"u1");

@@ -40,6 +40,8 @@ void	start_switch	(void)
 		user_iface(imgptr);
 		user_iface_cleanup();
 	}
+
+	img_iface_cleanup();
 }
 
 

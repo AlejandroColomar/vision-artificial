@@ -6,17 +6,15 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* opencv */
-	#include <cv.h>
+/* Standard C ----------------------------------------------------------------*/
 		/* snprintf() */
 	#include <stdio.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Packages ------------------------------------------------------------------*/
+		/* opencv */
+	#include <cv.h>
+
+/* Project -------------------------------------------------------------------*/
 		/* load_image_file() */
 	#include "save.h"
 		/* user_iface_log */
@@ -28,6 +26,8 @@
 	#include "img_zbar.h"
 		/* OCR */
 	#include "img_ocr.h"
+		/* ORB */
+	#include "img_orb.h"
 
 	#include "img_iface.h"
 
@@ -45,6 +45,7 @@ static	struct _IplImage	*image_copy_old;
 static	struct _IplImage	*image_copy_tmp;
 static	struct _IplImage	*image_copy_usr;
 static	struct _IplImage	*image_mem [10];
+static	struct _IplImage	*image_ref;
 
 
 /******************************************************************************
@@ -52,16 +53,25 @@ static	struct _IplImage	*image_mem [10];
  ******************************************************************************/
 	/* Actions */
 static	void	img_iface_action	(int action);
+	/* img_cv */
 static	void	img_iface_invert	(void);
-static	void	img_iface_rotate	(void);
 static	void	img_iface_bgr2gray	(void);
 static	void	img_iface_component	(void);
+static	void	img_iface_threshold	(void);
+static	void	img_iface_rotate	(void);
+	/* img_zbar */
 static	void	img_iface_decode	(void);
+	/* img_ocr */
 static	void	img_iface_read		(void);
+	/* img_orb */
+static	void	img_iface_align		(void);
+	/* img_iface */
 static	void	img_iface_apply		(void);
 static	void	img_iface_discard	(void);
 static	void	img_iface_save_mem	(void);
 static	void	img_iface_load_mem	(void);
+static	void	img_iface_save_ref	(void);
+	/* save */
 static	void	img_iface_save_file	(void);
 
 
@@ -75,6 +85,7 @@ void			img_iface_cleanup_main	(void)
 	for (i = 0; i < IMG_MEM_SIZE; i++) {
 		cvReleaseImage(&image_mem[i]);
 	}
+	cvReleaseImage(&image_ref);
 }
 
 struct _IplImage	*img_iface_load		(void)
@@ -115,9 +126,7 @@ struct _IplImage	*img_iface_act		(int action)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Actions	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Actions -------------------------------------------------------------------*/
 static	void	img_iface_action	(int action)
 {
 	switch (action) {
@@ -125,14 +134,17 @@ static	void	img_iface_action	(int action)
 	case IMG_IFACE_ACT_INVERT:
 		img_iface_invert();
 		break;
-	case IMG_IFACE_ACT_ROTATE:
-		img_iface_rotate();
-		break;
 	case IMG_IFACE_ACT_BGR2GRAY:
 		img_iface_bgr2gray();
 		break;
 	case IMG_IFACE_ACT_COMPONENT:
 		img_iface_component();
+		break;
+	case IMG_IFACE_ACT_THRESHOLD:
+		img_iface_threshold();
+		break;
+	case IMG_IFACE_ACT_ROTATE:
+		img_iface_rotate();
 		break;
 
 	/* img_zbar */
@@ -143,6 +155,11 @@ static	void	img_iface_action	(int action)
 	/* img_ocr */
 	case IMG_IFACE_ACT_READ:
 		img_iface_read();
+		break;
+
+	/* img_orb */
+	case IMG_IFACE_ACT_ALIGN:
+		img_iface_align();
 		break;
 
 	/* img_iface */
@@ -158,6 +175,11 @@ static	void	img_iface_action	(int action)
 	case IMG_IFACE_ACT_LOAD_MEM:
 		img_iface_load_mem();
 		break;
+	case IMG_IFACE_ACT_SAVE_REF:
+		img_iface_save_ref();
+		break;
+
+	/* save */
 	case IMG_IFACE_ACT_SAVE_FILE:
 		img_iface_save_file();
 		break;
@@ -168,16 +190,11 @@ static	void	img_iface_action	(int action)
 	}
 }
 
+/* img_cv --------------------------------------------------------------------*/
 static	void	img_iface_invert	(void)
 {
 	/* Filter: invert color */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_INVERT);
-}
-
-static	void	img_iface_rotate	(void)
-{
-	/* Rotate */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ROTATE);
 }
 
 static	void	img_iface_bgr2gray	(void)
@@ -185,6 +202,12 @@ static	void	img_iface_bgr2gray	(void)
 	/* Filter: invert color */
 	if (image_copy_tmp->nChannels == 3) {
 		img_cv_act(&image_copy_tmp, IMG_CV_ACT_BGR2GRAY);
+	} else {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 }
 
@@ -193,9 +216,36 @@ static	void	img_iface_component	(void)
 	/* Filter: extract component */
 	if (image_copy_tmp->nChannels == 3) {
 		img_cv_act(&image_copy_tmp, IMG_CV_ACT_COMPONENT);
+	} else {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 }
 
+static	void	img_iface_threshold	(void)
+{
+	/* Filter: threshold */
+	if (image_copy_tmp->nChannels == 1) {
+		img_cv_act(&image_copy_tmp, IMG_CV_ACT_THRESHOLD);
+	} else {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+}
+
+static	void	img_iface_rotate	(void)
+{
+	/* Rotate */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ROTATE);
+}
+
+/* img_zbar ------------------------------------------------------------------*/
 static	void	img_iface_decode	(void)
 {
 	/* Decode */
@@ -204,6 +254,7 @@ static	void	img_iface_decode	(void)
 //	}
 }
 
+/* img_ocr -------------------------------------------------------------------*/
 static	void	img_iface_read		(void)
 {
 	/* OCR */
@@ -212,10 +263,19 @@ static	void	img_iface_read		(void)
 //	}
 }
 
+/* img_orb -------------------------------------------------------------------*/
+static	void	img_iface_align		(void)
+{
+	/* Align to reference image_ref */
+	img_orb_act(image_ref, &image_copy_tmp, IMG_ORB_ACT_ALIGN);
+}
+
+/* img_iface -----------------------------------------------------------------*/
 static	void	img_iface_apply		(void)
 {
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Apply changes");
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Apply changes");
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 
@@ -227,7 +287,8 @@ static	void	img_iface_apply		(void)
 static	void	img_iface_discard	(void)
 {
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Discard changes");
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Discard changes");
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 
@@ -239,7 +300,8 @@ static	void	img_iface_discard	(void)
 static	void	img_iface_save_mem	(void)
 {
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save to memory");
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Save to memory");
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 
@@ -247,7 +309,8 @@ static	void	img_iface_save_mem	(void)
 	img_iface_apply();
 
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save to mem_%i", 0);
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Save to mem_%i", 0);
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
@@ -259,7 +322,8 @@ static	void	img_iface_save_mem	(void)
 static	void	img_iface_load_mem	(void)
 {
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Load from memory");
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Load from memory");
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 
@@ -267,7 +331,8 @@ static	void	img_iface_load_mem	(void)
 	cvReleaseImage(&image_copy_tmp);
 
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Load from mem_%i", 0);
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Load from mem_%i", 0);
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
@@ -275,10 +340,28 @@ static	void	img_iface_load_mem	(void)
 	image_copy_tmp	= cvCloneImage(image_mem[0]);
 }
 
+static	void	img_iface_save_ref	(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Save to reference");
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+
+	/* Apply changes before saving */
+	img_iface_apply();
+
+	/* Write into ref */
+	cvReleaseImage(&image_ref);
+	image_ref	= cvCloneImage(image_copy_old);
+}
+
+/* save ----------------------------------------------------------------------*/
 static	void	img_iface_save_file	(void)
 {
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save to file");
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Save to file");
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 
@@ -286,7 +369,8 @@ static	void	img_iface_save_file	(void)
 	img_iface_apply();
 
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "Save as...");
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Save as...");
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
