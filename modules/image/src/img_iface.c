@@ -79,6 +79,7 @@ static	void	img_iface_rotate	(void *data);
 
 static	void	img_iface_dilate_erode	(void *data);
 static	void	img_iface_erode_dilate	(void *data);
+static	void	img_iface_rotate_2rect	(void *data);
 	/* img_zbar */
 static	void	img_iface_decode	(void *data);
 	/* img_ocr */
@@ -203,6 +204,9 @@ static	void	img_iface_action	(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_ERODE_DILATE:
 		img_iface_erode_dilate(data);
+		break;
+	case IMG_IFACE_ACT_ROTATE_2RECT:
+		img_iface_rotate_2rect(data);
 		break;
 
 	/* img_zbar */
@@ -659,6 +663,30 @@ static	void	img_iface_erode_dilate	(void *data)
 	/* Dilate */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ERODE, data);
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_DILATE, data);
+}
+
+static	void	img_iface_rotate_2rect	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Rotate	data_tmp;
+	if (!data) {
+		data_tmp.center.x	= rectangle.center.x;
+		data_tmp.center.y	= rectangle.center.y;
+		data_tmp.angle		= rectangle.angle;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_Rotate	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Rotate *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Rotate to rectangle");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Rotate ortogonally */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ROTATE, data);
 }
 
 /* img_zbar ------------------------------------------------------------------*/

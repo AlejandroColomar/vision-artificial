@@ -319,6 +319,9 @@ static	int	usr_input	(void)
 				case '1':
 					action	= USER_IFACE_ACT_ROTATE;
 					break;
+				case '2':
+					action	= USER_IFACE_ACT_ROTATE_2RECT;
+					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
 					break;
@@ -455,23 +458,24 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to ref:	%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:	%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
-	mvwprintw(win_help, r++, c, " - Invert:	%s",	"f100");
+	mvwprintw(win_help, r++, c, " - Invert:	%s",		"f100");
 	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f101");
 	mvwprintw(win_help, r++, c, " - Component:	%s",	"f102");
-	mvwprintw(win_help, r++, c, " - Smooth:	%s",	"f110");
+	mvwprintw(win_help, r++, c, " - Smooth:	%s",		"f110");
 	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f111");
 	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f112");
-	mvwprintw(win_help, r++, c, " - Dilate:	%s",	"f120");
-	mvwprintw(win_help, r++, c, " - Erode:	%s",	"f121");
+	mvwprintw(win_help, r++, c, " - Dilate:	%s",		"f120");
+	mvwprintw(win_help, r++, c, " - Erode:	%s",		"f121");
 	mvwprintw(win_help, r++, c, " - D-E:		%s",	"f122");
 	mvwprintw(win_help, r++, c, " - E-D:		%s",	"f123");
 	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f130");
 	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f131");
 	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f140");
-	mvwprintw(win_help, r++, c, " - Rotate:	%s",	"f141");
+	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f141");
+	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f142");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
-	mvwprintw(win_help, r++, c, " - Align:	%s",	"f40");
+	mvwprintw(win_help, r++, c, " - Align:	%s",		"f40");
 	mvwprintw(win_help, r++, c, "Exercises:");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:	%s",	"u1");
