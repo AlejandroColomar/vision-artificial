@@ -28,7 +28,7 @@ all: $(ALL)
 
 $(BIN_NAME): $(MAIN_OBJS)
 	$(Q)$(CXX) $^ -o $@ $(LIBS)
-	@echo  "	CC	$@"
+	@echo  "	CXX	$@"
 	@echo  ""
 
 

@@ -6,22 +6,20 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Standard C ----------------------------------------------------------------*/
 	#include <inttypes.h>
 		/* WINDOW & wgetch() & KEY_... & ... */
 	#include <ncurses.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* libalx --------------------------------------------------------------------*/
 		/* alx_..._curses() & alx_ncur_prn_...() */
 	#include "alx_ncur.h"
 
+/* Project -------------------------------------------------------------------*/
 		/*img_ocr_text */
-	#include "img_ocr.h"
+	#include "img_iface.h"
 
+/* Module --------------------------------------------------------------------*/
 		/* user_iface_log */
 	#include "user_iface.h"
 
@@ -104,6 +102,21 @@ void	user_tui_save_name	(const char *filepath, char *filename, int destsize)
 	/* Request name */
 	alx_w_getfname(filepath, filename, false, w, r, "File name:",
 			"Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff");
+}
+
+double	user_tui_getdbl		(double m, double def, double M,
+				const char *title, const char *help)
+{
+	/* Input box */
+	int	w;
+	int	r;
+	w	= 75;
+	r	= 10;
+
+	/* Request int */
+	double	R;
+	R	= alx_w_getdbl(w, r, title, m, def, M, help);
+	return	R;
 }
 
 int64_t	user_tui_getint		(double m, int64_t def, double M,
@@ -220,19 +233,90 @@ static	int	usr_input	(void)
 
 			switch (ch) {
 			case '0':
-				action	= USER_IFACE_ACT_INVERT;
+				/* color manipulation */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_INVERT;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_BGR2GRAY;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_COMPONENT;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			case '1':
-				action	= USER_IFACE_ACT_BGR2GRAY;
+				/* grayscale filters */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_SMOOTH;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_THRESHOLD;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			case '2':
-				action	= USER_IFACE_ACT_COMPONENT;
+				/* black & white filters */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_DILATE;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_ERODE;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			case '3':
-				action	= USER_IFACE_ACT_THRESHOLD;
+				/* contour */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_CONTOURS;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_MIN_AREA_RECT;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			case '4':
-				action	= USER_IFACE_ACT_ROTATE;
+				/* rotation */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_ROTATE_ORTO;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_ROTATE;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -365,11 +449,18 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to ref:	%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:	%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
-	mvwprintw(win_help, r++, c, " - Invert:	%s",	"f10");
-	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f11");
-	mvwprintw(win_help, r++, c, " - Component:	%s",	"f12");
-	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f13");
-	mvwprintw(win_help, r++, c, " - Rotate:	%s",	"f14");
+	mvwprintw(win_help, r++, c, " - Invert:	%s",	"f100");
+	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f101");
+	mvwprintw(win_help, r++, c, " - Component:	%s",	"f102");
+	mvwprintw(win_help, r++, c, " - Smooth:	%s",	"f110");
+	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f111");
+	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f112");
+	mvwprintw(win_help, r++, c, " - Dilate:	%s",	"f120");
+	mvwprintw(win_help, r++, c, " - Erode:	%s",	"f121");
+	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f130");
+	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f131");
+	mvwprintw(win_help, r++, c, " - Rotate orto.:	%s",	"f140");
+	mvwprintw(win_help, r++, c, " - Rotate:	%s",	"f141");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Align:	%s",	"f40");

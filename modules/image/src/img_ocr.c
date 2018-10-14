@@ -6,47 +6,45 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* opencv */
-	#include <cv.h>
+/* Standard C ----------------------------------------------------------------*/
 		/* INT_MAX */
 	#include <limits.h>
-		/* snprintf() */
+		/* snprintf() & FILENAME_MAX */
 	#include <stdio.h>
+
+/* Packages ------------------------------------------------------------------*/
+		/* opencv */
+	#include <cv.h>
 		/* OCR Tesseract */
 	#include <tesseract/capi.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Project -------------------------------------------------------------------*/
 		/* user_iface_log */
 	#include "user_iface.h"
+		/* user_prog_path */
+	#include "save.h"
+
+/* Module --------------------------------------------------------------------*/
+		/* data & img_ocr_text & OCR_TEXT_MAX */
+	#include "img_iface.h"
 
 	#include "img_ocr.h"
 
 
 /******************************************************************************
- ******* variables ************************************************************
- ******************************************************************************/
-char	img_ocr_text [TEXT_MAX];
-
-
-/******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(struct _IplImage  *imgptr);
+static	void	img_ocr_read	(struct _IplImage  *imgptr, void *data);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_ocr_act	(struct _IplImage  **imgptr2, int action)
+void	img_ocr_act	(struct _IplImage  **imgptr2, int action, void *data)
 {
 	switch (action) {
 	case IMG_OCR_ACT_READ:
-		img_ocr_read(*imgptr2);
+		img_ocr_read(*imgptr2, data);
 		break;
 	}
 }
@@ -55,42 +53,46 @@ void	img_ocr_act	(struct _IplImage  **imgptr2, int action)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(struct _IplImage  *imgptr)
+static	void	img_ocr_read	(struct _IplImage  *imgptr, void *data)
 {
-
 	struct _IplImage	*imgtmp;
 	struct TessBaseAPI	*handle_ocr;
 
-	/* Make a copy of imgptr so that it isn't modified by zbar */
+	/* Make a copy of imgptr so that it isn't modified by tesseract */
 	imgtmp	= cvCloneImage(imgptr);
-
-	/* Ask user which language to scan */
-	char	title [80];
+	/* Language */
 	int	lang;
-	char	lang_code [3 + 1];
-	snprintf(title, 80, "Language: ENG = 0, SPA = 1, CAT = 2");
-	lang	= user_iface_getint(0, 1, 2, title, NULL);
+	char	lang_str [3 + 1];
+	lang	= ((struct Img_Iface_Data_Read *)data)->lang;
 	switch (lang) {
 	case 0:
-		sprintf(lang_code, "eng");
+		sprintf(lang_str, "eng");
 		break;
 	case 1:
-		sprintf(lang_code, "spa");
+		sprintf(lang_str, "spa");
 		break;
 	case 2:
-		sprintf(lang_code, "cat");
+		sprintf(lang_str, "cat");
+		break;
+	}
+
+	/* Config file */
+	int	conf;
+	char	conf_str [FILENAME_MAX];
+	conf	= ((struct Img_Iface_Data_Read *)data)->conf;
+	switch (conf) {
+	case 1:
+		sprintf(conf_str, "%s/%s", user_prog_path, "price");
 		break;
 	}
 
 	/* init OCR */
 	handle_ocr	= TessBaseAPICreate();
-	TessBaseAPIInit3(handle_ocr, NULL, lang_code);
-
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"OCR (%s)", lang_code);
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
+	TessBaseAPIInit3(handle_ocr, NULL, lang_str);
+	if (conf) {
+		/* Configure OCR (whitelist chars) */
+		TessBaseAPIReadConfigFile(handle_ocr, conf_str);
+	}
 
 	/* scan image for text */
 	TessBaseAPISetImage(handle_ocr, imgtmp->imageData,
@@ -100,16 +102,8 @@ static	void	img_ocr_read	(struct _IplImage  *imgptr)
 	char	*txt;
 	txt	= TessBaseAPIGetUTF8Text(handle_ocr);
 
-	/* scan the image for text */
-	if (!txt){
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"No text detected");
-		user_iface_log.lvl[user_iface_log.len]	= 1;
-		(user_iface_log.len)++;
-	}
-
 	/* Copy text to global variable */
-	snprintf(img_ocr_text, TEXT_MAX, "%s", txt);
+	snprintf(img_ocr_text, OCR_TEXT_MAX, "%s", txt);
 
 	/* cleanup */
 	TessDeleteText(txt);

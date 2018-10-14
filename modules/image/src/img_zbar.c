@@ -6,23 +6,25 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* opencv */
-	#include <cv.h>
+/* Standard C ----------------------------------------------------------------*/
 		/* INT_MAX */
 	#include <limits.h>
 		/* snprintf() */
 	#include <stdio.h>
+
+/* Packages ------------------------------------------------------------------*/
+		/* opencv */
+	#include <cv.h>
 		/* zbar */
 	#include <zbar.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Project -------------------------------------------------------------------*/
 		/* user_iface_log */
 	#include "user_iface.h"
+
+/* Module --------------------------------------------------------------------*/
+		/* data */
+	#include "img_iface.h"
 
 	#include "img_zbar.h"
 
@@ -37,17 +39,17 @@ struct Img_ZB_Code	img_zb_code [CODES_MAX];
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_zb_decode	(struct _IplImage  *imgptr);
+static	void	img_zb_decode	(struct _IplImage  *imgptr, void *data);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_zb_act	(struct _IplImage  **imgptr2, int action)
+void	img_zb_act	(struct _IplImage  **imgptr2, int action, void *data)
 {
 	switch (action) {
 	case IMG_ZB_ACT_DECODE:
-		img_zb_decode(*imgptr2);
+		img_zb_decode(*imgptr2, data);
 		break;
 	}
 }
@@ -56,7 +58,7 @@ void	img_zb_act	(struct _IplImage  **imgptr2, int action)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_zb_decode	(struct _IplImage  *imgptr)
+static	void	img_zb_decode	(struct _IplImage  *imgptr, void *data)
 {
 
 	struct _IplImage		*imgtmp;
@@ -66,21 +68,13 @@ static	void	img_zb_decode	(struct _IplImage  *imgptr)
 	/* Make a copy of imgptr so that it isn't modified by zbar */
 	imgtmp	= cvCloneImage(imgptr);
 
-	/* Ask user which type of code to scan */
-	char	title [80];
+	/* Type of code to scan */
 	int	code_type;
-	snprintf(title, 80, "Type of code: (0 for all)");
-	code_type	= user_iface_getint(0, 0, INT_MAX, title, NULL);
+	code_type	= ((struct Img_Iface_Data_Decode *)data)->code_type;
 
 	/* create & configure a reader */
 	scanner	= zbar_image_scanner_create();
 	zbar_image_scanner_set_config(scanner, code_type, ZBAR_CFG_ENABLE, 1);
-
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"Detect codes");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
 
 	/* wrap image data */
 	image_zb	= zbar_image_create();
@@ -93,13 +87,7 @@ static	void	img_zb_decode	(struct _IplImage  *imgptr)
 	/* scan the image for barcodes */
 	int	i;
 	img_zb_code_n	= zbar_scan_image(scanner, image_zb);
-	if (!img_zb_code_n){
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"No barcode detected");
-		user_iface_log.lvl[user_iface_log.len]	= 1;
-		(user_iface_log.len)++;
-
-	} else {
+	if (img_zb_code_n) {
 		/* extract results */
 		img_zb_code[0].symbol	= zbar_image_first_symbol(image_zb);
 		for (i = 0; i < CODES_MAX && img_zb_code[i].symbol; i++) {
@@ -107,14 +95,6 @@ static	void	img_zb_decode	(struct _IplImage  *imgptr)
 			img_zb_code[i].type	= zbar_symbol_get_type(img_zb_code[i].symbol);
 			img_zb_code[i].sym_name	= zbar_get_symbol_name(img_zb_code[i].type);
 			img_zb_code[i].data	= zbar_symbol_get_data(img_zb_code[i].symbol);
-
-			/* Write results into log */
-			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"%s -- '%s'",
-							img_zb_code[i].sym_name,
-							img_zb_code[i].data);
-			user_iface_log.lvl[user_iface_log.len]	= 1;
-			(user_iface_log.len)++;
 
 			/* Load next symbol */
 			img_zb_code[i+1].symbol	= zbar_symbol_next(img_zb_code[i].symbol);

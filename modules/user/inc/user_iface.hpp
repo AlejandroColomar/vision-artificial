@@ -47,7 +47,14 @@ extern	"C" {
 		USER_IFACE_ACT_INVERT,
 		USER_IFACE_ACT_BGR2GRAY,
 		USER_IFACE_ACT_COMPONENT,
+		USER_IFACE_ACT_SMOOTH,
 		USER_IFACE_ACT_THRESHOLD,
+		USER_IFACE_ACT_ADAPTIVE_THRESHOLD,
+		USER_IFACE_ACT_DILATE,
+		USER_IFACE_ACT_ERODE,
+		USER_IFACE_ACT_CONTOURS,
+		USER_IFACE_ACT_MIN_AREA_RECT,
+		USER_IFACE_ACT_ROTATE_ORTO,
 		USER_IFACE_ACT_ROTATE,
 
 		USER_IFACE_ACT_ZB = 0x0200,
@@ -100,6 +107,8 @@ extern	"C" {
 	void	user_iface		(struct _IplImage  *imgptr);
 	void	user_iface_save_name	(const char *filepath, char *filename,
 					int destsize);
+	double	user_iface_getdbl	(double m, double def, double M,
+					const char *title, const char *help);
 	int64_t	user_iface_getint	(double m, int64_t def, double M,
 					const char *title, const char *help);
 

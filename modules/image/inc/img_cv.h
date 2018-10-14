@@ -27,7 +27,14 @@
 		IMG_CV_ACT_INVERT,
 		IMG_CV_ACT_BGR2GRAY,
 		IMG_CV_ACT_COMPONENT,
+		IMG_CV_ACT_SMOOTH,
 		IMG_CV_ACT_THRESHOLD,
+		IMG_CV_ACT_ADAPTIVE_THRESHOLD,
+		IMG_CV_ACT_DILATE,
+		IMG_CV_ACT_ERODE,
+		IMG_CV_ACT_CONTOURS,
+		IMG_CV_ACT_MIN_AREA_RECT,
+		IMG_CV_ACT_ROTATE_ORTO,
 		IMG_CV_ACT_ROTATE
 	};
 
@@ -35,7 +42,7 @@
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-void	img_cv_act	(struct _IplImage  **imgptr2, int action);
+void	img_cv_act	(struct _IplImage  **imgptr2, int action, void *data);
 
 
 /******************************************************************************

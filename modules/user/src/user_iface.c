@@ -149,6 +149,25 @@ int64_t	user_iface_getint	(double m, int64_t def, double M,
 	return	i;
 }
 
+double	user_iface_getdbl	(double m, double def, double M,
+				const char *title, const char *help)
+{
+	int64_t	i;
+
+	switch (user_iface_mode) {
+	case USER_IFACE_CLUI:
+		// FIXME
+		i	= 1;
+		break;
+
+	case USER_IFACE_TUI:
+		i	= user_tui_getdbl(m, def, M, title, help);
+		break;
+	}
+
+	return	i;
+}
+
 
 /******************************************************************************
  ******* static functions *****************************************************
@@ -169,7 +188,7 @@ struct _IplImage	*user_iface_act		(int action)
 			break;
 		}
 	} else {
-		imgptr	= img_iface_act(action);
+		imgptr	= img_iface_act(action, NULL);
 	}
 
 	return	imgptr;
