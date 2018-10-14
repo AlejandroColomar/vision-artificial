@@ -140,7 +140,7 @@ static	void	img_cv_bgr2gray		(struct _IplImage  **imgptr2)
 	*imgptr2	= cvCloneImage(gray);
 
 	/* clean up */
-	cvReleaseImage(&gray);	
+	cvReleaseImage(&gray);
 }
 
 static	void	img_cv_component	(struct _IplImage  **imgptr2, void *data)
@@ -182,13 +182,11 @@ static	void	img_cv_component	(struct _IplImage  **imgptr2, void *data)
 	/* clean up */
 	cvReleaseImage(&cmp_B);
 	cvReleaseImage(&cmp_G);
-	cvReleaseImage(&cmp_R);	
+	cvReleaseImage(&cmp_R);
 }
 
 static	void	img_cv_smooth		(struct _IplImage  **imgptr2, void *data)
 {
-	struct _IplImage	*img_smth;
-
 	/* Data */
 	struct Img_Iface_Data_Smooth	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Smooth *)data;
@@ -203,24 +201,12 @@ static	void	img_cv_smooth		(struct _IplImage  **imgptr2, void *data)
 		msk_siz++;
 	}
 
-	/* Create structure for tmp */
-	img_smth	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth, 1);
-
 	/* Write smooth img into img_smth */
-	cvSmooth(*imgptr2, img_smth, method, msk_siz, msk_siz, 0, 0);
-
-	/* Write img_thr into imgptr2 */
-	cvReleaseImage(imgptr2);
-	*imgptr2	= cvCloneImage(img_smth);
-
-	/* clean up */
-	cvReleaseImage(&img_smth);	
+	cvSmooth(*imgptr2, *imgptr2, method, msk_siz, msk_siz, 0, 0);
 }
 
 static	void	img_cv_threshold	(struct _IplImage  **imgptr2, void *data)
 {
-	struct _IplImage	*img_thr;
-
 	/* Data */
 	struct Img_Iface_Data_Threshold	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Threshold *)data;
@@ -235,29 +221,20 @@ static	void	img_cv_threshold	(struct _IplImage  **imgptr2, void *data)
 		thr_typ	|= CV_THRESH_OTSU;
 	}
 
-	/* Create structure for tmp */
-	img_thr	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth, 1);
-
 	/* Write thr img into img_thr */
-	cvThreshold(*imgptr2, img_thr, thr_val, 0xFF, thr_typ);
-
-	/* Write img_thr into imgptr2 */
-	cvReleaseImage(imgptr2);
-	*imgptr2	= cvCloneImage(img_thr);
-
-	/* clean up */
-	cvReleaseImage(&img_thr);	
+	cvThreshold(*imgptr2, *imgptr2, thr_val, 0xFF, thr_typ);
 }
 
 static	void	img_cv_adaptive_thr	(struct _IplImage  **imgptr2, void *data)
 {
-	struct _IplImage	*img_thr;
-
 	/* Data */
 	struct Img_Iface_Data_Adaptive_Thr	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Adaptive_Thr *)data;
 
-	/* Threshold type to apply */
+	/* Threshold method */
+	int	method;
+	method	= data_cast->method;
+	/* Threshold type */
 	int	thr_typ;
 	thr_typ	= data_cast->thr_typ;
 	/* Neighbourhood size */
@@ -267,25 +244,12 @@ static	void	img_cv_adaptive_thr	(struct _IplImage  **imgptr2, void *data)
 		nbh_val++;
 	}
 
-	/* Create structure for tmp */
-	img_thr	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth, 1);
-
-	/* Write thr img into img_thr */
-	cvAdaptiveThreshold(*imgptr2, img_thr, 0xFF,
-			CV_ADAPTIVE_THRESH_GAUSSIAN_C, thr_typ, nbh_val, 0);
-
-	/* Write img_thr into imgptr2 */
-	cvReleaseImage(imgptr2);
-	*imgptr2	= cvCloneImage(img_thr);
-
-	/* clean up */
-	cvReleaseImage(&img_thr);	
+	/* Apply adaptive threshold */
+	cvAdaptiveThreshold(*imgptr2, *imgptr2, 255, method, thr_typ, nbh_val, 0);
 }
 
 static	void	img_cv_dilate		(struct _IplImage  **imgptr2, void *data)
 {
-	struct _IplImage	*dilated;
-
 	/* Data */
 	struct Img_Iface_Data_Dilate_Erode	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
@@ -294,25 +258,12 @@ static	void	img_cv_dilate		(struct _IplImage  **imgptr2, void *data)
 	int	i;
 	i	= data_cast->i;
 
-	/* Create structure for dilated */
-	dilated	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth,
-							(*imgptr2)->nChannels);
-
 	/* Dilate */
-	cvDilate(*imgptr2, dilated, NULL, i);
-
-	/* Write dilated into imgptr2 */
-	cvReleaseImage(imgptr2);
-	*imgptr2	= cvCloneImage(dilated);
-
-	/* clean up */
-	cvReleaseImage(&dilated);
+	cvDilate(*imgptr2, *imgptr2, NULL, i);
 }
 
 static	void	img_cv_erode		(struct _IplImage  **imgptr2, void *data)
 {
-	struct _IplImage	*eroded;
-
 	/* Data */
 	struct Img_Iface_Data_Dilate_Erode	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
@@ -321,24 +272,13 @@ static	void	img_cv_erode		(struct _IplImage  **imgptr2, void *data)
 	int	i;
 	i	= data_cast->i;
 
-	/* Create structure for eroded */
-	eroded	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth,
-							(*imgptr2)->nChannels);
-
 	/* Erode */
-	cvErode(*imgptr2, eroded, NULL, i);
-
-	/* Write eroded into imgptr2 */
-	cvReleaseImage(imgptr2);
-	*imgptr2	= cvCloneImage(eroded);
-
-	/* clean up */
-	cvReleaseImage(&eroded);
+	cvErode(*imgptr2, *imgptr2, NULL, i);
 }
 
 static	void	img_cv_contours		(struct _IplImage  **imgptr2, void *data)
 {
-	/* Black image (3 channels) */
+	/* 3 channels;  Set to black */
 	struct _IplImage	*imgtmp;
 	imgtmp	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth, 3);
 	cvSet(imgtmp, CV_RGB(0, 0, 0), NULL);
@@ -406,7 +346,6 @@ static	void	img_cv_min_area_rect	(struct _IplImage  **imgptr2, void *data)
 static	void	img_cv_rotate_orto	(struct _IplImage  **imgptr2, void *data)
 {
 	struct _IplImage	*rotated;
-	struct _IplImage	*imgtmp;
 
 	/* Data */
 	struct Img_Iface_Data_Rotate_Orto	*data_cast;
@@ -419,19 +358,16 @@ static	void	img_cv_rotate_orto	(struct _IplImage  **imgptr2, void *data)
 	switch (n) {
 	case 1:
 		/* Init structures */
-		imgtmp	= cvCreateImage(cvSize((*imgptr2)->height, (*imgptr2)->width),
-				(*imgptr2)->depth, (*imgptr2)->nChannels);
 		rotated	= cvCreateImage(cvSize((*imgptr2)->height, (*imgptr2)->width),
 				(*imgptr2)->depth, (*imgptr2)->nChannels);
 
 		/* Rotate: transpose and flip around horizontal axis: flip_mode=0 */
-		cvTranspose(*imgptr2, imgtmp);
-		cvFlip(imgtmp, rotated, 0);
+		cvTranspose(*imgptr2, rotated);
+		cvFlip(rotated, rotated, 0);
 		break;
 
 	case 2:
 		/* Init structures */
-		imgtmp	= NULL;
 		rotated	= cvCreateImage(cvGetSize(*imgptr2),
 				(*imgptr2)->depth, (*imgptr2)->nChannels);
 
@@ -441,14 +377,12 @@ static	void	img_cv_rotate_orto	(struct _IplImage  **imgptr2, void *data)
 
 	case 3:
 		/* Init structures */
-		imgtmp	= cvCreateImage(cvSize((*imgptr2)->height, (*imgptr2)->width),
-				(*imgptr2)->depth, (*imgptr2)->nChannels);
 		rotated	= cvCreateImage(cvSize((*imgptr2)->height, (*imgptr2)->width),
 				(*imgptr2)->depth, (*imgptr2)->nChannels);
 
 		/* Rotate: transpose and flip around vertical axis: flip_mode=1 */
-		cvTranspose(*imgptr2, imgtmp);
-		cvFlip(imgtmp, rotated, 1);
+		cvTranspose(*imgptr2, rotated);
+		cvFlip(rotated, rotated, 1);
 		break;
 	}
 
@@ -457,13 +391,12 @@ static	void	img_cv_rotate_orto	(struct _IplImage  **imgptr2, void *data)
 	*imgptr2	= cvCloneImage(rotated);
 
 	/* clean up */
-	cvReleaseImage(&imgtmp);
 	cvReleaseImage(&rotated);
 }
 
 static	void	img_cv_rotate		(struct _IplImage  **imgptr2, void *data)
 {
-	struct _IplImage	*rotated;
+	struct CvMat	*map_matrix;
 
 	/* Data */
 	struct Img_Iface_Data_Rotate	*data_cast;
@@ -475,27 +408,17 @@ static	void	img_cv_rotate		(struct _IplImage  **imgptr2, void *data)
 	double			angle;
 	angle		= data_cast->angle;
 
-	/* Create structure for dilated */
-	rotated	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth,
-							(*imgptr2)->nChannels);
-
 	/* Init map_matrix */
-	struct CvMat	*map_matrix;
 	map_matrix	= cvCreateMat(2, 3, CV_32F);
 
 	/* Get map_matrix */
 	cv2DRotationMatrix(center, angle, 1, map_matrix);
 
 	/* Rotate */
-	cvWarpAffine(*imgptr2, rotated, map_matrix,
+	cvWarpAffine(*imgptr2, *imgptr2, map_matrix,
 			CV_INTER_LINEAR + CV_WARP_FILL_OUTLIERS, cvScalarAll(0));
 
-	/* Write rotated into imgptr2 */
-	cvReleaseImage(imgptr2);
-	*imgptr2	= cvCloneImage(rotated);
-
 	/* clean up */
-	cvReleaseImage(&rotated);
 	cvReleaseMat(&map_matrix);
 }
 

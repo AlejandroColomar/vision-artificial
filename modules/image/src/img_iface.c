@@ -76,6 +76,9 @@ static	void	img_iface_contours	(void *data);
 static	void	img_iface_min_area_rect	(void *data);
 static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
+
+static	void	img_iface_dilate_erode	(void *data);
+static	void	img_iface_erode_dilate	(void *data);
 	/* img_zbar */
 static	void	img_iface_decode	(void *data);
 	/* img_ocr */
@@ -193,6 +196,13 @@ static	void	img_iface_action	(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_ROTATE:
 		img_iface_rotate(data);
+		break;
+
+	case IMG_IFACE_ACT_DILATE_ERODE:
+		img_iface_dilate_erode(data);
+		break;
+	case IMG_IFACE_ACT_ERODE_DILATE:
+		img_iface_erode_dilate(data);
 		break;
 
 	/* img_zbar */
@@ -329,7 +339,7 @@ static	void	img_iface_smooth	(void *data)
 	if (!data) {
 		/* Ask user */
 		char	title [80];
-		snprintf(title, 80, "Type: MEAN=1, GAUSS=2, MEDIAN=3");
+		snprintf(title, 80, "Method: MEAN=1, GAUSS=2, MEDIAN=3");
 		data_tmp.method		= user_iface_getint(0, 3, 4, title, NULL);
 
 		snprintf(title, 80, "Mask size: 3, 5, 7, ...");
@@ -342,7 +352,7 @@ static	void	img_iface_smooth	(void *data)
 	struct Img_Iface_Data_Smooth	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Smooth *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Smooth typ=%i [%ix%i]",
+						"Smooth mth=%i [%ix%i]",
 						data_cast->method,
 						data_cast->msk_siz,
 						data_cast->msk_siz);
@@ -412,6 +422,9 @@ static	void	img_iface_adaptive_thr	(void *data)
 	if (!data) {
 		/* Ask user */
 		char	title [80];
+		snprintf(title, 80, "Method: MEAN=0, GAUSS=1");
+		data_tmp.method		= user_iface_getint(0, 1, 1, title, NULL);
+
 		snprintf(title, 80, "Type: BIN=0, BIN_INV=1");
 		data_tmp.thr_typ	= user_iface_getint(0, 0, 1, title, NULL);
 
@@ -425,7 +438,8 @@ static	void	img_iface_adaptive_thr	(void *data)
 	struct Img_Iface_Data_Adaptive_Thr	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Adaptive_Thr *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Threshold typ=%i, nbh=%i",
+						"Threshold mth=%i, typ=%i, nbh=%i",
+						data_cast->method,
 						data_cast->thr_typ,
 						data_cast->nbh_val);
 	user_iface_log.lvl[user_iface_log.len]	= 1;
@@ -591,6 +605,60 @@ static	void	img_iface_rotate	(void *data)
 
 	/* Rotate ortogonally */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ROTATE, data);
+}
+
+static	void	img_iface_dilate_erode	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Dilate_Erode	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Iterations:");
+		data_tmp.i	= user_iface_getint(1, 1, INFINITY, title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_Dilate_Erode	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Dilate-erode i=%i",
+						data_cast->i);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Dilate */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_DILATE, data);
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ERODE, data);
+}
+
+static	void	img_iface_erode_dilate	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Dilate_Erode	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Iterations:");
+		data_tmp.i	= user_iface_getint(1, 1, INFINITY, title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_Dilate_Erode	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Erode-dilate i=%i",
+						data_cast->i);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Dilate */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ERODE, data);
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_DILATE, data);
 }
 
 /* img_zbar ------------------------------------------------------------------*/

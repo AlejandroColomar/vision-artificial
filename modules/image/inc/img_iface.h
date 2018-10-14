@@ -44,6 +44,9 @@
 		IMG_IFACE_ACT_ROTATE_ORTO,
 		IMG_IFACE_ACT_ROTATE,
 
+		IMG_IFACE_ACT_DILATE_ERODE,
+		IMG_IFACE_ACT_ERODE_DILATE,
+
 		IMG_IFACE_ACT_ZB = 0x0200,
 		IMG_IFACE_ACT_DECODE,
 
@@ -84,6 +87,7 @@
 	};
 
 	struct	Img_Iface_Data_Adaptive_Thr {
+		int	method;
 		int	thr_typ;
 		int	nbh_val;
 	};

@@ -50,6 +50,9 @@ extern	"C" {
 		IMG_IFACE_ACT_ROTATE_ORTO,
 		IMG_IFACE_ACT_ROTATE,
 
+		IMG_IFACE_ACT_DILATE_ERODE,
+		IMG_IFACE_ACT_ERODE_DILATE,
+
 		IMG_IFACE_ACT_ZB = 0x0200,
 		IMG_IFACE_ACT_DECODE,
 
@@ -90,16 +93,13 @@ extern	"C" {
 	};
 
 	struct	Img_Iface_Data_Adaptive_Thr {
+		int	method;
 		int	thr_typ;
 		int	nbh_val;
 	};
 
 	struct	Img_Iface_Data_Dilate_Erode {
 		int	i;
-	};
-
-	struct	Img_Iface_Data_Rotate_Orto {
-		int	n;
 	};
 
 	struct	Img_Iface_Data_Contours {
@@ -110,6 +110,15 @@ extern	"C" {
 	struct	Img_Iface_Data_MinARect {
 		struct CvSeq	**contours;
 		struct CvBox2D	*rect;
+	};
+
+	struct	Img_Iface_Data_Rotate_Orto {
+		int	n;
+	};
+
+	struct	Img_Iface_Data_Rotate {
+		struct CvPoint2D32f	center;
+		double			angle;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/

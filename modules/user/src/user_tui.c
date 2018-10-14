@@ -281,6 +281,12 @@ static	int	usr_input	(void)
 				case '1':
 					action	= USER_IFACE_ACT_ERODE;
 					break;
+				case '2':
+					action	= USER_IFACE_ACT_DILATE_ERODE;
+					break;
+				case '3':
+					action	= USER_IFACE_ACT_ERODE_DILATE;
+					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
 					break;
@@ -457,9 +463,11 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f112");
 	mvwprintw(win_help, r++, c, " - Dilate:	%s",	"f120");
 	mvwprintw(win_help, r++, c, " - Erode:	%s",	"f121");
+	mvwprintw(win_help, r++, c, " - D-E:		%s",	"f122");
+	mvwprintw(win_help, r++, c, " - E-D:		%s",	"f123");
 	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f130");
 	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f131");
-	mvwprintw(win_help, r++, c, " - Rotate orto.:	%s",	"f140");
+	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f140");
 	mvwprintw(win_help, r++, c, " - Rotate:	%s",	"f141");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
