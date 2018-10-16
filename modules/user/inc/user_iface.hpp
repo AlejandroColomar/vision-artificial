@@ -29,6 +29,8 @@ extern	"C" {
  ******************************************************************************/
 	# define	LOG_LEN		(1024)
 	# define	LOG_LINE_LEN	(35)
+	# define	WIN_NAME	"Image"
+	# define	WIN_TIMEOUT	(500)
 
 
 /******************************************************************************
@@ -56,6 +58,9 @@ extern	"C" {
 		USER_IFACE_ACT_MIN_AREA_RECT,
 		USER_IFACE_ACT_ROTATE_ORTO,
 		USER_IFACE_ACT_ROTATE,
+		USER_IFACE_ACT_SET_ROI,
+		USER_IFACE_ACT_RESET_ROI,
+		USER_IFACE_ACT_CROP,
 
 		USER_IFACE_ACT_DILATE_ERODE,
 		USER_IFACE_ACT_ERODE_DILATE,
@@ -80,7 +85,10 @@ extern	"C" {
 		USER_IFACE_ACT_SAVE = 0x2000,
 		USER_IFACE_ACT_SAVE_FILE,
 
-		USER_IFACE_ACT_USRI = 0x4000,
+		USER_IFACE_ACT_PROC = 0x4000,
+		USER_IFACE_ACT_PROC_ETIQUETA,
+
+		USER_IFACE_ACT_USRI = 0x8000,
 		USER_IFACE_ACT_SHOW_OCR,
 		USER_IFACE_ACT_QUIT
 	};

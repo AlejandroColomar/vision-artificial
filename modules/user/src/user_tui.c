@@ -54,14 +54,14 @@ void	user_tui_init		(void)
 	alx_resume_curses();
 
 	/* Dimensions: log */
-	const int	h1 =	24;
+	const int	h1 =	48;
 	const int	w1 =	50;
 	const int	r1 =	0;
 	const int	c1 =	30;
 	win_log		= newwin(h1, w1, r1, c1);
 
 	/* Dimensions: help */
-	const int	h2 =	24;
+	const int	h2 =	48;
 	const int	w2 =	30;
 	const int	r2 =	0;
 	const int	c2 =	0;
@@ -216,6 +216,16 @@ static	int	usr_input	(void)
 		ch = wgetch(win_log);
 
 		switch (ch) {
+		case '1':
+			/* img_cv */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_PROC_ETIQUETA;
+				break;
+			}
+			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
 			break;
@@ -321,6 +331,25 @@ static	int	usr_input	(void)
 					break;
 				case '2':
 					action	= USER_IFACE_ACT_ROTATE_2RECT;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '5':
+				/* ROI */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_SET_ROI;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_RESET_ROI;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_CROP;
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -473,10 +502,14 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f140");
 	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f141");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f142");
+	mvwprintw(win_help, r++, c, " - Set ROI:	%s",	"f150");
+	mvwprintw(win_help, r++, c, " - Reset ROI:	%s",	"f151");
+	mvwprintw(win_help, r++, c, " - Crop:	%s",		"f152");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Align:	%s",		"f40");
 	mvwprintw(win_help, r++, c, "Exercises:");
+	mvwprintw(win_help, r++, c, " - Etiqueta:	%s",	"e10");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:	%s",	"u1");
 	mvwprintw(win_help, r++, c, "Quit:		%c",	'q');

@@ -22,6 +22,8 @@
  ******* macros ***************************************************************
  ******************************************************************************/
 	# define	OCR_TEXT_MAX	(1048576)
+	# define	ZB_CODES_MAX	(10)
+	# define	ZBAR_LEN_MAX	(1048576)
 
 
 /******************************************************************************
@@ -43,6 +45,9 @@
 		IMG_IFACE_ACT_MIN_AREA_RECT,
 		IMG_IFACE_ACT_ROTATE_ORTO,
 		IMG_IFACE_ACT_ROTATE,
+		IMG_IFACE_ACT_SET_ROI,
+		IMG_IFACE_ACT_RESET_ROI,
+		IMG_IFACE_ACT_CROP,
 
 		IMG_IFACE_ACT_DILATE_ERODE,
 		IMG_IFACE_ACT_ERODE_DILATE,
@@ -74,27 +79,27 @@
  ******************************************************************************/
 /* img_cv --------------------------------------------------------------------*/
 	struct	Img_Iface_Data_Component {
-		int	cmp;
+		int			cmp;
 	};
 
 	struct	Img_Iface_Data_Smooth {
-		int	method;
-		int	msk_siz;
+		int			method;
+		int			msk_siz;
 	};
 
 	struct	Img_Iface_Data_Threshold {
-		int	thr_typ;
-		int	thr_val;
+		int			thr_typ;
+		int			thr_val;
 	};
 
 	struct	Img_Iface_Data_Adaptive_Thr {
-		int	method;
-		int	thr_typ;
-		int	nbh_val;
+		int			method;
+		int			thr_typ;
+		int			nbh_val;
 	};
 
 	struct	Img_Iface_Data_Dilate_Erode {
-		int	i;
+		int			i;
 	};
 
 	struct	Img_Iface_Data_Contours {
@@ -103,12 +108,12 @@
 	};
 
 	struct	Img_Iface_Data_MinARect {
-		struct CvSeq	**contours;
-		struct CvBox2D	*rect;
+		struct CvSeq		**contours;
+		struct CvBox2D		*rect;
 	};
 
 	struct	Img_Iface_Data_Rotate_Orto {
-		int	n;
+		int			n;
 	};
 
 	struct	Img_Iface_Data_Rotate {
@@ -116,9 +121,22 @@
 		double			angle;
 	};
 
+	struct	Img_Iface_Data_SetROI {
+		struct CvRect		rect;
+	};
+
 /* img_zbar -------------------------------------------------------------------*/
 	struct	Img_Iface_Data_Decode {
 		int	code_type;
+	};
+
+	struct	Img_Iface_ZB_Codes {
+		int	n;
+		struct {
+			int	type;
+			char	sym_name [80];
+			char	data [ZBAR_LEN_MAX];
+		} arr [ZB_CODES_MAX];
 	};
 
 /* img_ocr -------------------------------------------------------------------*/
@@ -131,7 +149,8 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	char	img_ocr_text [OCR_TEXT_MAX];
+	extern	char				img_ocr_text [OCR_TEXT_MAX];
+	extern	struct Img_Iface_ZB_Codes	zb_codes;
 
 
 /******************************************************************************

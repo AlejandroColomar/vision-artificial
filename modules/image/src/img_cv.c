@@ -32,15 +32,18 @@
 static	void	img_cv_invert		(struct _IplImage  *imgptr);
 static	void	img_cv_bgr2gray		(struct _IplImage  **imgptr2);
 static	void	img_cv_component	(struct _IplImage  **imgptr2, void *data);
-static	void	img_cv_smooth		(struct _IplImage  **imgptr2, void *data);
-static	void	img_cv_threshold	(struct _IplImage  **imgptr2, void *data);
-static	void	img_cv_adaptive_thr	(struct _IplImage  **imgptr2, void *data);
-static	void	img_cv_dilate		(struct _IplImage  **imgptr2, void *data);
-static	void	img_cv_erode		(struct _IplImage  **imgptr2, void *data);
+static	void	img_cv_smooth		(struct _IplImage  *imgptr, void *data);
+static	void	img_cv_threshold	(struct _IplImage  *imgptr, void *data);
+static	void	img_cv_adaptive_thr	(struct _IplImage  *imgptr, void *data);
+static	void	img_cv_dilate		(struct _IplImage  *imgptr, void *data);
+static	void	img_cv_erode		(struct _IplImage  *imgptr, void *data);
 static	void	img_cv_contours		(struct _IplImage  **imgptr2, void *data);
-static	void	img_cv_min_area_rect	(struct _IplImage  **imgptr2, void *data);
+static	void	img_cv_min_area_rect	(struct _IplImage  *imgptr, void *data);
 static	void	img_cv_rotate_orto	(struct _IplImage  **imgptr2, void *data);
-static	void	img_cv_rotate		(struct _IplImage  **imgptr2, void *data);
+static	void	img_cv_rotate		(struct _IplImage  *imgptr, void *data);
+static	void	img_cv_set_ROI		(struct _IplImage  *imgptr, void *data);
+static	void	img_cv_reset_ROI	(struct _IplImage  *imgptr);
+static	void	img_cv_crop		(struct _IplImage  **imgptr2);
 
 
 /******************************************************************************
@@ -61,35 +64,45 @@ void	img_cv_act	(struct _IplImage  **imgptr2, int action, void *data)
 		break;
 
 	case IMG_CV_ACT_SMOOTH:
-		img_cv_smooth(imgptr2, data);
+		img_cv_smooth(*imgptr2, data);
 		break;
 
 	case IMG_CV_ACT_THRESHOLD:
-		img_cv_threshold(imgptr2, data);
+		img_cv_threshold(*imgptr2, data);
 		break;
 	case IMG_CV_ACT_ADAPTIVE_THRESHOLD:
-		img_cv_adaptive_thr(imgptr2, data);
+		img_cv_adaptive_thr(*imgptr2, data);
 		break;
 
 	case IMG_CV_ACT_DILATE:
-		img_cv_dilate(imgptr2, data);
+		img_cv_dilate(*imgptr2, data);
 		break;
 	case IMG_CV_ACT_ERODE:
-		img_cv_erode(imgptr2, data);
+		img_cv_erode(*imgptr2, data);
 		break;
 
 	case IMG_CV_ACT_CONTOURS:
 		img_cv_contours(imgptr2, data);
 		break;
 	case IMG_CV_ACT_MIN_AREA_RECT:
-		img_cv_min_area_rect(imgptr2, data);
+		img_cv_min_area_rect(*imgptr2, data);
 		break;
 
 	case IMG_CV_ACT_ROTATE_ORTO:
 		img_cv_rotate_orto(imgptr2, data);
 		break;
 	case IMG_CV_ACT_ROTATE:
-		img_cv_rotate(imgptr2, data);
+		img_cv_rotate(*imgptr2, data);
+		break;
+
+	case IMG_CV_ACT_SET_ROI:
+		img_cv_set_ROI(*imgptr2, data);
+		break;
+	case IMG_CV_ACT_RESET_ROI:
+		img_cv_reset_ROI(*imgptr2);
+		break;
+	case IMG_CV_ACT_CROP:
+		img_cv_crop(imgptr2);
 		break;
 	}
 }
@@ -185,7 +198,7 @@ static	void	img_cv_component	(struct _IplImage  **imgptr2, void *data)
 	cvReleaseImage(&cmp_R);
 }
 
-static	void	img_cv_smooth		(struct _IplImage  **imgptr2, void *data)
+static	void	img_cv_smooth		(struct _IplImage  *imgptr, void *data)
 {
 	/* Data */
 	struct Img_Iface_Data_Smooth	*data_cast;
@@ -202,10 +215,10 @@ static	void	img_cv_smooth		(struct _IplImage  **imgptr2, void *data)
 	}
 
 	/* Write smooth img into img_smth */
-	cvSmooth(*imgptr2, *imgptr2, method, msk_siz, msk_siz, 0, 0);
+	cvSmooth(imgptr, imgptr, method, msk_siz, msk_siz, 0, 0);
 }
 
-static	void	img_cv_threshold	(struct _IplImage  **imgptr2, void *data)
+static	void	img_cv_threshold	(struct _IplImage  *imgptr, void *data)
 {
 	/* Data */
 	struct Img_Iface_Data_Threshold	*data_cast;
@@ -222,10 +235,10 @@ static	void	img_cv_threshold	(struct _IplImage  **imgptr2, void *data)
 	}
 
 	/* Write thr img into img_thr */
-	cvThreshold(*imgptr2, *imgptr2, thr_val, 0xFF, thr_typ);
+	cvThreshold(imgptr, imgptr, thr_val, 0xFF, thr_typ);
 }
 
-static	void	img_cv_adaptive_thr	(struct _IplImage  **imgptr2, void *data)
+static	void	img_cv_adaptive_thr	(struct _IplImage  *imgptr, void *data)
 {
 	/* Data */
 	struct Img_Iface_Data_Adaptive_Thr	*data_cast;
@@ -245,10 +258,10 @@ static	void	img_cv_adaptive_thr	(struct _IplImage  **imgptr2, void *data)
 	}
 
 	/* Apply adaptive threshold */
-	cvAdaptiveThreshold(*imgptr2, *imgptr2, 255, method, thr_typ, nbh_val, 0);
+	cvAdaptiveThreshold(imgptr, imgptr, 255, method, thr_typ, nbh_val, 0);
 }
 
-static	void	img_cv_dilate		(struct _IplImage  **imgptr2, void *data)
+static	void	img_cv_dilate		(struct _IplImage  *imgptr, void *data)
 {
 	/* Data */
 	struct Img_Iface_Data_Dilate_Erode	*data_cast;
@@ -259,10 +272,10 @@ static	void	img_cv_dilate		(struct _IplImage  **imgptr2, void *data)
 	i	= data_cast->i;
 
 	/* Dilate */
-	cvDilate(*imgptr2, *imgptr2, NULL, i);
+	cvDilate(imgptr, imgptr, NULL, i);
 }
 
-static	void	img_cv_erode		(struct _IplImage  **imgptr2, void *data)
+static	void	img_cv_erode		(struct _IplImage  *imgptr, void *data)
 {
 	/* Data */
 	struct Img_Iface_Data_Dilate_Erode	*data_cast;
@@ -273,7 +286,7 @@ static	void	img_cv_erode		(struct _IplImage  **imgptr2, void *data)
 	i	= data_cast->i;
 
 	/* Erode */
-	cvErode(*imgptr2, *imgptr2, NULL, i);
+	cvErode(imgptr, imgptr, NULL, i);
 }
 
 static	void	img_cv_contours		(struct _IplImage  **imgptr2, void *data)
@@ -310,7 +323,7 @@ static	void	img_cv_contours		(struct _IplImage  **imgptr2, void *data)
 	cvReleaseImage(&imgtmp);	
 }
 
-static	void	img_cv_min_area_rect	(struct _IplImage  **imgptr2, void *data)
+static	void	img_cv_min_area_rect	(struct _IplImage  *imgptr, void *data)
 {
 	/* Data */
 	struct Img_Iface_Data_MinARect	*data_cast;
@@ -329,16 +342,16 @@ static	void	img_cv_min_area_rect	(struct _IplImage  **imgptr2, void *data)
 	/* Draw rectangle */
 	struct CvPoint2D32f	points[4];
 	cvBoxPoints(*rect, points);
-	cvLine(*imgptr2, cvPoint(points[0].x, points[0].y),
+	cvLine(imgptr, cvPoint(points[0].x, points[0].y),
 			cvPoint(points[1].x, points[1].y), CV_RGB(0, 0, 255),
 								1, 8, 0);
-	cvLine(*imgptr2, cvPoint(points[1].x, points[1].y),
+	cvLine(imgptr, cvPoint(points[1].x, points[1].y),
 			cvPoint(points[2].x, points[2].y), CV_RGB(0, 0, 255),
 								1, 8, 0);
-	cvLine(*imgptr2, cvPoint(points[2].x, points[2].y),
+	cvLine(imgptr, cvPoint(points[2].x, points[2].y),
 			cvPoint(points[3].x, points[3].y), CV_RGB(0, 0, 255),
 								1, 8, 0);
-	cvLine(*imgptr2, cvPoint(points[3].x, points[3].y),
+	cvLine(imgptr, cvPoint(points[3].x, points[3].y),
 			cvPoint(points[0].x, points[0].y), CV_RGB(0, 0, 255),
 								1, 8, 0);
 }
@@ -394,7 +407,7 @@ static	void	img_cv_rotate_orto	(struct _IplImage  **imgptr2, void *data)
 	cvReleaseImage(&rotated);
 }
 
-static	void	img_cv_rotate		(struct _IplImage  **imgptr2, void *data)
+static	void	img_cv_rotate		(struct _IplImage  *imgptr, void *data)
 {
 	struct CvMat	*map_matrix;
 
@@ -415,11 +428,49 @@ static	void	img_cv_rotate		(struct _IplImage  **imgptr2, void *data)
 	cv2DRotationMatrix(center, angle, 1, map_matrix);
 
 	/* Rotate */
-	cvWarpAffine(*imgptr2, *imgptr2, map_matrix,
+	cvWarpAffine(imgptr, imgptr, map_matrix,
 			CV_INTER_LINEAR + CV_WARP_FILL_OUTLIERS, cvScalarAll(0));
 
 	/* clean up */
 	cvReleaseMat(&map_matrix);
+}
+
+static	void	img_cv_set_ROI		(struct _IplImage  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_SetROI	*data_cast;
+	data_cast	= (struct Img_Iface_Data_SetROI *)data;
+
+	/* Set ROI */
+	cvSetImageROI(imgptr, data_cast->rect);
+}
+
+static	void	img_cv_reset_ROI	(struct _IplImage  *imgptr)
+{
+	/* Reset ROI */
+	cvResetImageROI(imgptr);
+}
+
+static	void	img_cv_crop		(struct _IplImage  **imgptr2)
+{
+	struct _IplImage	*cropped;
+
+	/* Create structure for cropped */
+	cropped	= cvCreateImage(cvGetSize(*imgptr2), (*imgptr2)->depth,
+							(*imgptr2)->nChannels);
+
+	/* Copy data */
+	cvCopy(*imgptr2, cropped, NULL);
+
+	/* Reset ROI */
+	cvResetImageROI(cropped);
+
+	/* Write cropped into imgptr2 */
+	cvReleaseImage(imgptr2);
+	*imgptr2	= cvCloneImage(cropped);
+
+	/* clean up */
+	cvReleaseImage(&cropped);
 }
 
 

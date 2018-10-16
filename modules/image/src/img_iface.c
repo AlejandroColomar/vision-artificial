@@ -45,7 +45,8 @@
  ******* variables ************************************************************
  ******************************************************************************/
 /* Global --------------------------------------------------------------------*/
-	char	img_ocr_text [OCR_TEXT_MAX];
+	char				img_ocr_text [OCR_TEXT_MAX];
+	struct Img_Iface_ZB_Codes	zb_codes;
 
 /* Static --------------------------------------------------------------------*/
 static	struct _IplImage	*image_copy_old;
@@ -76,6 +77,9 @@ static	void	img_iface_contours	(void *data);
 static	void	img_iface_min_area_rect	(void *data);
 static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
+static	void	img_iface_set_ROI	(void *data);
+static	void	img_iface_reset_ROI	(void);
+static	void	img_iface_crop		(void);
 
 static	void	img_iface_dilate_erode	(void *data);
 static	void	img_iface_erode_dilate	(void *data);
@@ -197,6 +201,15 @@ static	void	img_iface_action	(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_ROTATE:
 		img_iface_rotate(data);
+		break;
+	case IMG_IFACE_ACT_SET_ROI:
+		img_iface_set_ROI(data);
+		break;
+	case IMG_IFACE_ACT_RESET_ROI:
+		img_iface_reset_ROI();
+		break;
+	case IMG_IFACE_ACT_CROP:
+		img_iface_crop();
 		break;
 
 	case IMG_IFACE_ACT_DILATE_ERODE:
@@ -600,7 +613,7 @@ static	void	img_iface_rotate	(void *data)
 	struct Img_Iface_Data_Rotate	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Rotate *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Rotate (%f,%f) angle=%lfº",
+						"Rotate (%.2f,%.2f) angle=%lfº",
 						data_cast->center.x,
 						data_cast->center.y,
 						data_cast->angle);
@@ -609,6 +622,76 @@ static	void	img_iface_rotate	(void *data)
 
 	/* Rotate ortogonally */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ROTATE, data);
+}
+
+static	void	img_iface_set_ROI	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_SetROI	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Origin:  x:");
+		data_tmp.rect.x		= user_iface_getint(0, 0,
+					image_copy_tmp->width,
+					title, NULL);
+
+		snprintf(title, 80, "Origin:  y:");
+		data_tmp.rect.y		= user_iface_getint(0, 0,
+					image_copy_tmp->height,
+					title, NULL);
+
+		snprintf(title, 80, "Width:");
+		data_tmp.rect.width	= user_iface_getint(1, 1,
+					image_copy_tmp->width - data_tmp.rect.x,
+					title, NULL);
+
+		snprintf(title, 80, "Height:");
+		data_tmp.rect.height	= user_iface_getint(1, 1,
+					image_copy_tmp->height - data_tmp.rect.y,
+					title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_SetROI	*data_cast;
+	data_cast	= (struct Img_Iface_Data_SetROI *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"ROI: (%i,%i) w=%i,h=%i",
+						data_cast->rect.x,
+						data_cast->rect.y,
+						data_cast->rect.width,
+						data_cast->rect.height);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Set ROI */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_SET_ROI, data);
+}
+
+static	void	img_iface_reset_ROI	(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Reset ROI");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Set ROI */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_RESET_ROI, NULL);
+}
+
+static	void	img_iface_crop		(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Crop");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Set ROI */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_CROP, NULL);
 }
 
 static	void	img_iface_dilate_erode	(void *data)
@@ -727,7 +810,7 @@ static	void	img_iface_decode	(void *data)
 	img_zb_act(&image_copy_tmp, IMG_ZB_ACT_DECODE, data);
 
 	/* Results */
-	if (!img_zb_code_n) {
+	if (!zb_codes.n) {
 		/* No text found */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! No code detected");
@@ -736,11 +819,11 @@ static	void	img_iface_decode	(void *data)
 	} else {
 		/* Write results into log */
 		int	i;
-		for (i = 0; i < img_zb_code_n; i++) {
+		for (i = 0; i < zb_codes.n; i++) {
 			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"%s -- '%s'",
-							img_zb_code[i].sym_name,
-							img_zb_code[i].data);
+							zb_codes.arr[i].sym_name,
+							zb_codes.arr[i].data);
 			user_iface_log.lvl[user_iface_log.len]	= 1;
 			(user_iface_log.len)++;
 		}
@@ -879,9 +962,6 @@ static	void	img_iface_load_mem	(void *data)
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 
-	/* Discard tmp image copy */
-	cvReleaseImage(&image_copy_tmp);
-
 	/* Which memory to use */
 	int	x;
 	if (!data) {
@@ -899,8 +979,13 @@ static	void	img_iface_load_mem	(void *data)
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
-	/* Load from mem */
-	image_copy_tmp	= cvCloneImage(image_mem[x]);
+	if (image_mem[x]) {
+		/* Discard tmp image copy */
+		cvReleaseImage(&image_copy_tmp);
+
+		/* Load from mem */
+		image_copy_tmp	= cvCloneImage(image_mem[x]);
+	}
 }
 
 static	void	img_iface_save_ref	(void)

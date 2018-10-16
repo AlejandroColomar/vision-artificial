@@ -23,17 +23,10 @@
 	#include "user_iface.h"
 
 /* Module --------------------------------------------------------------------*/
-		/* data */
+		/* data & zb_codes */
 	#include "img_iface.h"
 
 	#include "img_zbar.h"
-
-
-/******************************************************************************
- ******* variables ************************************************************
- ******************************************************************************/
-int			img_zb_code_n;
-struct Img_ZB_Code	img_zb_code [CODES_MAX];
 
 
 /******************************************************************************
@@ -60,10 +53,10 @@ void	img_zb_act	(struct _IplImage  **imgptr2, int action, void *data)
  ******************************************************************************/
 static	void	img_zb_decode	(struct _IplImage  *imgptr, void *data)
 {
-
 	struct _IplImage		*imgtmp;
 	struct zbar_image_scanner_s	*scanner;
 	struct zbar_image_s		*image_zb;
+	const struct zbar_symbol_s	*symbol;
 
 	/* Make a copy of imgptr so that it isn't modified by zbar */
 	imgtmp	= cvCloneImage(imgptr);
@@ -86,18 +79,21 @@ static	void	img_zb_decode	(struct _IplImage  *imgptr, void *data)
 
 	/* scan the image for barcodes */
 	int	i;
-	img_zb_code_n	= zbar_scan_image(scanner, image_zb);
-	if (img_zb_code_n) {
+	zb_codes.n	= zbar_scan_image(scanner, image_zb);
+	if (zb_codes.n) {
 		/* extract results */
-		img_zb_code[0].symbol	= zbar_image_first_symbol(image_zb);
-		for (i = 0; i < CODES_MAX && img_zb_code[i].symbol; i++) {
+		symbol	= zbar_image_first_symbol(image_zb);
+		for (i = 0; i < ZB_CODES_MAX && symbol; i++) {
 			/* Write results into array */
-			img_zb_code[i].type	= zbar_symbol_get_type(img_zb_code[i].symbol);
-			img_zb_code[i].sym_name	= zbar_get_symbol_name(img_zb_code[i].type);
-			img_zb_code[i].data	= zbar_symbol_get_data(img_zb_code[i].symbol);
+			zb_codes.arr[i].type	= zbar_symbol_get_type(symbol);
+			snprintf(zb_codes.arr[i].sym_name, 80, "%s",
+						zbar_get_symbol_name(
+							zb_codes.arr[i].type));
+			snprintf(zb_codes.arr[i].data, ZBAR_LEN_MAX, "%s",
+						zbar_symbol_get_data(symbol));
 
 			/* Load next symbol */
-			img_zb_code[i+1].symbol	= zbar_symbol_next(img_zb_code[i].symbol);
+			symbol	= zbar_symbol_next(symbol);
 		}
 	}
 

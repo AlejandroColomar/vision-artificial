@@ -4,7 +4,7 @@
 
 # directories
 
-TMP_DIR = $(IMG_DIR)/tmp/
+TMP_DIR = $(PROC_DIR)/tmp/
 
 # target: dependencies
 #	action

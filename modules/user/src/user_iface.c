@@ -21,6 +21,8 @@
  *	*	*	*	*	*	*	*	*	*/
 		/* img_iface_act() */
 	#include "img_iface.h"
+		/* proc_iface() */
+	#include "proc.h"
 
 		/* user_clui() & ...save_name() */
 	#include "user_clui.h"
@@ -33,8 +35,6 @@
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-	# define	WIN_NAME	"Image"
-	# define	WIN_TIMEOUT	(500)
 	# define	TITLE_SIZE	(20)
 
 
@@ -113,7 +113,14 @@ void	user_iface		(struct _IplImage  *imgptr)
 		}
 
 		/* Do action */
-		imgptr	= user_iface_act(user_action);
+		switch (user_action & 0xF000) {
+		case USER_IFACE_ACT_PROC:
+			proc_iface(user_action);
+			break;
+		default:
+			imgptr	= user_iface_act(user_action);
+			break;
+		}
 	} while (user_action != USER_IFACE_ACT_QUIT);
 }
 
