@@ -33,8 +33,8 @@ extern	"C" {
  ******************************************************************************/
 	# define	ENV_HOME		"HOME"
 
-	# define	USER_PROG_DIR		".vision-artificial/"
-	# define	USER_SAVED_DIR		".vision-artificial/saved/"
+	# define	USER_PROG_DIR		"vision-artificial/"
+	# define	USER_SAVED_DIR		"vision-artificial/saved/"
 	# define	SAVED_NAME_DEFAULT	"saved"
 
 

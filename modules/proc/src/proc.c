@@ -6,6 +6,15 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
+/* Standard C ----------------------------------------------------------------*/
+		/* snprintf() & fflush() */
+	#include <stdio.h>
+		/* bool */
+	#include <stdbool.h>
+		/* strcmp() */
+	#include <string.h>
+		/* clock_t & clock() & CLOCKS_PER_SEC */
+	#include <time.h>
 
 /* Packages ------------------------------------------------------------------*/
 		/* opencv */
@@ -13,28 +22,14 @@
 	#include <highgui.h>
 		/* ZBAR_EAN13 */
 	#include <zbar.h>
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* opencv */
-	#include <cv.h>
-		/* opencv gui */
-	#include <highgui.h>
-		/* snprintf() & fflush() */
-	#include <stdio.h>
-		/* bool */
-	#include <stdbool.h>
-		/* strcmp() */
-	#include <string.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Project -------------------------------------------------------------------*/
 		/* img_iface_act() */
 	#include "img_iface.h"
 		/* WIN_NAME */
 	#include "user_iface.h"
 
+/* Module --------------------------------------------------------------------*/
 	#include "proc.h"
 
 
@@ -91,12 +86,31 @@ static	void	proc_show_img		(void);
 int	proc_iface		(int proc_mode)
 {
 	int	error;
+	clock_t	time_0;
+	clock_t	time_1;
+	double	time_tot;
 
+	/* Init timer */
+	time_0	= clock();
+
+	/* Process */
 	switch (proc_mode) {
 	case PROC_MODE_ETIQUETA:
 		error	= proc_etiqueta();
 		break;
 	}
+
+	/* End timer */
+	time_1	= clock();
+
+	/* Calculate time in seconds */
+	time_tot	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+
+	/* Write time into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Time:  %.3lf", time_tot);
+	user_iface_log.lvl[user_iface_log.len]	= 2;
+	(user_iface_log.len)++;
 
 	return	error;
 }

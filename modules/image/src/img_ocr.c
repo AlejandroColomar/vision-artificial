@@ -21,8 +21,8 @@
 /* Project -------------------------------------------------------------------*/
 		/* user_iface_log */
 	#include "user_iface.h"
-		/* user_prog_path */
-	#include "save.h"
+		/* share_path */
+	#include "about.h"
 
 /* Module --------------------------------------------------------------------*/
 		/* data & img_ocr_text & OCR_TEXT_MAX */
@@ -82,7 +82,7 @@ static	void	img_ocr_read	(struct _IplImage  *imgptr, void *data)
 	conf	= ((struct Img_Iface_Data_Read *)data)->conf;
 	switch (conf) {
 	case 1:
-		sprintf(conf_str, "%s/%s", user_prog_path, "price");
+		sprintf(conf_str, "%s/%s", share_path, "price");
 		break;
 	}
 
