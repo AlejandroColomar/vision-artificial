@@ -7,6 +7,8 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
+		/* true & false */
+	#include <stdbool.h>
 		/* snprintf() */
 	#include <stdio.h>
 
@@ -38,6 +40,7 @@ static	void	img_cv_adaptive_thr	(struct _IplImage  *imgptr, void *data);
 static	void	img_cv_dilate		(struct _IplImage  *imgptr, void *data);
 static	void	img_cv_erode		(struct _IplImage  *imgptr, void *data);
 static	void	img_cv_contours		(struct _IplImage  **imgptr2, void *data);
+static	void	img_cv_contours_size	(void *data);
 static	void	img_cv_min_area_rect	(struct _IplImage  *imgptr, void *data);
 static	void	img_cv_rotate_orto	(struct _IplImage  **imgptr2, void *data);
 static	void	img_cv_rotate		(struct _IplImage  *imgptr, void *data);
@@ -83,6 +86,9 @@ void	img_cv_act	(struct _IplImage  **imgptr2, int action, void *data)
 
 	case IMG_CV_ACT_CONTOURS:
 		img_cv_contours(imgptr2, data);
+		break;
+	case IMG_CV_ACT_CONTOURS_SIZE:
+		img_cv_contours_size(data);
 		break;
 	case IMG_CV_ACT_MIN_AREA_RECT:
 		img_cv_min_area_rect(*imgptr2, data);
@@ -305,11 +311,17 @@ static	void	img_cv_contours		(struct _IplImage  **imgptr2, void *data)
 	storage		= data_cast->storage;
 	struct CvSeq		**contours;
 	contours	= data_cast->contours;
+	int			*n;
+	n		= data_cast->n;
 
 	/* Get contours */
-	int	i;
-	i	= cvFindContours(*imgptr2, *storage, contours, sizeof(CvContour),
+	*n	= cvFindContours(*imgptr2, *storage, contours, sizeof(CvContour),
 			CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cvPoint(0, 0));
+
+	/* Limit n */
+	if (*n > CONTOURS_MAX) {
+		*n	= CONTOURS_MAX;
+	}
 
 	/* Draw contours in color */
 	cvDrawContours(imgtmp, *contours, CV_RGB(255, 0, 0), CV_RGB(0, 255, 0),
@@ -320,7 +332,34 @@ static	void	img_cv_contours		(struct _IplImage  **imgptr2, void *data)
 	*imgptr2	= cvCloneImage(imgtmp);
 
 	/* clean up */
-	cvReleaseImage(&imgtmp);	
+	cvReleaseImage(&imgtmp);
+}
+
+static	void	img_cv_contours_size	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Contours_Size	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Contours_Size *)data;
+
+	/* Contours */
+	struct CvSeq	*contours;
+	contours	= data_cast->contours;
+	int		n;
+	n		= data_cast->n;
+
+	/* Get area and perimeter */
+	int	i;
+	for (i = 0; i < n; i++) {
+		if (!contours) {
+			break;
+		}
+
+		data_cast->area[i]	= cvContourArea(contours,
+							CV_WHOLE_SEQ, false);
+		data_cast->perimeter[i]	= cvArcLength(contours,
+							CV_WHOLE_SEQ, -1);
+		contours	= contours->h_next;
+	}
 }
 
 static	void	img_cv_min_area_rect	(struct _IplImage  *imgptr, void *data)
@@ -330,14 +369,14 @@ static	void	img_cv_min_area_rect	(struct _IplImage  *imgptr, void *data)
 	data_cast	= (struct Img_Iface_Data_MinARect *)data;
 
 	/* Contours */
-	struct CvSeq	**contours;
+	struct CvSeq	*contours;
 	contours	= data_cast->contours;
 	/* Rotated rectangle */
 	struct CvBox2D	*rect;
 	rect		= data_cast->rect;
 
 	/* Get rectangle */
-	*rect	= cvMinAreaRect2(*contours, NULL);
+	*rect	= cvMinAreaRect2(contours, NULL);
 
 	/* Draw rectangle */
 	struct CvPoint2D32f	points[4];

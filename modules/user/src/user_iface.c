@@ -118,9 +118,11 @@ void	user_iface		(struct _IplImage  *imgptr)
 			proc_iface(user_action);
 			break;
 		default:
-			imgptr	= user_iface_act(user_action);
+			user_iface_act(user_action);
 			break;
 		}
+
+		imgptr	= img_iface_show();
 	} while (user_action != USER_IFACE_ACT_QUIT);
 }
 
@@ -195,7 +197,7 @@ struct _IplImage	*user_iface_act		(int action)
 			break;
 		}
 	} else {
-		imgptr	= img_iface_act(action, NULL);
+		img_iface_act(action, NULL);
 	}
 
 	return	imgptr;

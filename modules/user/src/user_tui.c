@@ -176,7 +176,7 @@ static	void	log_loop	(void)
 	int	l;
 	int	l_0;
 
-	if ((user_iface_log.len - 21) > 0) {
+	if ((user_iface_log.len - 40) > 0) {
 		i_0	= user_iface_log.len - 21;
 		l_0	= 1;
 		mvwprintw(win_log, 1, 10, "...");
@@ -311,6 +311,9 @@ static	int	usr_input	(void)
 					action	= USER_IFACE_ACT_CONTOURS;
 					break;
 				case '1':
+					action	= USER_IFACE_ACT_CONTOURS_SIZE;
+					break;
+				case '2':
 					action	= USER_IFACE_ACT_MIN_AREA_RECT;
 					break;
 				default:
@@ -498,7 +501,8 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - D-E:		%s",	"f122");
 	mvwprintw(win_help, r++, c, " - E-D:		%s",	"f123");
 	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f130");
-	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f131");
+	mvwprintw(win_help, r++, c, " - Contours siz:%s",	"f131");
+	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f132");
 	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f140");
 	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f141");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f142");

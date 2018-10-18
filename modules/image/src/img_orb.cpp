@@ -106,7 +106,7 @@ static	void	img_orb_align	(struct _IplImage  *img_ref,
 	/* Extract location of good matches */
 	std::vector <class cv::Point_ <float>>	points_0;
 	std::vector <class cv::Point_ <float>>	points_1;
-	int	i;	
+	int	i;
 	for (i = 0; i < matches.size(); i++) {
 		points_1.push_back(keypoints_1[matches[i].queryIdx].pt);
 		points_0.push_back(keypoints_0[matches[i].trainIdx].pt);

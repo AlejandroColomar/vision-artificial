@@ -56,14 +56,13 @@ static	struct _IplImage	*image_mem [IMG_MEM_SIZE];
 static	struct _IplImage	*image_ref;
 static	struct CvMemStorage	*storage;
 static	struct CvSeq		*contours;
+static	int			contours_n;
 static	struct CvBox2D		rectangle;
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-	/* Actions */
-static	void	img_iface_action	(int action, void *data);
 	/* img_cv */
 static	void	img_iface_invert	(void);
 static	void	img_iface_bgr2gray	(void);
@@ -74,6 +73,7 @@ static	void	img_iface_adaptive_thr	(void *data);
 static	void	img_iface_dilate	(void *data);
 static	void	img_iface_erode		(void *data);
 static	void	img_iface_contours	(void *data);
+static	void	img_iface_contours_size	(void *data);
 static	void	img_iface_min_area_rect	(void *data);
 static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
@@ -146,23 +146,7 @@ void			img_iface_cleanup	(void)
 	cvReleaseImage(&image_copy_usr);
 }
 
-struct _IplImage	*img_iface_act		(int action, void *data)
-{
-	img_iface_action(action, data);
-
-	/* Make a static copy of tmp so that it isn't modified by the user */
-	cvReleaseImage(&image_copy_usr);
-	image_copy_usr	= cvCloneImage(image_copy_tmp);
-
-	return	image_copy_usr;
-}
-
-
-/******************************************************************************
- ******* static functions *****************************************************
- ******************************************************************************/
-/* Actions -------------------------------------------------------------------*/
-static	void	img_iface_action	(int action, void *data)
+void			img_iface_act		(int action, void *data)
 {
 	switch (action) {
 	/* img_cv */
@@ -192,6 +176,9 @@ static	void	img_iface_action	(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_CONTOURS:
 		img_iface_contours(data);
+		break;
+	case IMG_IFACE_ACT_CONTOURS_SIZE:
+		img_iface_contours_size(data);
 		break;
 	case IMG_IFACE_ACT_MIN_AREA_RECT:
 		img_iface_min_area_rect(data);
@@ -265,6 +252,19 @@ static	void	img_iface_action	(int action, void *data)
 	}
 }
 
+struct _IplImage	*img_iface_show		(void)
+{
+	/* Make a static copy of tmp so that it isn't modified by the user */
+	cvReleaseImage(&image_copy_usr);
+	image_copy_usr	= cvCloneImage(image_copy_tmp);
+
+	return	image_copy_usr;
+}
+
+
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
 /* img_cv --------------------------------------------------------------------*/
 static	void	img_iface_invert	(void)
 {
@@ -520,6 +520,17 @@ static	void	img_iface_erode		(void *data)
 
 static	void	img_iface_contours	(void *data)
 {
+	/* Must have 1 channel */
+	if (image_copy_tmp->nChannels != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
 	/* Data */
 	struct Img_Iface_Data_Contours	data_tmp;
 	if (!data) {
@@ -529,17 +540,57 @@ static	void	img_iface_contours	(void *data)
 		data_tmp.contours	= &contours;
 		*(data_tmp.contours)	= NULL;
 
+		data_tmp.n		= &contours_n;
+
 		data	= (void *)&data_tmp;
 	}
 
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Contours");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
 	/* Contours */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_CONTOURS, data);
+
+	/* Write into log */
+	struct Img_Iface_Data_Contours	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Contours *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Contours n=%i",
+						*(data_cast->n));
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_contours_size	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Contours_Size	data_tmp;
+	if (!data) {
+		data_tmp.contours	= contours;
+
+		data_tmp.n		= contours_n;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Contours */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_CONTOURS_SIZE, data);
+
+	/* Write into log */
+	struct Img_Iface_Data_Contours_Size	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Contours_Size *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Contours size:",
+						data_cast->n);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+	int	i;
+	for (i = 0; i < data_cast->n; i++) {
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"cnt[%i]: A=%lf; P=%lf;",
+							i,
+							data_cast->area[i],
+							data_cast->perimeter[i]);
+		user_iface_log.lvl[user_iface_log.len]	= 2;
+		(user_iface_log.len)++;
+	}
 }
 
 static	void	img_iface_min_area_rect	(void *data)
@@ -547,7 +598,7 @@ static	void	img_iface_min_area_rect	(void *data)
 	/* Data */
 	struct Img_Iface_Data_MinARect	data_tmp;
 	if (!data) {
-		data_tmp.contours	= &contours;
+		data_tmp.contours	= contours;
 
 		data_tmp.rect		= &rectangle;
 
