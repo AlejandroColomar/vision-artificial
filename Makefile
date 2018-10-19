@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
-VERSION		= 0
-PATCHLEVEL	= .6
+VERSION		= 1
+PATCHLEVEL	= .0
 SUBLEVEL	= 
 EXTRAVERSION	=
 NAME		=
@@ -101,7 +101,7 @@ export	SHARE_DIR
 ################################################################################
 # executables
 
-BIN_NAME	= vision-artificial
+BIN_NAME	= vision-artificial1
 
 export	BIN_NAME
 

@@ -8,8 +8,6 @@ MODULES_TMP_DIR	= $(MODULES_DIR)/tmp/
 TMP_DIR	= $(MAIN_DIR)/tmp/
 
 # dependencies
-_ALL	= vision-artificial
-
 ALL	= $(BIN_NAME)
 
 MAIN_OBJ_LIBALX		= alx_lib.o
@@ -33,7 +31,7 @@ $(BIN_NAME): $(MAIN_OBJS)
 
 
 clean:
-	$(Q)rm -f $(_ALL)
+	$(Q)rm -f $(ALL)
 	@echo  "Clean binaries"
 
 ################################################################################
