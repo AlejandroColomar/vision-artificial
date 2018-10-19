@@ -185,8 +185,14 @@ static	void	log_loop	(void)
 		l_0	= 0;
 	}
 
-	for (i = i_0, l = l_0; i < user_iface_log.len; i++, l++) {
-		mvwprintw(win_log, (1 + l), (1 + 4 * user_iface_log.lvl[i]), user_iface_log.line[i]);
+	l	= l_0;
+	for (i = i_0; i < user_iface_log.len; i++) {
+		if (user_iface_log.lvl[i] <= user_iface_log.visible) {
+			mvwprintw(win_log, (1 + l),
+						(1 + 4 * user_iface_log.lvl[i]),
+						user_iface_log.line[i]);
+			l++;
+		}
 	}
 }
 
@@ -222,7 +228,7 @@ static	int	usr_input	(void)
 
 			switch (ch) {
 			case '0':
-				action	= USER_IFACE_ACT_PROC_ETIQUETA;
+				action	= USER_IFACE_ACT_PROC_LABEL;
 				break;
 			}
 			break;

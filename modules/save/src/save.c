@@ -6,28 +6,30 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* opencv */
-	#include <cv.h>
-		/* cvLoadImage & cvSaveImage */
-	#include <highgui.h>
+/* Standard C ----------------------------------------------------------------*/
 		/* errno */
 	#include <errno.h>
 		/* fscanf() & fprintf() & FILE & FILENAME_MAX & snprintf() */
 	#include <stdio.h>
 		/* getenv() */
 	#include <stdlib.h>
+
+/* Linux ---------------------------------------------------------------------*/
 		/* mkdir */
 	#include <sys/stat.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Packages ------------------------------------------------------------------*/
+		/* opencv */
+	#include <opencv/cv.h>
+		/* cvLoadImage & cvSaveImage */
+	#include <opencv/highgui.h>
+//	#include <opencv2/imgcodecs/imgcodecs_c.h>
+
+/* Project -------------------------------------------------------------------*/
 		/* user_iface_save_name() */
 	#include "user_iface.h"
 
+/* Module --------------------------------------------------------------------*/
 	#include "save.h"
 
 
@@ -61,7 +63,7 @@ void	save_init	(void)
 		switch (errno) {
 		case EACCES:
 			printf("err = EACCES");
-			exit(EXIT_FAILURE);
+//			exit(EXIT_FAILURE);
 			break;
 
 		case EEXIST:
@@ -70,7 +72,7 @@ void	save_init	(void)
 
 		default:
 			printf("WTF?!");
-			exit(EXIT_FAILURE);
+//			exit(EXIT_FAILURE);
 		}
 	}
 }
@@ -91,12 +93,13 @@ void	load_image_file	(void)
 	snprintf(file_name, FILENAME_MAX, "%s/%s", saved_path, saved_name);
 
 	/* Load image */
-	image	= cvLoadImage(file_name, CV_LOAD_IMAGE_COLOR);
+//	image	= cvLoadImage(file_name, CV_LOAD_IMAGE_COLOR);
+	image	= cvvLoadImage(file_name);
 
 	/* Manage load error */
 	if (!image) {
 		printf("Could not load file: %s\n", file_name);
-		exit(0);
+//		exit(0);
 	}
 }
 

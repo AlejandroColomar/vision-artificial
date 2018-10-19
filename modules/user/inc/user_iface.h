@@ -80,7 +80,7 @@
 		USER_IFACE_ACT_SAVE_FILE,
 
 		USER_IFACE_ACT_PROC = 0x4000,
-		USER_IFACE_ACT_PROC_ETIQUETA,
+		USER_IFACE_ACT_PROC_LABEL,
 
 		USER_IFACE_ACT_USRI = 0x8000,
 		USER_IFACE_ACT_SHOW_OCR,
@@ -95,6 +95,7 @@
 		int	len;
 		char	line [LOG_LEN] [LOG_LINE_LEN];
 		int	lvl [LOG_LEN];
+		int	visible;
 	};
 
 

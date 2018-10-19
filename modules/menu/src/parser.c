@@ -122,7 +122,7 @@ static	void	parse_file		(char* argument)
 		fclose(fp);
 
 		sprintf(saved_path, "");
-		snprintf(saved_name, FILENAME_MAX, argument);
+		snprintf(saved_name, FILENAME_MAX, "%s", argument);
 	}
 }
 

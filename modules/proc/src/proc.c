@@ -34,22 +34,12 @@
 
 
 /******************************************************************************
- ******* macros ***************************************************************
- ******************************************************************************/
-	# define	OK		(0)
-	# define	NOK_LABEL	(1)
-	# define	NOK_CERDO	(2)
-	# define	NOK_BCODE	(3)
-	# define	NOK_PRODUCT	(4)
-	# define	NOK_PRICE	(5)
-
-	# define	show		(false)
-	# define	pause		(false)
-
-
-/******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
+/* Global --------------------------------------------------------------------*/
+	int	proc_debug;
+
+/* Static --------------------------------------------------------------------*/
 static	struct _IplImage	*imgptr;
 static	struct CvMemStorage	*proc_storage;
 
@@ -95,7 +85,7 @@ int	proc_iface		(int proc_mode)
 
 	/* Process */
 	switch (proc_mode) {
-	case PROC_MODE_ETIQUETA:
+	case PROC_MODE_LABEL:
 		error	= proc_etiqueta();
 		break;
 	}
@@ -109,7 +99,7 @@ int	proc_iface		(int proc_mode)
 	/* Write time into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Time:  %.3lf", time_tot);
-	user_iface_log.lvl[user_iface_log.len]	= 2;
+	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 
 	return	error;
@@ -123,7 +113,7 @@ static	int	proc_etiqueta		(void)
 {
 	int	status;
 
-	char	price [6];
+	char	price [80];
 
 	struct CvSeq		*et_contours;
 	int			et_contours_n;
@@ -153,7 +143,7 @@ static	int	proc_etiqueta		(void)
 
 		/* If no contour is found, error:  NOK_LABEL */
 		if (!et_contours) {
-			status	= NOK_LABEL;
+			status	= LABEL_NOK_LABEL;
 			result_etiqueta(status);
 			return	status;
 		}
@@ -193,7 +183,7 @@ static	int	proc_etiqueta		(void)
 		cerdo_nok	= strncmp(img_ocr_text, "Cerdo",
 							strlen("Cerdo"));
 		if (cerdo_nok) {
-			status	= NOK_CERDO;
+			status	= LABEL_NOK_CERDO;
 			result_etiqueta(status);
 			return	status;
 		}
@@ -206,7 +196,7 @@ static	int	proc_etiqueta		(void)
 
 		/* Check that 1 and only 1 bcode is read. */
 		if (zb_codes.n != 1) {
-			status	= NOK_BCODE;
+			status	= LABEL_NOK_BCODE;
 			result_etiqueta(status);
 			return	status;
 		}
@@ -217,7 +207,7 @@ static	int	proc_etiqueta		(void)
 		prod_nok	= strncmp(zb_codes.arr[0].data, "2301703",
 							strlen("2301703"));
 		if (prod_nok) {
-			status	= NOK_PRODUCT;
+			status	= LABEL_NOK_PRODUCT;
 			result_etiqueta(status);
 			return	status;
 		}
@@ -241,13 +231,13 @@ static	int	proc_etiqueta		(void)
 	/* Extract price from barcode */
 	{
 		if (zb_codes.arr[0].data[8] != '0') {
-			snprintf(price, 6, "%c%c.%c%c€",
+			snprintf(price, 80, "%c%c.%c%c€",
 						zb_codes.arr[0].data[8],
 						zb_codes.arr[0].data[9],
 						zb_codes.arr[0].data[10],
 						zb_codes.arr[0].data[11]);
 		} else {
-			snprintf(price, 6, "%c.%c%c€",
+			snprintf(price, 80, "%c.%c%c€",
 						zb_codes.arr[0].data[9],
 						zb_codes.arr[0].data[10],
 						zb_codes.arr[0].data[11]);
@@ -258,13 +248,13 @@ static	int	proc_etiqueta		(void)
 		bool	price_nok;
 		price_nok	= strncmp(img_ocr_text, price, strlen(price));
 		if (price_nok) {
-			status	= NOK_PRICE;
+			status	= LABEL_NOK_PRICE;
 			result_etiqueta(status);
 			return	status;
 		}
 	}
 
-	status	= OK;
+	status	= LABEL_OK;
 	result_etiqueta(status);
 	return	status;
 }
@@ -277,27 +267,27 @@ static	void	result_etiqueta		(int status)
 	/* Write result into log */
 	char	result [LOG_LINE_LEN];
 	switch (status) {
-	case OK:
+	case LABEL_OK:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Label:  OK");
 		break;
-	case NOK_LABEL:
+	case LABEL_NOK_LABEL:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Label:  NOK_LABEL");
 		break;
-	case NOK_CERDO:
+	case LABEL_NOK_CERDO:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Label:  NOK_CERDO");
 		break;
-	case NOK_BCODE:
+	case LABEL_NOK_BCODE:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Label:  NOK_BCODE");
 		break;
-	case NOK_PRODUCT:
+	case LABEL_NOK_PRODUCT:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Label:  NOK_PRODUCT");
 		break;
-	case NOK_PRICE:
+	case LABEL_NOK_PRICE:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Label:  NOK_PRICE");
 		break;
@@ -306,7 +296,7 @@ static	void	result_etiqueta		(int status)
 							"Label:  NOK");
 		break;
 	}
-	user_iface_log.lvl[user_iface_log.len]	= 1;
+	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
 }
 
@@ -445,14 +435,15 @@ static	void	proc_zbar		(int type)
 
 static	void	proc_show_img		(void)
 {
-	if (show) {
+	if (proc_debug >= PROC_DBG_DELAY_STEP) {
 		imgptr	= img_iface_show();
 		/* Display image and do NOT wait for any key to continue */
 		cvShowImage(WIN_NAME, imgptr);
 		cvWaitKey(WIN_TIMEOUT);
-	}
-	if (pause) {
-		getchar();
+
+		if (proc_debug >= PROC_DBG_STOP_STEP) {
+			getchar();
+		}
 	}
 }
 

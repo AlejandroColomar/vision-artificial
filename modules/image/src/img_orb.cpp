@@ -74,14 +74,19 @@ static	void	img_orb_align	(struct _IplImage  *img_ref,
 	class cv::Mat				descriptors_1;
 
 	/* Detect ORB features & compute descriptors */
+#if 1
+	/* OpenCV 2.x */
 	class cv::ORB	orb;
 	orb(img_0, cv::Mat(), keypoints_0, descriptors_0);
 	orb(img_1, cv::Mat(), keypoints_1, descriptors_1);
-/*	class cv::Ptr <class cv::Feature2D>	orb;
+#else
+	/* OpenCV 3.x */
+	class cv::Ptr <class cv::Feature2D>	orb;
 	orb	= cv::ORB::create(MAX_FEATURES);
 	orb->detectAndCompute(img_0, cv::Mat(), keypoints_0, descriptors_0);
 	orb->detectAndCompute(img_1, cv::Mat(), keypoints_1, descriptors_1);
-*/
+#endif
+
 
 	/* Match structures */
 	std::vector <struct cv::DMatch>		matches;

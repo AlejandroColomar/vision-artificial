@@ -8,6 +8,7 @@ LIBALX_INC_DIR	= $(LIBALX_DIR)/inc/
 
 ABOUT_INC_DIR	= $(ABOUT_DIR)/inc/
 CTRL_INC_DIR	= $(CTRL_DIR)/inc/
+PROC_INC_DIR	= $(PROC_DIR)/inc/
 SAVE_INC_DIR	= $(SAVE_DIR)/inc/
 USR_INC_DIR	= $(USR_DIR)/inc/
 
@@ -58,19 +59,25 @@ MENUCLUI_INC_DIRS	= -I $(INC_DIR) \
 MENUTUI_INC_LIBALX	= alx_ncur.h
 MENUTUI_INC_ABOUT	= about.h
 MENUTUI_INC_CTRL	= start.h
+MENUTUI_INC_PROC	= proc.h
 MENUTUI_INC_SAVE	= save.h
+MENUTUI_INC_USR		= user_iface.h
 MENUTUI_INC		= menu_tui.h
 MENUTUI_DEPS	= $(SRC_DIR)/menu_tui.c \
 			$(patsubst %,$(INC_DIR)/%,$(MENUTUI_INC)) \
 			$(patsubst %,$(LIBALX_INC_DIR)/%,$(MENUTUI_INC_LIBALX)) \
 			$(patsubst %,$(ABOUT_INC_DIR)/%,$(MENUTUI_INC_ABOUT)) \
 			$(patsubst %,$(CTRL_INC_DIR)/%,$(MENUTUI_INC_CTRL)) \
-			$(patsubst %,$(SAVE_INC_DIR)/%,$(MENUTUI_INC_SAVE))
+			$(patsubst %,$(PROC_INC_DIR)/%,$(MENUTUI_INC_PROC)) \
+			$(patsubst %,$(SAVE_INC_DIR)/%,$(MENUTUI_INC_SAVE)) \
+			$(patsubst %,$(USR_INC_DIR)/%,$(MENUTUI_INC_USR))
 MENUTUI_INC_DIRS	= -I $(INC_DIR) \
 			-I $(LIBALX_INC_DIR) \
 			-I $(ABOUT_INC_DIR) \
 			-I $(CTRL_INC_DIR) \
-			-I $(SAVE_INC_DIR)
+			-I $(PROC_INC_DIR) \
+			-I $(SAVE_INC_DIR) \
+			-I $(USR_INC_DIR)
 
 # target: dependencies
 #	action

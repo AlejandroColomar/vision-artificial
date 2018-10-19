@@ -134,7 +134,7 @@ int	alx_sscan_fname	(const char *fpath, char *fname, bool exist, const char *str
 	}
 
 	if (!err) {
-		snprintf(fname, FILENAME_MAX, buff);
+		snprintf(fname, FILENAME_MAX, "%s", buff);
 	}
 
 	return	err;
