@@ -8,11 +8,7 @@
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
 		/* errno */
-<<<<<<< HEAD:modules/image/src/img_iface.cpp
 	#include <cerrno>
-=======
-	#include <errno.h>
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/image/src/img_iface.c
 		/* INFINITY */
 	#include <cmath>
 		/* snprintf() */
@@ -135,22 +131,8 @@ void	img_iface_load		(void)
 
 	if (!errno) {
 		/* Make a static copy of image */
-<<<<<<< HEAD:modules/image/src/img_iface.cpp
 		image.copyTo(image_copy_old);
 		image.copyTo(image_copy_tmp);
-=======
-		cvReleaseImage(&image_copy_old);
-		image_copy_old	= cvCloneImage(image);
-		cvReleaseImage(&image_copy_tmp);
-		image_copy_tmp	= cvCloneImage(image);
-
-		/* Make a copy of the image so that it isn't modified by the user */
-		cvReleaseImage(&image_copy_usr);
-		image_copy_usr	= cvCloneImage(image_copy_tmp);
-		return	image_copy_tmp;
-	} else {
-		return	NULL;
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/image/src/img_iface.c
 	}
 }
 
@@ -985,13 +967,8 @@ static	void	img_iface_save_mem	(void *data)
 	(user_iface_log.len)++;
 
 	/* Write into mem */
-<<<<<<< HEAD:modules/image/src/img_iface.cpp
 	image_mem[x].release();
 	image_copy_tmp.copyTo(image_mem[x]);
-=======
-	cvReleaseImage(&image_mem[x]);
-	image_mem[x]	= cvCloneImage(image_copy_tmp);
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/image/src/img_iface.c
 }
 
 static	void	img_iface_load_mem	(void *data)
@@ -1031,14 +1008,9 @@ static	void	img_iface_save_ref	(void)
 	(user_iface_log.len)++;
 
 	/* Write into ref */
-<<<<<<< HEAD:modules/image/src/img_iface.cpp
 	image_ref.release();
 	image_copy_tmp.copyTo(image_ref);
 	image_ref	= image_copy_tmp;
-=======
-	cvReleaseImage(&image_ref);
-	image_ref	= cvCloneImage(image_copy_tmp);
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/image/src/img_iface.c
 }
 
 /* save ----------------------------------------------------------------------*/
@@ -1051,13 +1023,8 @@ static	void	img_iface_save_file	(void)
 	(user_iface_log.len)++;
 
 	/* Write into image struct (save.c) */
-<<<<<<< HEAD:modules/image/src/img_iface.cpp
 	image.release();
 	image_copy_tmp.copyTo(image);
-=======
-	cvReleaseImage(&image);
-	image	= cvCloneImage(image_copy_tmp);
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/image/src/img_iface.c
 
 	/* Save into file */
 	save_image_file();

@@ -36,10 +36,10 @@ IMGZB_INC_DIRS		= -I $(INC_DIR) \
 			-I $(USR_INC_DIR) \
 			-I $(LIBALX_INC_DIR)
 
-IMGOCR_INC_USR		= user_iface.h
-IMGOCR_INC_ABOUT	= about.h
-IMGOCR_INC		= img_ocr.h	img_iface.h
-IMGOCR_DEPS		= $(SRC_DIR)/img_ocr.c \
+IMGOCR_INC_USR		= user_iface.hpp
+IMGOCR_INC_ABOUT	= about.hpp
+IMGOCR_INC		= img_ocr.hpp	img_iface.hpp
+IMGOCR_DEPS		= $(SRC_DIR)/img_ocr.cpp \
 			$(patsubst %,$(INC_DIR)/%,$(IMGOCR_INC)) \
 			$(patsubst %,$(USR_INC_DIR)/%,$(IMGOCR_INC_USR)) \
 			$(patsubst %,$(ABOUT_INC_DIR)/%,$(IMGOCR_INC_ABOUT))

@@ -1,7 +1,3 @@
 *.o
 *.s
-<<<<<<< HEAD
 bin/vision-artificial2
-=======
-bin/vision-artificial1
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323

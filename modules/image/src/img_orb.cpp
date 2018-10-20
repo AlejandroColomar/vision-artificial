@@ -70,24 +70,14 @@ static	void	img_orb_align	(class cv::Mat  *img_0,
 #if 1
 	/* OpenCV 2.x */
 	class cv::ORB	orb;
-<<<<<<< HEAD
 	orb(*img_0, cv::Mat(), keypoints_0, descriptors_0);
 	orb(*img_1, cv::Mat(), keypoints_1, descriptors_1);
-=======
-	orb(img_0, cv::Mat(), keypoints_0, descriptors_0);
-	orb(img_1, cv::Mat(), keypoints_1, descriptors_1);
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323
 #else
 	/* OpenCV 3.x */
 	class cv::Ptr <class cv::Feature2D>	orb;
 	orb	= cv::ORB::create(MAX_FEATURES);
-<<<<<<< HEAD
 	orb->detectAndCompute(*img_0, cv::Mat(), keypoints_0, descriptors_0);
 	orb->detectAndCompute(*img_1, cv::Mat(), keypoints_1, descriptors_1);
-=======
-	orb->detectAndCompute(img_0, cv::Mat(), keypoints_0, descriptors_0);
-	orb->detectAndCompute(img_1, cv::Mat(), keypoints_1, descriptors_1);
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323
 #endif
 
 

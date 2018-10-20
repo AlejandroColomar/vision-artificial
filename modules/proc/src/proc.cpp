@@ -27,11 +27,7 @@
 	#include "user_iface.hpp"
 
 /* Module --------------------------------------------------------------------*/
-<<<<<<< HEAD:modules/proc/src/proc.cpp
 	#include "proc.hpp"
-=======
-	#include "proc.h"
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/proc/src/proc.c
 
 
 /******************************************************************************
@@ -39,13 +35,6 @@
  ******************************************************************************/
 /* Global --------------------------------------------------------------------*/
 	int	proc_debug;
-<<<<<<< HEAD:modules/proc/src/proc.cpp
-=======
-
-/* Static --------------------------------------------------------------------*/
-static	struct _IplImage	*imgptr;
-static	struct CvMemStorage	*proc_storage;
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/proc/src/proc.c
 
 
 /******************************************************************************
@@ -152,11 +141,7 @@ static	int	proc_etiqueta		(void)
 		proc_contours(&contours, &hierarchy);
 
 		/* If no contour is found, error:  NOK_LABEL */
-<<<<<<< HEAD:modules/proc/src/proc.cpp
 		if (!contours.size()) {
-=======
-		if (!et_contours) {
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/proc/src/proc.c
 			status	= LABEL_NOK_LABEL;
 			result_etiqueta(status);
 			return	status;
@@ -466,14 +451,7 @@ static	void	proc_zbar		(int type)
 static	void	proc_show_img		(void)
 {
 	if (proc_debug >= PROC_DBG_DELAY_STEP) {
-<<<<<<< HEAD:modules/proc/src/proc.cpp
 		img_iface_show();
-=======
-		imgptr	= img_iface_show();
-		/* Display image and do NOT wait for any key to continue */
-		cvShowImage(WIN_NAME, imgptr);
-		cvWaitKey(WIN_TIMEOUT);
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/proc/src/proc.c
 
 		if (proc_debug >= PROC_DBG_STOP_STEP) {
 			getchar();

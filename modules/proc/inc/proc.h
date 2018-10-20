@@ -23,25 +23,6 @@
 
 		PROC_MODE = 0x4000,
 		PROC_MODE_LABEL
-<<<<<<< HEAD
-=======
-	};
-
-	enum	Proc_DBG {
-		PROC_DBG_NO,
-		PROC_DBG_STOP_PROD,
-		PROC_DBG_DELAY_STEP,
-		PROC_DBG_STOP_STEP
-	};
-
-	enum	Proc_Label {
-		LABEL_OK,
-		LABEL_NOK_LABEL,
-		LABEL_NOK_CERDO,
-		LABEL_NOK_BCODE,
-		LABEL_NOK_PRODUCT,
-		LABEL_NOK_PRICE
->>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323
 	};
 
 	enum	Proc_DBG {
