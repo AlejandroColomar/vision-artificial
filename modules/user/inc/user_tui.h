@@ -16,6 +16,7 @@
 void	user_tui_init		(void);
 void	user_tui_cleanup	(void);
 int	user_tui		(const char *title, const char *subtitle);
+void	user_tui_show_log	(const char *title, const char *subtitle);
 void	user_tui_save_name	(const char *filepath, char *filename, int destsize);
 double	user_tui_getdbl		(double m, double def, double M,
 				const char *title, const char *help);

@@ -11,8 +11,6 @@
 	#include <cstdio>
 
 /* Packages ------------------------------------------------------------------*/
-		/* opencv */
-	#include <opencv2/opencv.hpp>
 		/* OCR Tesseract */
 	#include <tesseract/baseapi.h>
 	#include <leptonica/allheaders.h>
@@ -33,17 +31,17 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(class cv::Mat  *imgptr, void *data);
+static	void	img_ocr_read	(void *data);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_ocr_act	(class cv::Mat  *imgptr, int action, void *data)
+void	img_ocr_act	(int action, void *data)
 {
 	switch (action) {
 	case IMG_OCR_ACT_READ:
-		img_ocr_read(imgptr, data);
+		img_ocr_read(data);
 		break;
 	}
 }
@@ -52,14 +50,18 @@ void	img_ocr_act	(class cv::Mat  *imgptr, int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(class cv::Mat  *imgptr, void *data)
+static	void	img_ocr_read	(void *data)
 {
 	class tesseract::TessBaseAPI	*handle_ocr;
+
+	/* Data */
+	struct Img_Iface_Data_Read	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Read *)data;
 
 	/* Language */
 	int	lang;
 	char	lang_str [3 + 1];
-	lang	= ((struct Img_Iface_Data_Read *)data)->lang;
+	lang	= data_cast->lang;
 	switch (lang) {
 	case 0:
 		sprintf(lang_str, "eng");
@@ -75,7 +77,7 @@ static	void	img_ocr_read	(class cv::Mat  *imgptr, void *data)
 	/* Config file */
 	int	conf;
 	char	conf_str [FILENAME_MAX];
-	conf	= ((struct Img_Iface_Data_Read *)data)->conf;
+	conf	= data_cast->conf;
 	switch (conf) {
 	case 1:
 		sprintf(conf_str, "%s/%s", share_path, "price");
@@ -83,16 +85,18 @@ static	void	img_ocr_read	(class cv::Mat  *imgptr, void *data)
 	}
 
 	/* init OCR */
-	handle_ocr	= new tesseract::TessBaseApi();
-	handle_ocr->Init(NULL, lang_str, tesseract::OEM_TESSERACT_CUBE_COMBINED);
+	handle_ocr	= new tesseract::TessBaseAPI();
+	handle_ocr->Init(NULL, lang_str, tesseract::OEM_TESSERACT_LSTM_COMBINED);
 	if (conf) {
 		/* Configure OCR (whitelist chars) */
 		handle_ocr->ReadConfigFile(conf_str);
 	}
 
 	/* scan image for text */
-	handle_ocr->SetImage(imgptr->data, imgptr->cols, imgptr->rows,
-				imgptr->depth() / 8, imgptr->step);
+	handle_ocr->SetImage((const unsigned char *)data_cast->img.data,
+				data_cast->img.width, data_cast->img.height,
+				data_cast->img.B_per_pix,
+				data_cast->img.B_per_line);
 	char	*txt;
 	txt	= handle_ocr->GetUTF8Text();
 

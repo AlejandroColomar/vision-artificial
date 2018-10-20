@@ -15,6 +15,7 @@
  ******************************************************************************/
 int	user_clui		(const char *title, const char *subtitle);
 void	user_clui_save_name	(const char *filepath, char *filename, int destsize);
+void	user_clui_show_log	(const char *title, const char *subtitle);
 
 
 /******************************************************************************

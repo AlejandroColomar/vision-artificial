@@ -20,11 +20,17 @@
 		/* zbar::ZBAR_EAN13 */
 	#include <zbar.h>
 
+/* libalx -------------------------------------------------------------------*/
+		/* alx_sscan_fname() */
+	#include "alx_input.hpp"
+
 /* Project -------------------------------------------------------------------*/
 		/* img_iface_act() */
 	#include "img_iface.hpp"
 		/* user_iface_log */
 	#include "user_iface.hpp"
+		/* saved_path */
+	#include "save.hpp"
 
 /* Module --------------------------------------------------------------------*/
 	#include "proc.hpp"
@@ -35,13 +41,14 @@
  ******************************************************************************/
 /* Global --------------------------------------------------------------------*/
 	int	proc_debug;
+	int	proc_mode;
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	int	proc_etiqueta		(void);
-static	void	result_etiqueta		(int status);
+static	int	proc_label		(void);
+static	void	result_label		(int status);
 
 static	void	proc_save_mem		(int n);
 static	void	proc_load_mem		(int n);
@@ -74,7 +81,7 @@ static	void	proc_show_img		(void);
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-int	proc_iface		(int proc_mode)
+int	proc_iface_single	(void)
 {
 	int	error;
 	clock_t	time_0;
@@ -87,7 +94,7 @@ int	proc_iface		(int proc_mode)
 	/* Process */
 	switch (proc_mode) {
 	case PROC_MODE_LABEL:
-		error	= proc_etiqueta();
+		error	= proc_label();
 		break;
 	}
 
@@ -106,11 +113,65 @@ int	proc_iface		(int proc_mode)
 	return	error;
 }
 
+void	proc_iface_series	(void)
+{
+	bool	file_error;
+	int	num_len;
+	char	file_basename [FILENAME_MAX];
+	char	file_ext [80];
+	char	file_name [FILENAME_MAX];
+	bool	proc_error;
+	char	save_error_as [FILENAME_MAX];
+
+	switch (proc_mode) {
+	case PROC_MODE_LABEL:
+		snprintf(file_basename, 80, "b");
+		num_len	= 4;
+		snprintf(file_ext, 80, ".BMP");
+		break;
+	}
+
+	bool	wh;
+	int	i;
+	wh	= true;
+	for (i = 0; wh; i++) {
+		snprintf(file_name, FILENAME_MAX, "%s%04i%s",
+						file_basename, i, file_ext);
+
+		file_error	= alx_sscan_fname(saved_path, saved_name,
+						true, file_name);
+
+		if (file_error) {
+			wh	= false;
+		} else {
+			errno	= 0;
+			img_iface_load();
+
+			if (!errno) {
+				/* Process */
+				proc_error	= proc_iface_single();
+				/* Show log */
+				user_iface_show_log(saved_name, NULL);
+
+				if (proc_error) {
+					img_iface_show();
+					snprintf(save_error_as, FILENAME_MAX,
+						"%s%04i_err%s",
+						file_basename, i, file_ext);
+					save_image_file(save_error_as);
+				}
+			} else {
+				printf("errno:%i\n", errno);
+			}
+		}
+	}
+}
+
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	int	proc_etiqueta		(void)
+static	int	proc_label		(void)
 {
 	int	status;
 
@@ -143,7 +204,7 @@ static	int	proc_etiqueta		(void)
 		/* If no contour is found, error:  NOK_LABEL */
 		if (!contours.size()) {
 			status	= LABEL_NOK_LABEL;
-			result_etiqueta(status);
+			result_label(status);
 			return	status;
 		}
 
@@ -169,7 +230,13 @@ static	int	proc_etiqueta		(void)
 	{
 
 		x	= rect.center.x - (1.05 * rect.size.width / 2);
+		if (x < 0) {
+			x	= 0;
+		}
 		y	= rect.center.y - (1.47 * rect.size.height / 2);
+		if (y < 0) {
+			y	= 0;
+		}
 		w	= rect.size.width / 2;
 		h	= rect.size.height * 0.20;
 		proc_ROI(x, y, w, h);
@@ -183,7 +250,7 @@ static	int	proc_etiqueta		(void)
 							strlen("Cerdo"));
 		if (cerdo_nok) {
 			status	= LABEL_NOK_CERDO;
-			result_etiqueta(status);
+			result_label(status);
 			return	status;
 		}
 	}
@@ -196,7 +263,7 @@ static	int	proc_etiqueta		(void)
 		/* Check that 1 and only 1 bcode is read. */
 		if (zb_codes.n != 1) {
 			status	= LABEL_NOK_BCODE;
-			result_etiqueta(status);
+			result_label(status);
 			return	status;
 		}
 	}
@@ -207,7 +274,7 @@ static	int	proc_etiqueta		(void)
 							strlen("2301703"));
 		if (prod_nok) {
 			status	= LABEL_NOK_PRODUCT;
-			result_etiqueta(status);
+			result_label(status);
 			return	status;
 		}
 	}
@@ -217,26 +284,25 @@ static	int	proc_etiqueta		(void)
 
 		x	= rect.center.x + (0.33 * rect.size.width / 2);
 		y	= rect.center.y + (0.64 * rect.size.height / 2);
-		w	= rect.size.width * 0.33;
+		w	= rect.size.width * 0.225;
 		h	= rect.size.height * 0.15;
 		proc_ROI(x, y, w, h);
 		proc_smooth(IMGI_SMOOTH_MEAN, 3);
 		proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
-//		proc_threshold(CV_THRESH_BINARY, 100);
-//		proc_smooth(CV_BLUR, 3);
-//		proc_dilate(1);
-		proc_OCR(IMG_IFACE_OCR_LANG_ENG, IMG_IFACE_OCR_CONF_PRICE);
+		proc_dilate_erode(1);
+		proc_threshold(cv::THRESH_BINARY, 1);
+		proc_OCR(IMG_IFACE_OCR_LANG_DIGITS, IMG_IFACE_OCR_CONF_PRICE);
 	}
 	/* Extract price from barcode */
 	{
 		if (zb_codes.arr[0].data[8] != '0') {
-			snprintf(price, 80, "%c%c.%c%c€",
+			snprintf(price, 80, "%c%c.%c%c",
 						zb_codes.arr[0].data[8],
 						zb_codes.arr[0].data[9],
 						zb_codes.arr[0].data[10],
 						zb_codes.arr[0].data[11]);
 		} else {
-			snprintf(price, 80, "%c.%c%c€",
+			snprintf(price, 80, "%c.%c%c",
 						zb_codes.arr[0].data[9],
 						zb_codes.arr[0].data[10],
 						zb_codes.arr[0].data[11]);
@@ -248,17 +314,17 @@ static	int	proc_etiqueta		(void)
 		price_nok	= strncmp(img_ocr_text, price, strlen(price));
 		if (price_nok) {
 			status	= LABEL_NOK_PRICE;
-			result_etiqueta(status);
+			result_label(status);
 			return	status;
 		}
 	}
 
 	status	= LABEL_OK;
-	result_etiqueta(status);
+	result_label(status);
 	return	status;
 }
 
-static	void	result_etiqueta		(int status)
+static	void	result_label		(int status)
 {
 	/* Cleanup */
 

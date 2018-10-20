@@ -5,6 +5,7 @@
 # directories
 
 IMG_INC_DIR = $(IMG_DIR)/inc/
+PROC_INC_DIR = $(PROC_DIR)/inc/
 USR_INC_DIR = $(USR_DIR)/inc/
 
 INC_DIR = $(CTRL_DIR)/inc/
@@ -16,14 +17,17 @@ _ALL	= start.o
 ALL	= $(_ALL) ctrl_mod.o
 
 STRT_INC_IMG	= img_iface.h
+STRT_INC_PROC	= proc.h
 STRT_INC_USR	= user_iface.h
 STRT_INC	= start.h
 STRT_DEPS	= $(SRC_DIR)/start.c \
 			$(patsubst %,$(IMG_INC_DIR)/%,$(STRT_INC_IMG)) \
+			$(patsubst %,$(PROC_INC_DIR)/%,$(STRT_INC_PROC)) \
 			$(patsubst %,$(USR_INC_DIR)/%,$(STRT_INC_USR)) \
 			$(patsubst %,$(INC_DIR)/%,$(STRT_INC))
 STRT_INC_DIRS = -I $(INC_DIR) \
 			-I $(IMG_INC_DIR) \
+			-I $(PROC_INC_DIR) \
 			-I $(USR_INC_DIR)
 
 # target: dependencies

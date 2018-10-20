@@ -34,6 +34,7 @@
  ******************************************************************************/
 static	void	menu_tui_continue	(void);
 static	void	menu_tui_select		(void);
+static	void	menu_tui_series		(void);
 static	void	menu_tui_devel		(void);
 
 
@@ -47,7 +48,7 @@ void	menu_tui		(void)
 	/* Menu dimensions & options */
 	int	h;
 	int	w;
-	h	= 24;
+	h	= 23;
 	w	= 80;
 	int	N;
 	N	= 4;
@@ -107,17 +108,19 @@ static	void	menu_tui_continue	(void)
 	int	w;
 	int	r;
 	int	c;
-	h	= 24;
+	h	= 23;
 	w	= 80;
 	r	= 1;
 	c	= (80 - w) / 2;
 	int	N;
-	N	= 4;
-	struct Alx_Menu	mnu[4]	= {
-		{7, 4, "[0]	Back"},
+	N	= 6;
+	struct Alx_Menu	mnu[6]	= {
+		{8, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
-		{3, 4, "[2]	Change file name"},
-		{5, 4, "[3]	DEVEL"}
+		{3, 4, "[2]	Select"},
+		{4, 4, "[3]	Series"},
+		{5, 4, "[4]	Change file name"},
+		{6, 4, "[5]	DEVEL"}
 	};
 
 	/* Input box */
@@ -154,18 +157,93 @@ static	void	menu_tui_continue	(void)
 			break;
 
 		case 2:
+			alx_win_del(win);
+			menu_tui_select();
+			break;
+
+		case 3:
+			alx_win_del(win);
+			menu_tui_series();
+			break;
+
+		case 4:
 			save_clr();
 			alx_w_getfname(saved_path, saved_name, true, w2, r2,
 								txt[0], NULL);
 			alx_win_del(win);
 			break;
 
-		case 3:
+		case 5:
 			alx_win_del(win);
 			menu_tui_devel();
 			break;
 		}
 	}
+}
+
+static	void	menu_tui_select	(void)
+{
+	/* Menu dimensions & options */
+	WINDOW	*win;
+	int	h;
+	int	w;
+	int	r;
+	int	c;
+	h	= 23;
+	w	= 80;
+	r	= 1;
+	c	= (80 - w) / 2;
+	int	N;
+	N	= 3;
+	struct Alx_Menu	mnu[3]	= {
+		{6, 4, "[0]	Back"},
+		{2, 4, "[1]	Single image"},
+		{4, 4, "[2]	Series"}
+	};
+
+	/* Menu loop */
+	int	sw;
+	sw	= alx_menu(h, w, N, mnu, "SELECT MODE:");
+
+	/* Selection */
+	switch (sw) {
+	case 1:
+		start_mode =	START_SINGLE;
+		break;
+
+	case 2:
+		start_mode =	START_SERIES;
+		break;
+	}
+
+}
+
+static	void	menu_tui_series	(void)
+{
+	/* Menu dimensions & options */
+	WINDOW	*win;
+	int	h;
+	int	w;
+	h	= 23;
+	w	= 80;
+	int	N;
+	N	= 2;
+	struct Alx_Menu	mnu[2]	= {
+		{4, 4, "[0]	Back"},
+		{2, 4, "[1]	Label"}
+	};
+
+	/* Menu loop */
+	int	sw;
+	sw	= alx_menu(h, w, N, mnu, "SELECT LEVEL:");
+
+	/* Selection */
+	switch (sw) {
+	case 1:
+		proc_mode	= PROC_MODE_LABEL;
+		break;
+	}
+
 }
 
 static	void	menu_tui_devel		(void)
@@ -175,7 +253,7 @@ static	void	menu_tui_devel		(void)
 	int	w;
 	int	r;
 	int	c;
-	h	= 24;
+	h	= 23;
 	w	= 80;
 	r	= 1;
 	c	= (80 - w) / 2;

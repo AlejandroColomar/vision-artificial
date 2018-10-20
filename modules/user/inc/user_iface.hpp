@@ -115,6 +115,7 @@ extern	"C" {
 	void	user_iface_init		(void);
 	void	user_iface_cleanup	(void);
 	void	user_iface		(void);
+	void	user_iface_show_log	(const char *title, const char *subtitle);
 	void	user_iface_save_name	(const char *filepath, char *filename,
 					int destsize);
 	double	user_iface_getdbl	(double m, double def, double M,

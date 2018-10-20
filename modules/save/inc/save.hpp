@@ -55,7 +55,7 @@ extern	"C" {
 	void	save_cleanup	(void);
 	void	save_clr	(void);
 	void	load_image_file	(void);
-	void	save_image_file	(void);
+	void	save_image_file	(const char *save_as);
 
 
 /******************************************************************************

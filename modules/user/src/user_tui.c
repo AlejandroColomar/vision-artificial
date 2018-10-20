@@ -37,7 +37,6 @@ static	WINDOW	*win_help;
  ******* static functions *****************************************************
  ******************************************************************************/
 	/* Log */
-static	void	show_log	(const char *title, const char *subtitle);
 static	void	log_loop	(void);
 	/* Input */
 static	int	usr_input	(void);
@@ -85,10 +84,28 @@ int	user_tui		(const char *title, const char *subtitle)
 	int	action;
 
 	show_help();
-	show_log(title, subtitle);
+	user_tui_show_log(title, subtitle);
 	action	= usr_input();
 
 	return	action;
+}
+
+void	user_tui_show_log	(const char *title, const char *subtitle)
+{
+	/* Clear & box */
+	werase(win_log);
+	box(win_log, 0, 0);
+
+	/* Title */
+	alx_ncur_prn_title(win_log, title);
+	/* Subtitle */
+	alx_ncur_prn_subtitle(win_log, subtitle);
+
+	/* Log */
+	log_loop();
+
+	/* Refresh */
+	wrefresh(win_log);
 }
 
 void	user_tui_save_name	(const char *filepath, char *filename, int destsize)
@@ -151,24 +168,6 @@ void	user_tui_show_ocr	(void)
 /*	*	*	*	*	*	*	*	*	*
  *	*	* Log	*	*	*	*	*	*	*
  *	*	*	*	*	*	*	*	*	*/
-static	void	show_log	(const char *title, const char *subtitle)
-{
-	/* Clear & box */
-	werase(win_log);
-	box(win_log, 0, 0);
-
-	/* Title */
-	alx_ncur_prn_title(win_log, title);
-	/* Subtitle */
-	alx_ncur_prn_subtitle(win_log, subtitle);
-
-	/* Log */
-	log_loop();
-
-	/* Refresh */
-	wrefresh(win_log);
-}
-
 static	void	log_loop	(void)
 {
 	int	i;

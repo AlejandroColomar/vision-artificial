@@ -66,6 +66,7 @@ void	init_all	(int *argc, char *(*argv[]))
 	/* Modes */
 	menu_iface_mode		= MENU_IFACE_TUI;
 	user_iface_mode		= USER_IFACE_TUI;
+	user_iface_log.visible	= 2;
 
 	/* Parse command line options */
 	parser(*argc, *argv);

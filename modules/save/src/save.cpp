@@ -105,7 +105,7 @@ void	save_cleanup	(void)
 	image.release();
 }
 
-void	save_image_file	(void)
+void	save_image_file	(const char *save_as)
 {
 	char	file_name [FILENAME_MAX];
 	FILE	*fp;
@@ -115,7 +115,11 @@ void	save_image_file	(void)
 	snprintf(saved_name, FILENAME_MAX, "%s", SAVED_NAME_DEFAULT);
 
 	/* Request file name */
-	user_iface_save_name(saved_path, saved_name, FILENAME_MAX);
+	if (!save_as) {
+		user_iface_save_name(saved_path, saved_name, FILENAME_MAX);
+	} else {
+		snprintf(saved_name, FILENAME_MAX, "%s", save_as);
+	}
 
 	/* Prepend the path */
 	snprintf(file_name, FILENAME_MAX, "%s/%s", saved_path, saved_name);
