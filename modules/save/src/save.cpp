@@ -12,7 +12,11 @@
 		/* fscanf() & fprintf() & FILE & FILENAME_MAX & snprintf() */
 	#include <cstdio>
 		/* getenv() */
+<<<<<<< HEAD:modules/save/src/save.cpp
 	#include <cstdlib>
+=======
+	#include <stdlib.h>
+>>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/save/src/save.c
 
 /* Linux ---------------------------------------------------------------------*/
 		/* mkdir */
@@ -20,14 +24,25 @@
 
 /* Packages ------------------------------------------------------------------*/
 		/* opencv */
+<<<<<<< HEAD:modules/save/src/save.cpp
 	#include <opencv2/opencv.hpp>
+=======
+	#include <opencv/cv.h>
+		/* cvLoadImage & cvSaveImage */
+	#include <opencv/highgui.h>
+//	#include <opencv2/imgcodecs/imgcodecs_c.h>
+>>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/save/src/save.c
 
 /* Project -------------------------------------------------------------------*/
 		/* user_iface_save_name() */
 	#include "user_iface.hpp"
 
 /* Module --------------------------------------------------------------------*/
+<<<<<<< HEAD:modules/save/src/save.cpp
 	#include "save.hpp"
+=======
+	#include "save.h"
+>>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/save/src/save.c
 
 
 /******************************************************************************
@@ -90,7 +105,12 @@ void	load_image_file	(void)
 	snprintf(file_name, FILENAME_MAX, "%s/%s", saved_path, saved_name);
 
 	/* Load image */
+<<<<<<< HEAD:modules/save/src/save.cpp
 	image	= cv::imread(file_name, CV_LOAD_IMAGE_COLOR);
+=======
+//	image	= cvLoadImage(file_name, CV_LOAD_IMAGE_COLOR);
+	image	= cvvLoadImage(file_name);
+>>>>>>> 648c9aa9fca19cbf3730029691500fa92c1ad323:modules/save/src/save.c
 
 	/* Manage load error */
 	if (image.empty()) {
