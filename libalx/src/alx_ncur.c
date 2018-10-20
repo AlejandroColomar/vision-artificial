@@ -11,7 +11,6 @@
  *	*	*	*	*	*	*	*	*	*/
 	#include <ncurses.h>
 	#include <inttypes.h>
-	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <stdio.h>
 		/* strlen() */
@@ -153,12 +152,8 @@ int	alx_menu_2		(WINDOW *win,
 
 double	alx_w_getdbl		(int w, int r, const char *title,
 				double m, double def, double M,
-				const char *format, ...)
+				const char *help)
 {
-	/* Varargs */
-	va_list	args;
-	va_start(args, format);
-
 	/* Dimensions */
 	WINDOW	*win1;
 	int	h1;
@@ -197,10 +192,10 @@ double	alx_w_getdbl		(int w, int r, const char *title,
 
 	/* Help */
 	win2 =	newwin(h2, w2, r2, c2);
-	if (format == NULL) {
+	if (help == NULL) {
 		wprintw(win2, "Introduce a real number [%lf U %lf] (default %lf)", m, M, def);
 	} else {
-		vw_printw(win2, format, args);
+		wprintw(win2, "%s", help);
 	}
 	wrefresh(win2);
 
@@ -216,20 +211,13 @@ double	alx_w_getdbl		(int w, int r, const char *title,
 	alx_win_del(win2);
 	alx_win_del(win1);
 
-	/* End varargs */
-	va_end(args);
-
 	return	R;
 }
 
 int64_t	alx_w_getint		(int w, int r, const char *title,
 				double m, int64_t def, double M,
-				const char *format, ...)
+				const char *help)
 {
-	/* Varargs */
-	va_list	args;
-	va_start(args, format);
-
 	/* Dimensions */
 	WINDOW	*win1;
 	int	h1;
@@ -268,10 +256,10 @@ int64_t	alx_w_getint		(int w, int r, const char *title,
 
 	/* Help */
 	win2 =	newwin(h2, w2, r2, c2);
-	if (format == NULL) {
+	if (help == NULL) {
 		wprintw(win2, "Introduce an integer number [%lf U %lf] (default %"PRIi64")", m, M, def);
 	} else {
-		vw_printw(win2, format, args);
+		wprintw(win2, "%s", help);
 	}
 	wrefresh(win2);
 
@@ -287,20 +275,13 @@ int64_t	alx_w_getint		(int w, int r, const char *title,
 	alx_win_del(win2);
 	alx_win_del(win1);
 
-	/* End varargs */
-	va_end(args);
-
 	return	Z;
 }
 
 void	alx_w_getstr		(char *dest, int destsize,
 				int w, int r, const char *title,
-				const char *format, ...)
+				const char *help)
 {
-	/* Varargs */
-	va_list	args;
-	va_start(args, format);
-
 	/* Dimensions */
 	WINDOW	*win1;
 	int	h1;
@@ -339,10 +320,10 @@ void	alx_w_getstr		(char *dest, int destsize,
 
 	/* Help */
 	win2 =	newwin(h2, w2, r2, c2);
-	if (format == NULL) {
+	if (help == NULL) {
 		waddstr(win2, "Introduce a string");
 	} else {
-		vw_printw(win2, format, args);
+		wprintw(win2, "%s", help);
 	}
 	wrefresh(win2);
 
@@ -356,19 +337,12 @@ void	alx_w_getstr		(char *dest, int destsize,
 	alx_win_del(win3);
 	alx_win_del(win2);
 	alx_win_del(win1);
-
-	/* End varargs */
-	va_end(args);
 }
 
 void	alx_w_getfname		(const char *fpath, char *fname, bool exist,
 				int w, int r, const char *title,
-				const char *format, ...)
+				const char *help)
 {
-	/* Varargs */
-	va_list	args;
-	va_start(args, format);
-
 	/* Dimensions */
 	WINDOW	*win1;
 	int	h1;
@@ -407,10 +381,10 @@ void	alx_w_getfname		(const char *fpath, char *fname, bool exist,
 
 	/* Help */
 	win2 =	newwin(h2, w2, r2, c2);
-	if (format == NULL) {
+	if (help == NULL) {
 		waddstr(win2, "Introduce a file name");
 	} else {
-		vw_printw(win2, format, args);
+		wprintw(win2, "%s", help);
 	}
 	wrefresh(win2);
 
@@ -424,9 +398,6 @@ void	alx_w_getfname		(const char *fpath, char *fname, bool exist,
 	alx_win_del(win3);
 	alx_win_del(win2);
 	alx_win_del(win1);
-
-	/* End varargs */
-	va_end(args);
 }
 
 void	alx_ncur_prn_title	(WINDOW *win, const char *title)
@@ -641,7 +612,7 @@ static	void	loop_w_getstr		(char *dest, int destsize, WINDOW *win)
 	}
 
 	if (!err) {
-		snprintf(dest, destsize, buff);
+		snprintf(dest, destsize, "%s", buff);
 	}
 }
 

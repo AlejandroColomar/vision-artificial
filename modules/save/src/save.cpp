@@ -6,39 +6,38 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* opencv */
-	#include <cv.h>
-		/* cvLoadImage & cvSaveImage */
-	#include <highgui.h>
+/* Standard C ----------------------------------------------------------------*/
 		/* errno */
-	#include <errno.h>
+	#include <cerrno>
 		/* fscanf() & fprintf() & FILE & FILENAME_MAX & snprintf() */
-	#include <stdio.h>
+	#include <cstdio>
 		/* getenv() */
-	#include <stdlib.h>
+	#include <cstdlib>
+
+/* Linux ---------------------------------------------------------------------*/
 		/* mkdir */
 	#include <sys/stat.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* user_iface_save_name() */
-	#include "user_iface.h"
+/* Packages ------------------------------------------------------------------*/
+		/* opencv */
+	#include <opencv2/opencv.hpp>
 
-	#include "save.h"
+/* Project -------------------------------------------------------------------*/
+		/* user_iface_save_name() */
+	#include "user_iface.hpp"
+
+/* Module --------------------------------------------------------------------*/
+	#include "save.hpp"
 
 
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-struct _IplImage	*image;
-char			home_path [FILENAME_MAX];
-char			user_prog_path [FILENAME_MAX];
-char			saved_path [FILENAME_MAX];
-char			saved_name [FILENAME_MAX];
+class cv::Mat	image;
+char		home_path [FILENAME_MAX];
+char		user_prog_path [FILENAME_MAX];
+char		saved_path [FILENAME_MAX];
+char		saved_name [FILENAME_MAX];
 
 
 /******************************************************************************
@@ -61,7 +60,7 @@ void	save_init	(void)
 		switch (errno) {
 		case EACCES:
 			printf("err = EACCES");
-			exit(EXIT_FAILURE);
+//			exit(EXIT_FAILURE);
 			break;
 
 		case EEXIST:
@@ -70,7 +69,7 @@ void	save_init	(void)
 
 		default:
 			printf("WTF?!");
-			exit(EXIT_FAILURE);
+//			exit(EXIT_FAILURE);
 		}
 	}
 }
@@ -85,25 +84,25 @@ void	load_image_file	(void)
 	char	file_name [FILENAME_MAX];
 
 	/* Free old image */
-	cvReleaseImage(&image);
+	image.release();
 
 	/* File name */
 	snprintf(file_name, FILENAME_MAX, "%s/%s", saved_path, saved_name);
 
 	/* Load image */
-	image	= cvLoadImage(file_name, CV_LOAD_IMAGE_COLOR);
+	image	= cv::imread(file_name, CV_LOAD_IMAGE_COLOR);
 
 	/* Manage load error */
-	if (!image) {
+	if (image.empty()) {
 		printf("Could not load file: %s\n", file_name);
-		exit(0);
+//		exit(0);
 	}
 }
 
 void	save_cleanup	(void)
 {
 	/* Free old image */
-	cvReleaseImage(&image);
+	image.release();
 }
 
 void	save_image_file	(void)
@@ -137,7 +136,7 @@ void	save_image_file	(void)
 
 
 	/* Write to a new file */
-	cvSaveImage(file_name, image, NULL);
+	cv::imwrite(file_name, image);
 }
 
 

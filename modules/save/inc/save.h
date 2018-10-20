@@ -13,8 +13,7 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-		/* opencv */
-	#include <cv.h>
+/* Standard C ----------------------------------------------------------------*/
 		/* FILENAME_MAX */
 	#include <stdio.h>
 
@@ -32,21 +31,20 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-extern	struct _IplImage	*image;
-extern	char			home_path [FILENAME_MAX];
-extern	char			user_prog_path [FILENAME_MAX];
-extern	char			saved_path [FILENAME_MAX];
-extern	char			saved_name [FILENAME_MAX];
+	extern	char		home_path [FILENAME_MAX];
+	extern	char		user_prog_path [FILENAME_MAX];
+	extern	char		saved_path [FILENAME_MAX];
+	extern	char		saved_name [FILENAME_MAX];
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-void	save_init	(void);
-void	save_cleanup	(void);
-void	save_clr	(void);
-void	load_image_file	(void);
-void	save_image_file	(void);
+	void	save_init	(void);
+	void	save_cleanup	(void);
+	void	save_clr	(void);
+	void	load_image_file	(void);
+	void	save_image_file	(void);
 
 
 /******************************************************************************

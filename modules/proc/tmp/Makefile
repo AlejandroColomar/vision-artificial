@@ -15,10 +15,10 @@ SRC_DIR	= $(PROC_DIR)/src/
 _ALL	= proc.o
 ALL	= $(_ALL) proc_mod.o
 
-PROC_INC_IMG	= img_iface.h
-PROC_INC_USER	= user_iface.h
-PROC_INC	= proc.h
-PROC_DEPS	= $(SRC_DIR)/proc.c \
+PROC_INC_IMG	= img_iface.hpp
+PROC_INC_USER	= user_iface.hpp
+PROC_INC	= proc.hpp
+PROC_DEPS	= $(SRC_DIR)/proc.cpp \
 			$(patsubst %,$(INC_DIR)/%,$(PROC_INC)) \
 			$(patsubst %,$(IMG_INC_DIR)/%,$(PROC_INC_IMG)) \
 			$(patsubst %,$(USR_INC_DIR)/%,$(PROC_INC_USR))
@@ -39,8 +39,8 @@ proc_mod.o: $(_ALL)
 
 
 proc.s: $(PROC_DEPS)
-	$(Q)$(CC) $(CFLAGS) $(PROC_INC_DIRS) -S $< -o $@
-	@echo  "	CC	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(PROC_INC_DIRS) -S $< -o $@
+	@echo  "	CXX	$@"
 proc.o: proc.s
 	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"

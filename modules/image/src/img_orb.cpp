@@ -36,19 +36,19 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_orb_align	(struct _IplImage  *img_ref,
-				struct _IplImage  **imgptr2);
+static	void	img_orb_align	(class cv::Mat  *img_0,
+				class cv::Mat  *img_1);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_orb_act	(struct _IplImage  *img_ref,
-			struct _IplImage  **imgptr2, int action)
+void	img_orb_act	(class cv::Mat  *img_ref,
+			class cv::Mat  *imgptr, int action)
 {
 	switch (action) {
 	case IMG_ORB_ACT_ALIGN:
-		img_orb_align(img_ref, imgptr2);
+		img_orb_align(img_ref, imgptr);
 		break;
 	}
 }
@@ -57,16 +57,9 @@ void	img_orb_act	(struct _IplImage  *img_ref,
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_orb_align	(struct _IplImage  *img_ref,
-				struct _IplImage  **imgptr2)
+static	void	img_orb_align	(class cv::Mat  *img_0,
+				class cv::Mat  *img_1)
 {
-	/* Transform (struct _IplImage *) to (class cv::Mat) */
-	/* Make a copy so that they aren't modified */
-	class cv::Mat	img_0;
-	class cv::Mat	img_1;
-	img_0	= cv::cvarrToMat(img_ref, true);
-	img_1	= cv::cvarrToMat(*imgptr2, true);
-
 	/* Variables to store keypoints & descriptors */
 	std::vector <class cv::KeyPoint>	keypoints_0;
 	std::vector <class cv::KeyPoint>	keypoints_1;
@@ -74,14 +67,19 @@ static	void	img_orb_align	(struct _IplImage  *img_ref,
 	class cv::Mat				descriptors_1;
 
 	/* Detect ORB features & compute descriptors */
+#if 1
+	/* OpenCV 2.x */
 	class cv::ORB	orb;
-	orb(img_0, cv::Mat(), keypoints_0, descriptors_0);
-	orb(img_1, cv::Mat(), keypoints_1, descriptors_1);
-/*	class cv::Ptr <class cv::Feature2D>	orb;
+	orb(*img_0, cv::Mat(), keypoints_0, descriptors_0);
+	orb(*img_1, cv::Mat(), keypoints_1, descriptors_1);
+#else
+	/* OpenCV 3.x */
+	class cv::Ptr <class cv::Feature2D>	orb;
 	orb	= cv::ORB::create(MAX_FEATURES);
-	orb->detectAndCompute(img_0, cv::Mat(), keypoints_0, descriptors_0);
-	orb->detectAndCompute(img_1, cv::Mat(), keypoints_1, descriptors_1);
-*/
+	orb->detectAndCompute(*img_0, cv::Mat(), keypoints_0, descriptors_0);
+	orb->detectAndCompute(*img_1, cv::Mat(), keypoints_1, descriptors_1);
+#endif
+
 
 	/* Match structures */
 	std::vector <struct cv::DMatch>		matches;
@@ -99,7 +97,7 @@ static	void	img_orb_align	(struct _IplImage  *img_ref,
 
 	/* Draw top matches */
 	class cv::Mat	img_matches;
-	cv::drawMatches(img_1, keypoints_1, img_0, keypoints_0, matches,
+	cv::drawMatches(*img_1, keypoints_1, *img_0, keypoints_0, matches,
 								img_matches);
 	cv::imwrite("matches.jpg", img_matches);
 
@@ -118,22 +116,10 @@ static	void	img_orb_align	(struct _IplImage  *img_ref,
 
 	/* Use homography to warp image */
 	class cv::Mat	img_align;
-	cv::warpPerspective(img_1, img_align, img_hg, img_0.size());
+	cv::warpPerspective(*img_1, img_align, img_hg, img_0->size());
 
-	/* Write img_align into imgptr (need a tmp img;  don't know why) */
-	struct _IplImage	imgtmp;
-	int			cols;
-	int			rows;
-	int			depth;
-	int			chan;
-	cols		= img_align.cols;
-	rows		= img_align.rows;
-	depth		= (*imgptr2)->depth;
-	chan		= (*imgptr2)->nChannels;
-	cvReleaseImage(imgptr2);
-	*imgptr2	= cvCreateImage(cvSize(cols, rows), depth, chan);
-	imgtmp		= img_align;
-	cvCopy(&imgtmp, *imgptr2);
+	/* Write img_align into img_1 */
+	*img_1	= img_align;
 	img_align.release();
 }
 

@@ -6,24 +6,19 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* opencv */
-	#include <cv.h>
-		/* opencv gui */
-	#include <highgui.h>
+/* Standard C ----------------------------------------------------------------*/
+		/* intX_t */
+	#include <stdint.h>
 		/* snprintf() & fflush() */
 	#include <stdio.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-		/* img_iface_act() */
+/* Project -------------------------------------------------------------------*/
+		/* img_iface_act_nodata() */
 	#include "img_iface.h"
 		/* proc_iface() */
 	#include "proc.h"
 
+/* Module --------------------------------------------------------------------*/
 		/* user_clui() & ...save_name() */
 	#include "user_clui.h"
 		/* user_tui() & ...init() & ...cleanup() & ...save_name() */
@@ -48,8 +43,8 @@ struct User_Iface_Log	user_iface_log;
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-struct _IplImage	*user_iface_act	(int action);
-void			user_iface_show_ocr	(void);
+void	user_iface_act		(int action);
+void	user_iface_show_ocr	(void);
 
 
 /******************************************************************************
@@ -58,8 +53,7 @@ void			user_iface_show_ocr	(void);
 void	user_iface_init		(void)
 {
 	user_iface_log.len	= 0;
-
-	cvNamedWindow(WIN_NAME, CV_WINDOW_NORMAL);
+	user_iface_log.visible	= 2;
 
 	switch (user_iface_mode) {
 	case USER_IFACE_CLUI:
@@ -82,12 +76,10 @@ void	user_iface_cleanup	(void)
 		break;
 	}
 
-	cvDestroyWindow(WIN_NAME);
-
 	fflush(stdout);
 }
 
-void	user_iface		(struct _IplImage  *imgptr)
+void	user_iface		(void)
 {
 	char	title[TITLE_SIZE];
 	char	subtitle[TITLE_SIZE];
@@ -97,9 +89,8 @@ void	user_iface		(struct _IplImage  *imgptr)
 	snprintf(subtitle, TITLE_SIZE, "Subtitle");
 
 	do {
-		/* Display image and do NOT wait for any key to continue */
-		cvShowImage(WIN_NAME, imgptr);
-		cvWaitKey(WIN_TIMEOUT);
+		/* Display image */
+		img_iface_show();
 
 		/* Request user action */
 		switch (user_iface_mode) {
@@ -121,8 +112,6 @@ void	user_iface		(struct _IplImage  *imgptr)
 			user_iface_act(user_action);
 			break;
 		}
-
-		imgptr	= img_iface_show();
 	} while (user_action != USER_IFACE_ACT_QUIT);
 }
 
@@ -181,13 +170,9 @@ double	user_iface_getdbl	(double m, double def, double M,
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-struct _IplImage	*user_iface_act		(int action)
+void	user_iface_act		(int action)
 {
-	struct _IplImage	*imgptr;
-
 	if (action & USER_IFACE_ACT_USRI) {
-		imgptr	= NULL;
-
 		switch (action) {
 		case USER_IFACE_ACT_SHOW_OCR:
 			user_iface_show_ocr();
@@ -197,13 +182,11 @@ struct _IplImage	*user_iface_act		(int action)
 			break;
 		}
 	} else {
-		img_iface_act(action, NULL);
+		img_iface_act_nodata(action);
 	}
-
-	return	imgptr;
 }
 
-void			user_iface_show_ocr	(void)
+void	user_iface_show_ocr	(void)
 {
 	switch (user_iface_mode) {
 	case USER_IFACE_CLUI:

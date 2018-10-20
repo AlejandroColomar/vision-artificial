@@ -11,22 +11,18 @@
 
 
 /******************************************************************************
- ******* headers **************************************************************
- ******************************************************************************/
-/* Packages ------------------------------------------------------------------*/
-		/* struct _IplImage */
-	#include <cv.h>
-
-
-/******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
+/* Constants -----------------------------------------------------------------*/
 	# define	CONTOURS_MAX		(65536)
 	# define	OCR_TEXT_MAX		(1048576)
 	# define	ZB_CODES_MAX		(10)
 	# define	ZBAR_LEN_MAX		(1048576)
 
 	# define	IMG_IFACE_THR_OTSU	(-1)
+
+/* Functions -----------------------------------------------------------------*/
+	# define	img_iface_act_nodata(x)	img_iface_act(x, NULL);
 
 
 /******************************************************************************
@@ -50,8 +46,6 @@
 		IMG_IFACE_ACT_ROTATE_ORTO,
 		IMG_IFACE_ACT_ROTATE,
 		IMG_IFACE_ACT_SET_ROI,
-		IMG_IFACE_ACT_RESET_ROI,
-		IMG_IFACE_ACT_CROP,
 
 		IMG_IFACE_ACT_DILATE_ERODE,
 		IMG_IFACE_ACT_ERODE_DILATE,
@@ -83,6 +77,12 @@
 		IMG_IFACE_CMP_RED
 	};
 
+	enum	ImgI_Smooth {
+		IMGI_SMOOTH_MEAN = 0,
+		IMGI_SMOOTH_GAUSS,
+		IMGI_SMOOTH_MEDIAN
+	};
+
 	enum	Img_Iface_OCR_Lang {
 		IMG_IFACE_OCR_LANG_ENG = 0,
 		IMG_IFACE_OCR_LANG_SPA,
@@ -98,80 +98,16 @@
 /******************************************************************************
  ******* structs **************************************************************
  ******************************************************************************/
-/* img_cv --------------------------------------------------------------------*/
-	struct	Img_Iface_Data_Component {
-		int	cmp;
-	};
-
-	struct	Img_Iface_Data_Smooth {
-		int	method;
-		int	msk_siz;
-	};
-
-	struct	Img_Iface_Data_Threshold {
-		int	thr_typ;
-		int	thr_val;
-	};
-
-	struct	Img_Iface_Data_Adaptive_Thr {
-		int	method;
-		int	thr_typ;
-		int	nbh_val;
-	};
-
-	struct	Img_Iface_Data_Dilate_Erode {
-		int	i;
-	};
-
-	struct	Img_Iface_Data_Contours {
-		struct CvMemStorage	**storage;
-		struct CvSeq		**contours;
-		int			*n;
-	};
-
-	struct	Img_Iface_Data_Contours_Size {
-		struct CvSeq	*contours;
-		int		n;
-		double		area [CONTOURS_MAX];
-		double		perimeter [CONTOURS_MAX];
-	};
-
-	struct	Img_Iface_Data_MinARect {
-		struct CvSeq		*contours;
-		struct CvBox2D		*rect;
-	};
-
-	struct	Img_Iface_Data_Rotate_Orto {
-		int	n;
-	};
-
-	struct	Img_Iface_Data_Rotate {
-		struct CvPoint2D32f	center;
-		double			angle;
-	};
-
-	struct	Img_Iface_Data_SetROI {
-		struct CvRect	rect;
-	};
-
-/* img_zbar -------------------------------------------------------------------*/
-	struct	Img_Iface_Data_Decode {
-		int	code_type;
-	};
-
-	struct	Img_Iface_ZB_Codes {
-		int	n;
-		struct {
-			int	type;
-			char	sym_name [80];
-			char	data [ZBAR_LEN_MAX];
-		} arr [ZB_CODES_MAX];
-	};
-
-/* img_ocr -------------------------------------------------------------------*/
 	struct	Img_Iface_Data_Read {
 		int	lang;
 		int	conf;
+		struct {
+			void	*data;
+			int	width;
+			int	height;
+			int	B_per_pix;
+			int	B_per_line;
+		} img;
 	};
 
 
@@ -185,11 +121,12 @@
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void			img_iface_cleanup_main	(void);
-	struct _IplImage	*img_iface_load		(void);
-	void			img_iface_cleanup	(void);
-	void			img_iface_act		(int action, void *data);
-	struct _IplImage	*img_iface_show		(void);
+	void	img_iface_cleanup_main	(void);
+	void	img_iface_load		(void);
+	void	img_iface_cleanup	(void);
+		/* data should *always* be NULL */ 
+	void	img_iface_act		(int action, void *data);
+	void	img_iface_show		(void);
 
 
 /******************************************************************************

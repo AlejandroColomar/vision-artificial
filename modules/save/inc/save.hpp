@@ -18,7 +18,7 @@
 	#include <cstdio>
 
 /* Project -------------------------------------------------------------------*/
-		/* struct _IplImage */
+		/* opencv */
 	#include <opencv2/opencv.hpp>
 
 
@@ -41,11 +41,11 @@ extern	"C" {
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	struct _IplImage	*image;
-	extern	char			home_path [FILENAME_MAX];
-	extern	char			user_prog_path [FILENAME_MAX];
-	extern	char			saved_path [FILENAME_MAX];
-	extern	char			saved_name [FILENAME_MAX];
+	extern	class cv::Mat	image;
+	extern	char		home_path [FILENAME_MAX];
+	extern	char		user_prog_path [FILENAME_MAX];
+	extern	char		saved_path [FILENAME_MAX];
+	extern	char		saved_name [FILENAME_MAX];
 
 
 /******************************************************************************
@@ -67,7 +67,7 @@ extern	"C" {
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# endif				/* save.h */
+# endif				/* save.hpp */
 
 
 /******************************************************************************

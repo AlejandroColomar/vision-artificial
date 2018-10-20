@@ -185,8 +185,14 @@ static	void	log_loop	(void)
 		l_0	= 0;
 	}
 
-	for (i = i_0, l = l_0; i < user_iface_log.len; i++, l++) {
-		mvwprintw(win_log, (1 + l), (1 + 4 * user_iface_log.lvl[i]), user_iface_log.line[i]);
+	l	= l_0;
+	for (i = i_0; i < user_iface_log.len; i++) {
+		if (user_iface_log.lvl[i] <= user_iface_log.visible) {
+			mvwprintw(win_log, (1 + l),
+						(1 + 4 * user_iface_log.lvl[i]),
+						user_iface_log.line[i]);
+			l++;
+		}
 	}
 }
 
@@ -222,7 +228,7 @@ static	int	usr_input	(void)
 
 			switch (ch) {
 			case '0':
-				action	= USER_IFACE_ACT_PROC_ETIQUETA;
+				action	= USER_IFACE_ACT_PROC_LABEL;
 				break;
 			}
 			break;
@@ -347,12 +353,6 @@ static	int	usr_input	(void)
 				switch (ch) {
 				case '0':
 					action	= USER_IFACE_ACT_SET_ROI;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_RESET_ROI;
-					break;
-				case '2':
-					action	= USER_IFACE_ACT_CROP;
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -507,8 +507,6 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f141");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f142");
 	mvwprintw(win_help, r++, c, " - Set ROI:	%s",	"f150");
-	mvwprintw(win_help, r++, c, " - Reset ROI:	%s",	"f151");
-	mvwprintw(win_help, r++, c, " - Crop:	%s",		"f152");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Align:	%s",		"f40");

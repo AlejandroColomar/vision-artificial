@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
-VERSION		= 0
-PATCHLEVEL	= .6
+VERSION		= 2
+PATCHLEVEL	= ~a1
 SUBLEVEL	= 
 EXTRAVERSION	=
 NAME		=
@@ -101,7 +101,7 @@ export	SHARE_DIR
 ################################################################################
 # executables
 
-BIN_NAME	= vision-artificial
+BIN_NAME	= vision-artificial2
 
 export	BIN_NAME
 
@@ -120,10 +120,14 @@ export	LD
 # cflags
 CFLAGS_STD	= -std=c11
 
+CFLAGS_W	= -Wno-format-truncation
+CFLAGS_W       += -Wno-format-zero-length
+
 CFLAGS_PKG	= `pkg-config --cflags ncurses`
 CFLAGS_PKG     += `pkg-config --cflags opencv`
 CFLAGS_PKG     += `pkg-config --cflags zbar`
 CFLAGS_PKG     += `pkg-config --cflags tesseract`
+CFLAGS_PKG     += `pkg-config --cflags lept`
 
 CFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
 CFLAGS_D       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
@@ -131,7 +135,7 @@ CFLAGS_D       += -D 'SHARE_DIR="$(SHARE_DIR)"'
 CFLAGS_D       += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
 CFLAGS_D       += -D 'VAR_DIR="$(VAR_DIR)"'
 
-CFLAGS		= $(CFLAGS_STD) $(CFLAGS_PKG) $(CFLAGS_D)
+CFLAGS		= $(CFLAGS_STD) $(CFLAGS_W) $(CFLAGS_PKG) $(CFLAGS_D)
 
 export	CFLAGS
 
@@ -139,10 +143,14 @@ export	CFLAGS
 # c++flags
 CXXFLAGS_STD	= -std=c++17
 
+CXXFLAGS_W	= -Wno-format-truncation
+CXXFLAGS_W     += -Wno-format-zero-length
+
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv`
 CXXFLAGS_PKG   += `pkg-config --cflags zbar`
 CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
+CXXFLAGS_PKG   += `pkg-config --cflags lept`
 
 CXXFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
 CXXFLAGS_D     += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
@@ -150,7 +158,7 @@ CXXFLAGS_D     += -D 'SHARE_DIR="$(SHARE_DIR)"'
 CXXFLAGS_D     += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
 CXXFLAGS_D     += -D 'VAR_DIR="$(VAR_DIR)"'
 
-CXXFLAGS	= $(CXXFLAGS_STD) $(CXXFLAGS_PKG) $(CXXFLAGS_D)
+CXXFLAGS	= $(CXXFLAGS_STD) $(CXXFLAGS_W) $(CXXFLAGS_PKG) $(CXXFLAGS_D)
 
 export	CXXFLAGS
 
@@ -160,6 +168,7 @@ LIBS_PKG	= `pkg-config --libs ncurses`
 LIBS_PKG       += `pkg-config --libs opencv`
 LIBS_PKG       += `pkg-config --libs zbar`
 LIBS_PKG       += `pkg-config --libs tesseract`
+LIBS_PKG       += `pkg-config --libs lept`
 
 LIBS		= $(LIBS_PKG)
 

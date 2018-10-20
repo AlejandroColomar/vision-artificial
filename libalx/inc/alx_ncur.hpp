@@ -64,8 +64,7 @@ extern	"C" {
 					double		m,
 					double		def,
 					double		M,
-					const char	*format,
-							...);
+					const char	*help);
 
 	int64_t	alx_w_getint		(int		w,
 					int		r,
@@ -73,16 +72,14 @@ extern	"C" {
 					double		m,
 					int64_t		def,
 					double		M,
-					const char	*format,
-							...);
+					const char	*help);
 
 	void	alx_w_getstr		(char		*dest,
 					int		destsize,
 					int		w,
 					int		r,
 					const char	*title,
-					const char	*format,
-							...);
+					const char	*help);
 
 	void	alx_w_getfname		(const char	*fpath,
 					char		*fname,
@@ -90,8 +87,7 @@ extern	"C" {
 					int		w,
 					int		r,
 					const char	*title,
-					const char	*format,
-							...);
+					const char	*help);
 
 	void	alx_ncur_prn_title	(WINDOW		*win,
 					const char	*title);

@@ -7,38 +7,42 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
+		/* errno */
+	#include <cerrno>
 		/* INFINITY */
-	#include <math.h>
+	#include <cmath>
 		/* snprintf() */
-	#include <stdio.h>
+	#include <cstdio>
 
 /* Packages ------------------------------------------------------------------*/
-		/* opencv */
-	#include <cv.h>
+		/* openCV */
+	#include <opencv2/opencv.hpp>
 
 /* Project -------------------------------------------------------------------*/
 		/* load_image_file() */
-	#include "save.h"
+	#include "save.hpp"
 		/* user_iface_log */
-	#include "user_iface.h"
+	#include "user_iface.hpp"
 
 /* Module --------------------------------------------------------------------*/
 		/* img_cv_act() */
-	#include "img_cv.h"
+	#include "img_cv.hpp"
 		/* img_zb_act() */
-	#include "img_zbar.h"
+	#include "img_zbar.hpp"
 		/* OCR */
-	#include "img_ocr.h"
+	#include "img_ocr.hpp"
 		/* ORB */
-	#include "img_orb.h"
+	#include "img_orb.hpp"
 
-	#include "img_iface.h"
+	#include "img_iface.hpp"
 
 
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
 	# define	IMG_MEM_SIZE	(10)
+	# define	WIN_NAME	"Image"
+	# define	WIN_TIMEOUT	(500)
 
 
 /******************************************************************************
@@ -49,15 +53,13 @@
 	struct Img_Iface_ZB_Codes	zb_codes;
 
 /* Static --------------------------------------------------------------------*/
-static	struct _IplImage	*image_copy_old;
-static	struct _IplImage	*image_copy_tmp;
-static	struct _IplImage	*image_copy_usr;
-static	struct _IplImage	*image_mem [IMG_MEM_SIZE];
-static	struct _IplImage	*image_ref;
-static	struct CvMemStorage	*storage;
-static	struct CvSeq		*contours;
-static	int			contours_n;
-static	struct CvBox2D		rectangle;
+static	class cv::Mat					image_copy_old;
+static	class cv::Mat					image_copy_tmp;
+static	class cv::Mat					image_mem [IMG_MEM_SIZE];
+static	class cv::Mat					image_ref;
+static	std::vector <std::vector <cv::Point_ <int>>>	contours;
+static	class cv::Mat					hierarchy;
+static	class cv::RotatedRect				rectangle;
 
 
 /******************************************************************************
@@ -78,8 +80,6 @@ static	void	img_iface_min_area_rect	(void *data);
 static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
 static	void	img_iface_set_ROI	(void *data);
-static	void	img_iface_reset_ROI	(void);
-static	void	img_iface_crop		(void);
 
 static	void	img_iface_dilate_erode	(void *data);
 static	void	img_iface_erode_dilate	(void *data);
@@ -103,50 +103,46 @@ static	void	img_iface_save_file	(void);
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void			img_iface_init		(void)
+void	img_iface_init		(void)
 {
-	storage	= cvCreateMemStorage(0);
+	cv::namedWindow(WIN_NAME, cv::WINDOW_NORMAL);
 }
 
-void			img_iface_cleanup_main	(void)
+void	img_iface_cleanup_main	(void)
 {
 	int	i;
 
 	for (i = 0; i < IMG_MEM_SIZE; i++) {
-		cvReleaseImage(&image_mem[i]);
+		image_mem[i].release();
 	}
-	cvReleaseImage(&image_ref);
-	cvReleaseMemStorage(&storage);
+	image_ref.release();
+
+	cv::destroyAllWindows();
 }
 
-struct _IplImage	*img_iface_load		(void)
+void	img_iface_load		(void)
 {
 	/* Init */
 	img_iface_init();
 
 	/* Load file */
+	errno	= 0;
 	load_image_file();
 
-	/* Make a static copy of image */
-	cvReleaseImage(&image_copy_old);
-	image_copy_old	= cvCloneImage(image);
-	cvReleaseImage(&image_copy_tmp);
-	image_copy_tmp	= cvCloneImage(image);
-
-	/* Make a copy of the image so that it isn't modified by the user */
-	cvReleaseImage(&image_copy_usr);
-	image_copy_usr	= cvCloneImage(image_copy_tmp);
-	return	image_copy_tmp;
+	if (!errno) {
+		/* Make a static copy of image */
+		image.copyTo(image_copy_old);
+		image.copyTo(image_copy_tmp);
+	}
 }
 
-void			img_iface_cleanup	(void)
+void	img_iface_cleanup	(void)
 {
-	cvReleaseImage(&image_copy_old);
-	cvReleaseImage(&image_copy_tmp);
-	cvReleaseImage(&image_copy_usr);
+	image_copy_old.release();
+	image_copy_tmp.release();
 }
 
-void			img_iface_act		(int action, void *data)
+void	img_iface_act		(int action, void *data)
 {
 	switch (action) {
 	/* img_cv */
@@ -191,12 +187,6 @@ void			img_iface_act		(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_SET_ROI:
 		img_iface_set_ROI(data);
-		break;
-	case IMG_IFACE_ACT_RESET_ROI:
-		img_iface_reset_ROI();
-		break;
-	case IMG_IFACE_ACT_CROP:
-		img_iface_crop();
 		break;
 
 	case IMG_IFACE_ACT_DILATE_ERODE:
@@ -252,13 +242,10 @@ void			img_iface_act		(int action, void *data)
 	}
 }
 
-struct _IplImage	*img_iface_show		(void)
+void	img_iface_show		(void)
 {
-	/* Make a static copy of tmp so that it isn't modified by the user */
-	cvReleaseImage(&image_copy_usr);
-	image_copy_usr	= cvCloneImage(image_copy_tmp);
-
-	return	image_copy_usr;
+	cv::imshow(WIN_NAME, image_copy_tmp);
+	cv::waitKey(WIN_TIMEOUT);
 }
 
 
@@ -281,11 +268,11 @@ static	void	img_iface_invert	(void)
 static	void	img_iface_bgr2gray	(void)
 {
 	/* Must have 3 channels */
-	if (image_copy_tmp->nChannels != 3) {
+	if (image_copy_tmp.channels() != 3) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -304,11 +291,11 @@ static	void	img_iface_bgr2gray	(void)
 static	void	img_iface_component	(void *data)
 {
 	/* Must have 3 channels */
-	if (image_copy_tmp->nChannels != 3) {
+	if (image_copy_tmp.channels() != 3) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -341,11 +328,11 @@ static	void	img_iface_component	(void *data)
 static	void	img_iface_smooth	(void *data)
 {
 	/* Must have 1 channel */
-	if (image_copy_tmp->nChannels != 1) {
+	if (image_copy_tmp.channels() != 1) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -357,7 +344,7 @@ static	void	img_iface_smooth	(void *data)
 		/* Ask user */
 		char	title [80];
 		snprintf(title, 80, "Method: MEAN=1, GAUSS=2, MEDIAN=3");
-		data_tmp.method		= user_iface_getint(0, 3, 4, title, NULL);
+		data_tmp.method		= user_iface_getint(1, 3, 3, title, NULL);
 
 		snprintf(title, 80, "Mask size: 3, 5, 7, ...");
 		data_tmp.msk_siz	= user_iface_getint(3, 3, INFINITY, title, NULL);
@@ -383,11 +370,11 @@ static	void	img_iface_smooth	(void *data)
 static	void	img_iface_threshold	(void *data)
 {
 	/* Must have 1 channel */
-	if (image_copy_tmp->nChannels != 1) {
+	if (image_copy_tmp.channels() != 1) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -424,11 +411,11 @@ static	void	img_iface_threshold	(void *data)
 static	void	img_iface_adaptive_thr	(void *data)
 {
 	/* Must have 1 channel */
-	if (image_copy_tmp->nChannels != 1) {
+	if (image_copy_tmp.channels() != 1) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -521,11 +508,11 @@ static	void	img_iface_erode		(void *data)
 static	void	img_iface_contours	(void *data)
 {
 	/* Must have 1 channel */
-	if (image_copy_tmp->nChannels != 1) {
+	if (image_copy_tmp.channels() != 1) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -534,13 +521,8 @@ static	void	img_iface_contours	(void *data)
 	/* Data */
 	struct Img_Iface_Data_Contours	data_tmp;
 	if (!data) {
-		data_tmp.storage	= &storage;
-		cvClearMemStorage(*(data_tmp.storage));
-
 		data_tmp.contours	= &contours;
-		*(data_tmp.contours)	= NULL;
-
-		data_tmp.n		= &contours_n;
+		data_tmp.hierarchy	= &hierarchy;
 
 		data	= (void *)&data_tmp;
 	}
@@ -552,8 +534,8 @@ static	void	img_iface_contours	(void *data)
 	struct Img_Iface_Data_Contours	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Contours *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Contours n=%i",
-						*(data_cast->n));
+					"Contours n=%i",
+					(int)data_cast->contours->size());
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 }
@@ -563,9 +545,7 @@ static	void	img_iface_contours_size	(void *data)
 	/* Data */
 	struct Img_Iface_Data_Contours_Size	data_tmp;
 	if (!data) {
-		data_tmp.contours	= contours;
-
-		data_tmp.n		= contours_n;
+		data_tmp.contours	= &contours;
 
 		data	= (void *)&data_tmp;
 	}
@@ -577,12 +557,11 @@ static	void	img_iface_contours_size	(void *data)
 	struct Img_Iface_Data_Contours_Size	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Contours_Size *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Contours size:",
-						data_cast->n);
+						"Contours size:");
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 	int	i;
-	for (i = 0; i < data_cast->n; i++) {
+	for (i = 0; i < data_cast->contours->size(); i++) {
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"cnt[%i]: A=%lf; P=%lf;",
 							i,
@@ -598,7 +577,7 @@ static	void	img_iface_min_area_rect	(void *data)
 	/* Data */
 	struct Img_Iface_Data_MinARect	data_tmp;
 	if (!data) {
-		data_tmp.contours	= contours;
+		data_tmp.contour	= &(contours[0]);
 
 		data_tmp.rect		= &rectangle;
 
@@ -664,7 +643,7 @@ static	void	img_iface_rotate	(void *data)
 	struct Img_Iface_Data_Rotate	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Rotate *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Rotate (%.2f,%.2f) angle=%lfº",
+						"Rotate (%.2f,%.2f) %lfº",
 						data_cast->center.x,
 						data_cast->center.y,
 						data_cast->angle);
@@ -684,22 +663,22 @@ static	void	img_iface_set_ROI	(void *data)
 		char	title [80];
 		snprintf(title, 80, "Origin:  x:");
 		data_tmp.rect.x		= user_iface_getint(0, 0,
-					image_copy_tmp->width,
+					image_copy_tmp.cols,
 					title, NULL);
 
 		snprintf(title, 80, "Origin:  y:");
 		data_tmp.rect.y		= user_iface_getint(0, 0,
-					image_copy_tmp->height,
+					image_copy_tmp.rows,
 					title, NULL);
 
 		snprintf(title, 80, "Width:");
 		data_tmp.rect.width	= user_iface_getint(1, 1,
-					image_copy_tmp->width - data_tmp.rect.x,
+					image_copy_tmp.cols - data_tmp.rect.x,
 					title, NULL);
 
 		snprintf(title, 80, "Height:");
 		data_tmp.rect.height	= user_iface_getint(1, 1,
-					image_copy_tmp->height - data_tmp.rect.y,
+					image_copy_tmp.rows - data_tmp.rect.y,
 					title, NULL);
 
 		data	= (void *)&data_tmp;
@@ -719,30 +698,6 @@ static	void	img_iface_set_ROI	(void *data)
 
 	/* Set ROI */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_SET_ROI, data);
-}
-
-static	void	img_iface_reset_ROI	(void)
-{
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Reset ROI");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
-	/* Set ROI */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_RESET_ROI, NULL);
-}
-
-static	void	img_iface_crop		(void)
-{
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Crop");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
-	/* Set ROI */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_CROP, NULL);
 }
 
 static	void	img_iface_dilate_erode	(void *data)
@@ -827,11 +782,11 @@ static	void	img_iface_rotate_2rect	(void *data)
 static	void	img_iface_decode	(void *data)
 {
 	/* Must have 1 channel */
-	if (image_copy_tmp->nChannels != 1) {
+	if (image_copy_tmp.channels() != 1) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -843,7 +798,9 @@ static	void	img_iface_decode	(void *data)
 		/* Ask user */
 		char	title [80];
 		snprintf(title, 80, "Type of code: (0 for all)");
-		data_tmp.code_type	= user_iface_getint(0, 0, INT_MAX, title, NULL);
+		data_tmp.code_type	= (enum zbar::zbar_symbol_type_e)
+						user_iface_getint(0, 0, INT_MAX,
+								title, NULL);
 
 		data	= (void *)&data_tmp;
 	}
@@ -875,7 +832,7 @@ static	void	img_iface_decode	(void *data)
 							"%s -- '%s'",
 							zb_codes.arr[i].sym_name,
 							zb_codes.arr[i].data);
-			user_iface_log.lvl[user_iface_log.len]	= 1;
+			user_iface_log.lvl[user_iface_log.len]	= 2;
 			(user_iface_log.len)++;
 		}
 	}
@@ -884,6 +841,17 @@ static	void	img_iface_decode	(void *data)
 /* img_ocr -------------------------------------------------------------------*/
 static	void	img_iface_read		(void *data)
 {
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
 	/* Data */
 	struct Img_Iface_Data_Read	data_tmp;
 	if (!data) {
@@ -908,15 +876,22 @@ static	void	img_iface_read		(void *data)
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
+	/* Adapt image data */
+	data_cast->img.data		= image_copy_tmp.data;
+	data_cast->img.width		= image_copy_tmp.size().width;
+	data_cast->img.height		= image_copy_tmp.size().height;
+	data_cast->img.B_per_pix	= image_copy_tmp.channels();
+	data_cast->img.B_per_line	= image_copy_tmp.step1();
+
 	/* OCR */
-	img_ocr_act(&image_copy_tmp, IMG_OCR_ACT_READ, data);
+	img_ocr_act(IMG_OCR_ACT_READ, data);
 
 	/* Results */
 	if (img_ocr_text[0] == '\0') {
 		/* No text found */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! No text detected");
-		user_iface_log.lvl[user_iface_log.len]	= 1;
+		user_iface_log.lvl[user_iface_log.len]	= 2;
 		(user_iface_log.len)++;
 	}
 }
@@ -925,11 +900,11 @@ static	void	img_iface_read		(void *data)
 static	void	img_iface_align		(void)
 {
 	/* Must have defined a reference */
-	if (!image_ref) {
+	if (image_ref.empty()) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Reference is NULL");
-		user_iface_log.lvl[user_iface_log.len]	= 0;
+		user_iface_log.lvl[user_iface_log.len]	= 1;
 		(user_iface_log.len)++;
 
 		return;
@@ -942,7 +917,7 @@ static	void	img_iface_align		(void)
 	(user_iface_log.len)++;
 
 	/* Align to reference image_ref */
-	img_orb_act(image_ref, &image_copy_tmp, IMG_ORB_ACT_ALIGN);
+	img_orb_act(&image_ref, &image_copy_tmp, IMG_ORB_ACT_ALIGN);
 }
 
 /* img_iface -----------------------------------------------------------------*/
@@ -951,12 +926,12 @@ static	void	img_iface_apply		(void)
 	/* Write into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Apply changes");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
+	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
 	/* Write tmp into old */
-	cvReleaseImage(&image_copy_old);
-	image_copy_old	= cvCloneImage(image_copy_tmp);
+	image_copy_old.release();
+	image_copy_tmp.copyTo(image_copy_old);
 }
 
 static	void	img_iface_discard	(void)
@@ -964,25 +939,16 @@ static	void	img_iface_discard	(void)
 	/* Write into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Discard changes");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
+	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
 	/* Discard tmp image copy */
-	cvReleaseImage(&image_copy_tmp);
-	image_copy_tmp	= cvCloneImage(image_copy_old);
+	image_copy_tmp.release();
+	image_copy_old.copyTo(image_copy_tmp);
 }
 
 static	void	img_iface_save_mem	(void *data)
 {
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"Save to memory");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
-	(user_iface_log.len)++;
-
-	/* Apply changes before saving */
-	img_iface_apply();
-
 	/* Which memory to use */
 	int	x;
 	if (!data) {
@@ -1001,18 +967,12 @@ static	void	img_iface_save_mem	(void *data)
 	(user_iface_log.len)++;
 
 	/* Write into mem */
-	cvReleaseImage(&image_mem[x]);
-	image_mem[x]	= cvCloneImage(image_copy_old);
+	image_mem[x].release();
+	image_copy_tmp.copyTo(image_mem[x]);
 }
 
 static	void	img_iface_load_mem	(void *data)
 {
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"Load from memory");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
-	(user_iface_log.len)++;
-
 	/* Which memory to use */
 	int	x;
 	if (!data) {
@@ -1030,12 +990,12 @@ static	void	img_iface_load_mem	(void *data)
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
-	if (image_mem[x]) {
+	if (!image_mem[x].empty()) {
 		/* Discard tmp image copy */
-		cvReleaseImage(&image_copy_tmp);
+		image_copy_tmp.release();
 
 		/* Load from mem */
-		image_copy_tmp	= cvCloneImage(image_mem[x]);
+		image_mem[x].copyTo(image_copy_tmp);
 	}
 }
 
@@ -1044,15 +1004,13 @@ static	void	img_iface_save_ref	(void)
 	/* Write into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Save to reference");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
+	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
-	/* Apply changes before saving */
-	img_iface_apply();
-
 	/* Write into ref */
-	cvReleaseImage(&image_ref);
-	image_ref	= cvCloneImage(image_copy_old);
+	image_ref.release();
+	image_copy_tmp.copyTo(image_ref);
+	image_ref	= image_copy_tmp;
 }
 
 /* save ----------------------------------------------------------------------*/
@@ -1060,22 +1018,13 @@ static	void	img_iface_save_file	(void)
 {
 	/* Write into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"Save to file");
-	user_iface_log.lvl[user_iface_log.len]	= 0;
-	(user_iface_log.len)++;
-
-	/* Apply changes before saving */
-	img_iface_apply();
-
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"Save as...");
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
 	/* Write into image struct (save.c) */
-	cvReleaseImage(&image);
-	image	= cvCloneImage(image_copy_old);
+	image.release();
+	image_copy_tmp.copyTo(image);
 
 	/* Save into file */
 	save_image_file();

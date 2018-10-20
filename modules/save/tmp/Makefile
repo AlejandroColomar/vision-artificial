@@ -14,9 +14,9 @@ SRC_DIR	= $(SAVE_DIR)/src/
 _ALL	= save.o
 ALL	= $(_ALL) save_mod.o
 
-SAVE_INC_VIEW	= user_iface.h
-SAVE_INC	= save.h
-SAVE_DEPS	= $(SRC_DIR)/save.c \
+SAVE_INC_VIEW	= user_iface.hpp
+SAVE_INC	= save.hpp
+SAVE_DEPS	= $(SRC_DIR)/save.cpp \
 			$(patsubst %,$(INC_DIR)/%,$(SAVE_INC)) \
 			$(patsubst %,$(USR_INC_DIR)/%,$(SAVE_INC_USR))
 SAVE_INC_DIRS	= -I $(INC_DIR) \
@@ -35,8 +35,8 @@ save_mod.o: $(_ALL)
 	
 
 save.s: $(SAVE_DEPS)
-	$(Q)$(CC) $(CFLAGS) $(SAVE_INC_DIRS) -S $< -o $@
-	@echo  "	CC	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(SAVE_INC_DIRS) -S $< -o $@
+	@echo  "	CXX	$@"
 save.o: save.s
 	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"

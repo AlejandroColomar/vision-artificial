@@ -14,14 +14,10 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Packages ------------------------------------------------------------------*/
-		/* struct _IplImage */
+		/* opencv */
 	#include <opencv2/opencv.hpp>
-
-
-/******************************************************************************
- ******* C wrapper ************************************************************
- ******************************************************************************/
-extern	"C" {
+		/* zbar */
+	#include <zbar.h>
 
 
 /******************************************************************************
@@ -56,8 +52,6 @@ extern	"C" {
 		IMG_IFACE_ACT_ROTATE_ORTO,
 		IMG_IFACE_ACT_ROTATE,
 		IMG_IFACE_ACT_SET_ROI,
-		IMG_IFACE_ACT_RESET_ROI,
-		IMG_IFACE_ACT_CROP,
 
 		IMG_IFACE_ACT_DILATE_ERODE,
 		IMG_IFACE_ACT_ERODE_DILATE,
@@ -87,6 +81,12 @@ extern	"C" {
 		IMG_IFACE_CMP_BLUE = 0,
 		IMG_IFACE_CMP_GREEN,
 		IMG_IFACE_CMP_RED
+	};
+
+	enum	ImgI_Smooth {
+		IMGI_SMOOTH_MEAN = 1,
+		IMGI_SMOOTH_GAUSS,
+		IMGI_SMOOTH_MEDIAN
 	};
 
 	enum	Img_Iface_OCR_Lang {
@@ -130,21 +130,19 @@ extern	"C" {
 	};
 
 	struct	Img_Iface_Data_Contours {
-		struct CvMemStorage	**storage;
-		struct CvSeq		**contours;
-		int			*n;
+		std::vector <std::vector <class cv::Point_ <int>>>	*contours;
+		class cv::Mat						*hierarchy;
 	};
 
 	struct	Img_Iface_Data_Contours_Size {
-		struct CvSeq	*contours;
-		int		n;
-		double		area [CONTOURS_MAX];
-		double		perimeter [CONTOURS_MAX];
+		std::vector <std::vector <class cv::Point_ <int>>>	*contours;
+		double							area [CONTOURS_MAX];
+		double							perimeter [CONTOURS_MAX];
 	};
 
 	struct	Img_Iface_Data_MinARect {
-		struct CvSeq	*contours;
-		struct CvBox2D	*rect;
+		std::vector <class cv::Point_ <int>>	*contour;
+		class cv::RotatedRect			*rect;
 	};
 
 	struct	Img_Iface_Data_Rotate_Orto {
@@ -152,25 +150,25 @@ extern	"C" {
 	};
 
 	struct	Img_Iface_Data_Rotate {
-		struct CvPoint2D32f	center;
-		double			angle;
+		class cv::Point_ <float>	center;
+		double				angle;
 	};
 
 	struct	Img_Iface_Data_SetROI {
-		struct CvRect	rect;
+		class cv::Rect_ <int>	rect;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/
 	struct	Img_Iface_Data_Decode {
-		int	code_type;
+		enum zbar::zbar_symbol_type_e	code_type;
 	};
 
 	struct	Img_Iface_ZB_Codes {
 		int	n;
 		struct {
-			int	type;
-			char	sym_name [80];
-			char	data [ZBAR_LEN_MAX];
+			enum zbar::zbar_symbol_type_e	type;
+			char				sym_name [80];
+			char				data [ZBAR_LEN_MAX];
 		} arr [ZB_CODES_MAX];
 	};
 
@@ -178,7 +176,20 @@ extern	"C" {
 	struct	Img_Iface_Data_Read {
 		int	lang;
 		int	conf;
+		struct {
+			void	*data;
+			int	width;
+			int	height;
+			int	B_per_pix;
+			int	B_per_line;
+		} img;
 	};
+
+
+/******************************************************************************
+ ******* C wrapper ************************************************************
+ ******************************************************************************/
+extern	"C" {
 
 
 /******************************************************************************
@@ -191,11 +202,11 @@ extern	"C" {
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void			img_iface_cleanup_main	(void);
-	struct _IplImage	*img_iface_load		(void);
-	void			img_iface_cleanup	(void);
-	void			img_iface_act		(int action, void *data);
-	struct _IplImage	*img_iface_show		(void);
+	void	img_iface_cleanup_main	(void);
+	void	img_iface_load		(void);
+	void	img_iface_cleanup	(void);
+	void	img_iface_act		(int action, void *data);
+	void	img_iface_show		(void);
 
 
 /******************************************************************************

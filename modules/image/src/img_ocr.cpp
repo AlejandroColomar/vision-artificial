@@ -7,42 +7,43 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
-		/* INT_MAX */
-	#include <limits.h>
 		/* snprintf() & FILENAME_MAX */
-	#include <stdio.h>
+	#include <cstdio>
 
 /* Packages ------------------------------------------------------------------*/
+		/* opencv */
+	#include <opencv2/opencv.hpp>
 		/* OCR Tesseract */
-	#include <tesseract/capi.h>
+	#include <tesseract/baseapi.h>
+	#include <leptonica/allheaders.h>
 
 /* Project -------------------------------------------------------------------*/
 		/* user_iface_log */
-	#include "user_iface.h"
+	#include "user_iface.hpp"
 		/* share_path */
-	#include "about.h"
+	#include "about.hpp"
 
 /* Module --------------------------------------------------------------------*/
 		/* data & img_ocr_text & OCR_TEXT_MAX */
-	#include "img_iface.h"
+	#include "img_iface.hpp"
 
-	#include "img_ocr.h"
+	#include "img_ocr.hpp"
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(void *data);
+static	void	img_ocr_read	(class cv::Mat  *imgptr, void *data);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_ocr_act	(int action, void *data)
+void	img_ocr_act	(class cv::Mat  *imgptr, int action, void *data)
 {
 	switch (action) {
 	case IMG_OCR_ACT_READ:
-		img_ocr_read(data);
+		img_ocr_read(imgptr, data);
 		break;
 	}
 }
@@ -51,18 +52,14 @@ void	img_ocr_act	(int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(void *data)
+static	void	img_ocr_read	(class cv::Mat  *imgptr, void *data)
 {
-	struct TessBaseAPI	*handle_ocr;
-
-	/* Data */
-	struct Img_Iface_Data_Read	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Read *)data;
+	class tesseract::TessBaseAPI	*handle_ocr;
 
 	/* Language */
 	int	lang;
 	char	lang_str [3 + 1];
-	lang	= data_cast->lang;
+	lang	= ((struct Img_Iface_Data_Read *)data)->lang;
 	switch (lang) {
 	case 0:
 		sprintf(lang_str, "eng");
@@ -78,7 +75,7 @@ static	void	img_ocr_read	(void *data)
 	/* Config file */
 	int	conf;
 	char	conf_str [FILENAME_MAX];
-	conf	= data_cast->conf;
+	conf	= ((struct Img_Iface_Data_Read *)data)->conf;
 	switch (conf) {
 	case 1:
 		sprintf(conf_str, "%s/%s", share_path, "price");
@@ -86,30 +83,26 @@ static	void	img_ocr_read	(void *data)
 	}
 
 	/* init OCR */
-	handle_ocr	= TessBaseAPICreate();
-	TessBaseAPIInit2(handle_ocr, NULL, lang_str,
-						OEM_CUBE_ONLY);
+	handle_ocr	= new tesseract::TessBaseApi();
+	handle_ocr->Init(NULL, lang_str, tesseract::OEM_TESSERACT_CUBE_COMBINED);
 	if (conf) {
 		/* Configure OCR (whitelist chars) */
-		TessBaseAPIReadConfigFile(handle_ocr, conf_str);
+		handle_ocr->ReadConfigFile(conf_str);
 	}
 
 	/* scan image for text */
-	TessBaseAPISetImage(handle_ocr, data_cast->img.data,
-				data_cast->img.width, data_cast->img.height,
-				data_cast->img.B_per_pix,
-				data_cast->img.B_per_line);
-	TessBaseAPIRecognize(handle_ocr, NULL);
+	handle_ocr->SetImage(imgptr->data, imgptr->cols, imgptr->rows,
+				imgptr->depth() / 8, imgptr->step);
 	char	*txt;
-	txt	= TessBaseAPIGetUTF8Text(handle_ocr);
+	txt	= handle_ocr->GetUTF8Text();
 
 	/* Copy text to global variable */
 	snprintf(img_ocr_text, OCR_TEXT_MAX, "%s", txt);
 
 	/* cleanup */
-	TessDeleteText(txt);
-	TessBaseAPIEnd(handle_ocr);
-	TessBaseAPIDelete(handle_ocr);
+	delete []	txt;
+	handle_ocr->Clear();
+	handle_ocr->End();
 }
 
 

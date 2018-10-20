@@ -11,19 +11,18 @@
 
 
 /******************************************************************************
- ******* headers **************************************************************
- ******************************************************************************/
-	/* struct IplImage */
-	#include <cv.h>
-
-
-/******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
 	# define	LOG_LEN		(1024)
 	# define	LOG_LINE_LEN	(35)
-	# define	WIN_NAME	"Image"
-	# define	WIN_TIMEOUT	(500)
+
+
+/******************************************************************************
+ ******* headers **************************************************************
+ ******************************************************************************/
+/* Standard C ----------------------------------------------------------------*/
+		/* intX_t */
+	#include <stdint.h>
 
 
 /******************************************************************************
@@ -53,8 +52,6 @@
 		USER_IFACE_ACT_ROTATE_ORTO,
 		USER_IFACE_ACT_ROTATE,
 		USER_IFACE_ACT_SET_ROI,
-		USER_IFACE_ACT_RESET_ROI,
-		USER_IFACE_ACT_CROP,
 
 		USER_IFACE_ACT_DILATE_ERODE,
 		USER_IFACE_ACT_ERODE_DILATE,
@@ -80,7 +77,7 @@
 		USER_IFACE_ACT_SAVE_FILE,
 
 		USER_IFACE_ACT_PROC = 0x4000,
-		USER_IFACE_ACT_PROC_ETIQUETA,
+		USER_IFACE_ACT_PROC_LABEL,
 
 		USER_IFACE_ACT_USRI = 0x8000,
 		USER_IFACE_ACT_SHOW_OCR,
@@ -95,27 +92,29 @@
 		int	len;
 		char	line [LOG_LEN] [LOG_LINE_LEN];
 		int	lvl [LOG_LEN];
+		int	visible;
 	};
 
 
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-extern	int			user_iface_mode;
-extern	struct User_Iface_Log	user_iface_log;
+	extern	int			user_iface_mode;
+	extern	struct User_Iface_Log	user_iface_log;
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-void	user_iface_init		(void);
-void	user_iface_cleanup	(void);
-void	user_iface		(struct _IplImage  *imgptr);
-void	user_iface_save_name	(const char *filepath, char *filename, int destsize);
-double	user_iface_getdbl	(double m, double def, double M,
-				const char *title, const char *help);
-int64_t	user_iface_getint	(double m, int64_t def, double M,
-				const char *title, const char *help);
+	void	user_iface_init		(void);
+	void	user_iface_cleanup	(void);
+	void	user_iface		(void);
+	void	user_iface_save_name	(const char *filepath, char *filename,
+					int destsize);
+	double	user_iface_getdbl	(double m, double def, double M,
+					const char *title, const char *help);
+	int64_t	user_iface_getint	(double m, int64_t def, double M,
+					const char *title, const char *help);
 
 
 /******************************************************************************
