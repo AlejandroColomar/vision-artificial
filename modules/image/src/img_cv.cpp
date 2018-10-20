@@ -234,7 +234,7 @@ static	void	img_cv_dilate		(class cv::Mat  *imgptr, void *data)
 
 	/* Dilate */
 	cv::dilate(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_CONSTANT, 0);
+							cv::BORDER_REPLICATE);
 }
 
 static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
@@ -249,7 +249,7 @@ static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
 
 	/* Erode */
 	cv::erode(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_CONSTANT, 0);
+							cv::BORDER_REPLICATE);
 }
 
 static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)

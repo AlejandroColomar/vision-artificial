@@ -53,7 +53,6 @@ void	user_iface_show_ocr	(void);
 void	user_iface_init		(void)
 {
 	user_iface_log.len	= 0;
-	user_iface_log.visible	= 2;
 
 	switch (user_iface_mode) {
 	case USER_IFACE_CLUI:
@@ -106,13 +105,26 @@ void	user_iface		(void)
 		/* Do action */
 		switch (user_action & 0xF000) {
 		case USER_IFACE_ACT_PROC:
-			proc_iface(user_action);
+			proc_iface_single();
 			break;
 		default:
 			user_iface_act(user_action);
 			break;
 		}
 	} while (user_action != USER_IFACE_ACT_QUIT);
+}
+
+void	user_iface_show_log	(const char *title, const char *subtitle)
+{
+	switch (user_iface_mode) {
+	case USER_IFACE_CLUI:
+		user_clui_show_log(title, subtitle);
+		break;
+
+	case USER_IFACE_TUI:
+		user_tui_show_log(title, subtitle);
+		break;
+	}
 }
 
 void	user_iface_save_name	(const char *filepath, char *filename, int destsize)

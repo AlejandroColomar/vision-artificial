@@ -31,7 +31,6 @@
  ******* static functions *****************************************************
  ******************************************************************************/
 	/* Play */
-static	void	show_log	(const char *title, const char *subtitle);
 static	void	log_loop	(void);
 	/* Input */
 static	int	usr_input	(void);
@@ -48,7 +47,7 @@ int	user_clui		(const char *title, const char *subtitle)
 
 	/* User action */
 	show_help();
-	show_log(title, subtitle);
+	user_clui_show_log(title, subtitle);
 	action	= usr_input();
 
 	return	action;
@@ -61,14 +60,7 @@ void	user_clui_save_name	(const char *filepath, char *filename, int destsize)
 	fgets(filename, destsize, stdin);
 }
 
-
-/******************************************************************************
- ******* static functions *****************************************************
- ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Log	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-static	void	show_log	(const char *title, const char *subtitle)
+void	user_clui_show_log	(const char *title, const char *subtitle)
 {
 	puts("________________________________________________________________________________");
 
@@ -81,13 +73,27 @@ static	void	show_log	(const char *title, const char *subtitle)
 
 }
 
+
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
+/*	*	*	*	*	*	*	*	*	*
+ *	*	* Log	*	*	*	*	*	*	*
+ *	*	*	*	*	*	*	*	*	*/
+
 static	void	log_loop	(void)
 {
-	int	i;
+	static	int	i	= 0;
+	int	lvl;
 
 	putchar('\n');
-	for (i = 0; i < user_iface_log.len; i++) {
-		printf("%s\n", user_iface_log.line[i]);
+	for (; i < user_iface_log.len; i++) {
+		if (user_iface_log.lvl[i] <= user_iface_log.visible) {
+			for (lvl = 0; lvl < user_iface_log.lvl[i]; lvl++) {
+				printf("\t");
+			}
+			printf("%s\n", user_iface_log.line[i]);
+		}
 	}
 	putchar('\n');
 }

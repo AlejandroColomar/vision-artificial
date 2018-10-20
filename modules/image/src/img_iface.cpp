@@ -577,6 +577,16 @@ static	void	img_iface_min_area_rect	(void *data)
 	/* Data */
 	struct Img_Iface_Data_MinARect	data_tmp;
 	if (!data) {
+		if(!contours.size()) {
+			/* Write into log */
+			snprintf(user_iface_log.line[user_iface_log.len],
+							LOG_LINE_LEN,
+							"! Invalid input");
+			user_iface_log.lvl[user_iface_log.len]	= 1;
+			(user_iface_log.len)++;
+
+			return;
+		}
 		data_tmp.contour	= &(contours[0]);
 
 		data_tmp.rect		= &rectangle;
@@ -1027,7 +1037,7 @@ static	void	img_iface_save_file	(void)
 	image_copy_tmp.copyTo(image);
 
 	/* Save into file */
-	save_image_file();
+	save_image_file(NULL);
 }
 
 
