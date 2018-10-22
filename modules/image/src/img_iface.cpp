@@ -120,14 +120,32 @@ void	img_iface_cleanup_main	(void)
 	cv::destroyAllWindows();
 }
 
-void	img_iface_load		(void)
+void	img_iface_load		(const char *fpath, const char *fname)
 {
+	char	file_path [FILENAME_MAX];
+	char	file_name [FILENAME_MAX];
+
 	/* Init */
 	img_iface_init();
 
+	/* Set file_path */
+	if (!fpath) {
+		snprintf(file_path, FILENAME_MAX, "%s", saved_path);
+	} else {
+		snprintf(file_path, FILENAME_MAX, "%s", fpath);
+	}
+
+	/* Set file_name */
+	if (!fname) {
+		/* Request file name */
+		user_iface_fname(file_path, file_name);
+	} else {
+		snprintf(file_name, FILENAME_MAX, "%s", fname);
+	}
+
 	/* Load file */
 	errno	= 0;
-	load_image_file();
+	load_image_file(file_path, file_name);
 
 	if (!errno) {
 		/* Make a static copy of image */
@@ -1037,7 +1055,7 @@ static	void	img_iface_save_file	(void)
 	image_copy_tmp.copyTo(image);
 
 	/* Save into file */
-	save_image_file(NULL);
+	save_image_file(NULL, NULL);
 }
 
 

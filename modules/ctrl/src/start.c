@@ -17,6 +17,8 @@
 	#include "img_iface.h"
 		/* proc_iface_series() */
 	#include "proc.h"
+		/* saved_name*/
+	#include "save.h"
 		/* user_iface() */
 	#include "user_iface.h"
 
@@ -70,7 +72,7 @@ static	void	start_foo	(void)
 static	void	start_single	(void)
 {
 	errno	= 0;
-	img_iface_load();
+	img_iface_load(NULL, saved_name);
 
 	if (!errno) {
 		user_iface_init();

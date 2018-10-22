@@ -205,7 +205,7 @@ extern	"C" {
  ******* functions ************************************************************
  ******************************************************************************/
 	void	img_iface_cleanup_main	(void);
-	void	img_iface_load		(void);
+	void	img_iface_load		(const char *fpath, const char *fname);
 	void	img_iface_cleanup	(void);
 	void	img_iface_act		(int action, void *data);
 	void	img_iface_show		(void);

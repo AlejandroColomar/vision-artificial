@@ -124,7 +124,7 @@
  ******* functions ************************************************************
  ******************************************************************************/
 	void	img_iface_cleanup_main	(void);
-	void	img_iface_load		(void);
+	void	img_iface_load		(const char *fpath, const char *fname);
 	void	img_iface_cleanup	(void);
 		/* data should *always* be NULL */ 
 	void	img_iface_act		(int action, void *data);

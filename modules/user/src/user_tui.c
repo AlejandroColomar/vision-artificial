@@ -90,6 +90,19 @@ int	user_tui		(const char *title, const char *subtitle)
 	return	action;
 }
 
+void	user_tui_fname		(const char *filepath, char *filename)
+{
+	/* Input box */
+	int	w;
+	int	r;
+	w	= 75;
+	r	= 10;
+
+	/* Request name */
+	alx_w_getfname(filepath, filename, false, w, r, "File name:",
+			"Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff");
+}
+
 void	user_tui_show_log	(const char *title, const char *subtitle)
 {
 	/* Clear & box */
@@ -106,19 +119,6 @@ void	user_tui_show_log	(const char *title, const char *subtitle)
 
 	/* Refresh */
 	wrefresh(win_log);
-}
-
-void	user_tui_save_name	(const char *filepath, char *filename, int destsize)
-{
-	/* Input box */
-	int	w;
-	int	r;
-	w	= 75;
-	r	= 10;
-
-	/* Request name */
-	alx_w_getfname(filepath, filename, false, w, r, "File name:",
-			"Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff");
 }
 
 double	user_tui_getdbl		(double m, double def, double M,
@@ -165,9 +165,7 @@ void	user_tui_show_ocr	(void)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Log	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Log -----------------------------------------------------------------------*/
 static	void	log_loop	(void)
 {
 	int	i;
@@ -195,9 +193,7 @@ static	void	log_loop	(void)
 	}
 }
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Input	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Input ---------------------------------------------------------------------*/
 static	int	usr_input	(void)
 {
 	int	action;

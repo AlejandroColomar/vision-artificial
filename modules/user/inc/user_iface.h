@@ -13,7 +13,7 @@
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-	# define	LOG_LEN		(1024)
+	# define	LOG_LEN		(1048576)
 	# define	LOG_LINE_LEN	(35)
 
 
@@ -110,8 +110,7 @@
 	void	user_iface_cleanup	(void);
 	void	user_iface		(void);
 	void	user_iface_show_log	(const char *title, const char *subtitle);
-	void	user_iface_save_name	(const char *filepath, char *filename,
-					int destsize);
+	void	user_iface_fname	(const char *filepath, char *filename);
 	double	user_iface_getdbl	(double m, double def, double M,
 					const char *title, const char *help);
 	int64_t	user_iface_getint	(double m, int64_t def, double M,
