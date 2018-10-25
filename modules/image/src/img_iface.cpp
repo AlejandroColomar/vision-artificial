@@ -70,6 +70,7 @@ static	void	img_iface_invert	(void);
 static	void	img_iface_bgr2gray	(void);
 static	void	img_iface_component	(void *data);
 static	void	img_iface_smooth	(void *data);
+static	void	img_iface_sobel		(void *data);
 static	void	img_iface_threshold	(void *data);
 static	void	img_iface_adaptive_thr	(void *data);
 static	void	img_iface_dilate	(void *data);
@@ -175,6 +176,9 @@ void	img_iface_act		(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_SMOOTH:
 		img_iface_smooth(data);
+		break;
+	case IMG_IFACE_ACT_SOBEL:
+		img_iface_sobel(data);
 		break;
 	case IMG_IFACE_ACT_THRESHOLD:
 		img_iface_threshold(data);
@@ -364,8 +368,8 @@ static	void	img_iface_smooth	(void *data)
 		snprintf(title, 80, "Method: MEAN=1, GAUSS=2, MEDIAN=3");
 		data_tmp.method		= user_iface_getint(1, 3, 3, title, NULL);
 
-		snprintf(title, 80, "Mask size: 3, 5, 7, ...");
-		data_tmp.msk_siz	= user_iface_getint(3, 3, INFINITY, title, NULL);
+		snprintf(title, 80, "Kernel size: 3, 5, 7, ...");
+		data_tmp.ksize	= user_iface_getint(3, 3, INFINITY, title, NULL);
 
 		data	= (void *)&data_tmp;
 	}
@@ -376,13 +380,58 @@ static	void	img_iface_smooth	(void *data)
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Smooth mth=%i [%ix%i]",
 						data_cast->method,
-						data_cast->msk_siz,
-						data_cast->msk_siz);
+						data_cast->ksize,
+						data_cast->ksize);
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
 	/* Filter: smooth */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_SMOOTH, data);
+}
+
+static	void	img_iface_sobel		(void *data)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Data */
+	struct Img_Iface_Data_Sobel	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Order of the derivative x");
+		data_tmp.dx	= user_iface_getint(0, 1, 10, title, NULL);
+
+		snprintf(title, 80, "Order of the derivative y");
+		data_tmp.dy	= user_iface_getint(0, 1, 10, title, NULL);
+
+		snprintf(title, 80, "Size of the extended Sobel kernel (-1 -> Scharr");
+		data_tmp.ksize	= user_iface_getint(-1, 3, 7, title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_Sobel	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Sobel *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Smooth dx=%i;dy=%i [ks=%i]",
+						data_cast->dx,
+						data_cast->dy,
+						data_cast->ksize);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Filter: sobel */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_SOBEL, data);
 }
 
 static	void	img_iface_threshold	(void *data)
@@ -450,8 +499,8 @@ static	void	img_iface_adaptive_thr	(void *data)
 		snprintf(title, 80, "Type: BIN=0, BIN_INV=1");
 		data_tmp.thr_typ	= user_iface_getint(0, 0, 1, title, NULL);
 
-		snprintf(title, 80, "Neighbourhood size: 3, 5, 7, ...");
-		data_tmp.nbh_val	= user_iface_getint(3, 3, INFINITY, title, NULL);
+		snprintf(title, 80, "Kernel size: 3, 5, 7, ...");
+		data_tmp.ksize	= user_iface_getint(3, 3, INFINITY, title, NULL);
 
 		data	= (void *)&data_tmp;
 	}
@@ -460,10 +509,10 @@ static	void	img_iface_adaptive_thr	(void *data)
 	struct Img_Iface_Data_Adaptive_Thr	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Adaptive_Thr *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Threshold mth=%i, typ=%i, nbh=%i",
+						"Threshold mth=%i, typ=%i, ks=%i",
 						data_cast->method,
 						data_cast->thr_typ,
-						data_cast->nbh_val);
+						data_cast->ksize);
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 

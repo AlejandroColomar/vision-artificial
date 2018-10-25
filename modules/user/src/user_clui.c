@@ -168,9 +168,12 @@ static	int	usr_input	(void)
 					action	= USER_IFACE_ACT_SMOOTH;
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_THRESHOLD;
+					action	= USER_IFACE_ACT_SOBEL;
 					break;
 				case '2':
+					action	= USER_IFACE_ACT_THRESHOLD;
+					break;
+				case '3':
 					action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 					break;
 				default:
@@ -347,32 +350,33 @@ static	void	show_help	(void)
 {
 	// FIXME
 	printf("Apply:		%s\n",	"Space");
-	printf("Discard:	%s\n",		"Backspace");
+	printf("Discard:	%s\n",	"Backspace");
 	printf("Save to mem:	%c\n",	'm');
 	printf("Load from mem:	%c\n",	'l');
 	printf("Save to ref:	%c\n",	'r');
 	printf("Save to file:	%c\n",	's');
 	printf("Functions:\n");
-	printf(" - Invert:	%s\n",		"f100");
+	printf(" - Invert:	%s\n",	"f100");
 	printf(" - BGR -> Gray:	%s\n",	"f101");
 	printf(" - Component:	%s\n",	"f102");
-	printf(" - Smooth:	%s\n",		"f110");
-	printf(" - Threshold:	%s\n",	"f111");
-	printf(" - Adaptive Thr:%s\n",	"f112");
-	printf(" - Dilate:	%s\n",		"f120");
-	printf(" - Erode:	%s\n",		"f121");
+	printf(" - Smooth:	%s\n",	"f110");
+	printf(" - Sobel:	%s\n",	"f111");
+	printf(" - Threshold:	%s\n",	"f112");
+	printf(" - Adaptive Thr:%s\n",	"f113");
+	printf(" - Dilate:	%s\n",	"f120");
+	printf(" - Erode:	%s\n",	"f121");
 	printf(" - D-E:		%s\n",	"f122");
 	printf(" - E-D:		%s\n",	"f123");
 	printf(" - Contours:	%s\n",	"f130");
 	printf(" - Contours siz:%s\n",	"f131");
 	printf(" - Min. A rect.:%s\n",	"f132");
 	printf(" - Rotate orto.:%s\n",	"f140");
-	printf(" - Rotate:	%s\n",		"f141");
+	printf(" - Rotate:	%s\n",	"f141");
 	printf(" - Rotate 2rect:%s\n",	"f142");
 	printf(" - Set ROI:	%s\n",	"f150");
 	printf(" - Scan codes:	%s\n",	"f20");
 	printf(" - Scan text:	%s\n",	"f30");
-	printf(" - Align:	%s\n",		"f40");
+	printf(" - Align:	%s\n",	"f40");
 	printf("Exercises:\n");
 	printf(" - Etiqueta:	%s\n",	"e10");
 	printf("Other:\n");

@@ -53,9 +53,9 @@ static	void	result_label		(int status);
 static	void	proc_save_mem		(int n);
 static	void	proc_load_mem		(int n);
 static	void	proc_cmp		(int cmp);
-static	void	proc_smooth		(int method, int mask_size);
-static	void	proc_adaptive_threshold	(int method, int type, int size);
-static	void	proc_threshold		(int type, int size);
+static	void	proc_smooth		(int method, int ksize);
+static	void	proc_adaptive_threshold	(int method, int type, int ksize);
+static	void	proc_threshold		(int type, int ksize);
 static	void	proc_invert		(void);
 static	void	proc_dilate		(int size);
 static	void	proc_erode		(int size);
@@ -486,22 +486,22 @@ static	void	proc_cmp		(int cmp)
 	proc_show_img();
 }
 
-static	void	proc_smooth		(int method, int mask_size)
+static	void	proc_smooth		(int method, int ksize)
 {
 	struct Img_Iface_Data_Smooth		data;
 	data.method	= method;
-	data.msk_siz	= mask_size;
+	data.ksize	= ksize;
 	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
 
 	proc_show_img();
 }
 
-static	void	proc_adaptive_threshold	(int method, int type, int size)
+static	void	proc_adaptive_threshold	(int method, int type, int ksize)
 {
 	struct Img_Iface_Data_Adaptive_Thr	data;
 	data.method	= method;
 	data.thr_typ	= type;
-	data.nbh_val	= size;
+	data.ksize	= ksize;
 	img_iface_act(USER_IFACE_ACT_ADAPTIVE_THRESHOLD, (void *)&data);
 
 	proc_show_img();

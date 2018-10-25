@@ -271,9 +271,12 @@ static	int	usr_input	(void)
 					action	= USER_IFACE_ACT_SMOOTH;
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_THRESHOLD;
+					action	= USER_IFACE_ACT_SOBEL;
 					break;
 				case '2':
+					action	= USER_IFACE_ACT_THRESHOLD;
+					break;
+				case '3':
 					action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 					break;
 				default:
@@ -489,8 +492,9 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f101");
 	mvwprintw(win_help, r++, c, " - Component:	%s",	"f102");
 	mvwprintw(win_help, r++, c, " - Smooth:	%s",		"f110");
-	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f111");
-	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f112");
+	mvwprintw(win_help, r++, c, " - Sobel:	%s",		"f111");
+	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f112");
+	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f113");
 	mvwprintw(win_help, r++, c, " - Dilate:	%s",		"f120");
 	mvwprintw(win_help, r++, c, " - Erode:	%s",		"f121");
 	mvwprintw(win_help, r++, c, " - D-E:		%s",	"f122");
