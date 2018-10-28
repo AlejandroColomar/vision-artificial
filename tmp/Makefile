@@ -28,7 +28,7 @@ SRC_DIR		= $(MAIN_DIR)/src/
 
 # dependencies
 
-ALL = main.o
+ALL	= main.o
 
 MAIN_INC_LIBALX	= alx_ncur.hpp
 MAIN_INC_ABOUT	= about.hpp
@@ -67,6 +67,7 @@ main.o: main.s
 
 clean:
 	$(Q)rm -f *.o *.s
+	@echo  "Clean binaries"
 
 ################################################################################
 ######## End of file ###########################################################
