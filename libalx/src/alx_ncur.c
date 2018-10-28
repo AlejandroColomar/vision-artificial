@@ -6,10 +6,7 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-	#include <ncurses.h>
+/* Standard C ----------------------------------------------------------------*/
 	#include <inttypes.h>
 	#include <stdbool.h>
 	#include <stdio.h>
@@ -18,9 +15,10 @@
 		/* wchar_t */
 	#include <wchar.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Packages ------------------------------------------------------------------*/
+	#include <ncurses.h>
+
+/* libalx --------------------------------------------------------------------*/
 	#include "alx_input.h"
 
 	#include "alx_ncur.h"
@@ -42,8 +40,8 @@
 
 	# define	ERR_RANGE_MSG	"¡ Number is out of range !"
 	# define	ERR_SSCANF_MSG	"¡ sscanf() error !"
-	# define	ERR_GETSTR_MSG	"¡ wgetstr() error !"
 	# define	ERR_FPTR_MSG	"¡ FILE error !"
+	# define	ERR_GETSTR_MSG	"¡ wgetstr() error !"
 
 
 /******************************************************************************
@@ -654,11 +652,11 @@ static	void	manage_w_error		(WINDOW *win, int err)
 	case ERR_SSCANF:
 		mvwaddstr(win, 0, 0, ERR_SSCANF_MSG);
 		break;
-	case ERR_GETSTR:
-		mvwaddstr(win, 0, 0, ERR_GETSTR_MSG);
-		break;
 	case ERR_FPTR:
 		mvwaddstr(win, 0, 0, ERR_FPTR_MSG);
+		break;
+	case ERR_GETSTR:
+		mvwaddstr(win, 0, 0, ERR_GETSTR_MSG);
 		break;
 	}
 	wrefresh(win);

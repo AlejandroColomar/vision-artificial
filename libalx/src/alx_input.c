@@ -6,17 +6,13 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Standard C ----------------------------------------------------------------*/
 	#include <inttypes.h>
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <stdio.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* libalx --------------------------------------------------------------------*/
 	#include "alx_input.h"
 
 
@@ -35,6 +31,7 @@
 
 	# define	ERR_RANGE_MSG	"¡ Number is out of range !"
 	# define	ERR_SSCANF_MSG	"¡ sscanf() error !"
+	# define	ERR_FPTR_MSG	"¡ FILE error !"
 	# define	ERR_FGETS_MSG	"¡ fgets() error !"
 
 
@@ -148,25 +145,21 @@ int	alx_sscan_fname	(const char *fpath, char *fname, bool exist, const char *str
 	 * value.
 	 */
 double	alx_getdbl	(double m, double def, double M,
-			const char *formatA, const char *formatB, ...)
+			const char *title, const char *help)
 {
-	va_list	args;
-	va_start(args, formatB);
-
 	double	R;
 
-	if (formatA != NULL) {
-		puts(formatA);
+	if (title != NULL) {
+		puts(title);
 	}
-	if (formatB == NULL) {
+	if (help == NULL) {
 		printf("Introduce a real number [%lf U %lf] (default %lf):...\t", m, M, def);
 	} else {
-		vprintf(formatB, args);
+		puts(help);
 	}
 
 	R = loop_getdbl(m, def, M);
 
-	va_end(args);
 	return	R;
 }
 
@@ -178,25 +171,21 @@ double	alx_getdbl	(double m, double def, double M,
 	 * value.
 	 */
 int64_t	alx_getint	(double m, int64_t def, double M,
-			const char *formatA, const char *formatB, ...)
+			const char *title, const char *help)
 {
-	va_list	args;
-	va_start(args, formatB);
-
 	int64_t	Z;
 
-	if (formatA != NULL) {
-		puts(formatA);
+	if (title != NULL) {
+		puts(title);
 	}
-	if (formatB == NULL) {
+	if (help == NULL) {
 		printf("Introduce an integer number [%lf U %lf] (default %"PRIi64"):...\t", m, M, def);
 	} else {
-		vprintf(formatB, args);
+		puts(help);
 	}
 
 	Z = loop_getint(m, def, M);
 
-	va_end(args);
 	return	Z;
 }
 

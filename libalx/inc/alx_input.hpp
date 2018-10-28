@@ -48,16 +48,14 @@ extern	"C" {
 	double	alx_getdbl	(double		m,
 				double		def,
 				double		M,
-				const char	*formatA,
-				const char	*formatB,
-						...);
+				const char	*title,
+				const char	*help);
 
 	int64_t	alx_getint	(double		m,
 				int64_t		def,
 				double		M,
-				const char	*formatA,
-				const char	*formatB,
-						...);
+				const char	*title,
+				const char	*help);
 
 
 /******************************************************************************
