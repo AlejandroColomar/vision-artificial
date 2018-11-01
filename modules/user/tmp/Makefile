@@ -30,18 +30,21 @@ UI_INC_DIRS	= -I $(INC_DIR) \
 			-I $(IMG_INC_DIR) \
 			-I $(PROC_INC_DIR)
 
+UCLUI_INC_IMG	= img_iface.h
 UCLUI_INC	= user_clui.h	user_iface.h
 UCLUI_DEPS	= $(SRC_DIR)/user_clui.c \
-			$(patsubst %,$(INC_DIR)/%,$(UCLUI_INC))
-UCLUI_INC_DIRS	= -I $(INC_DIR)
+			$(patsubst %,$(INC_DIR)/%,$(UCLUI_INC)) \
+			$(patsubst %,$(IMG_INC_DIR)/%,$(UCLUI_INC_IMG))
+UCLUI_INC_DIRS	= -I $(INC_DIR) \
+				-I $(IMG_INC_DIR)
 
 UTUI_INC_LIBALX	= alx_ncur.h
 UTUI_INC_IMG	= img_iface.h
 UTUI_INC	= user_tui.h	user_iface.h
 UTUI_DEPS	= $(SRC_DIR)/user_tui.c \
 			$(patsubst %,$(INC_DIR)/%,$(UTUI_INC)) \
-			$(patsubst %,$(LIBALX_INC_DIR)/%,$(UTUI_INC_LIBALX)) \
-			$(patsubst %,$(IMG_INC_DIR)/%,$(UTUI_INC_IMG))
+			$(patsubst %,$(IMG_INC_DIR)/%,$(UTUI_INC_IMG)) \
+			$(patsubst %,$(LIBALX_INC_DIR)/%,$(UTUI_INC_LIBALX))
 UTUI_INC_DIRS	= -I $(INC_DIR) \
 				-I $(LIBALX_INC_DIR) \
 				-I $(IMG_INC_DIR)

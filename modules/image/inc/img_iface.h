@@ -36,6 +36,7 @@
 		IMG_IFACE_ACT_BGR2GRAY,
 		IMG_IFACE_ACT_COMPONENT,
 		IMG_IFACE_ACT_SMOOTH,
+		IMG_IFACE_ACT_SOBEL,
 		IMG_IFACE_ACT_THRESHOLD,
 		IMG_IFACE_ACT_ADAPTIVE_THRESHOLD,
 		IMG_IFACE_ACT_DILATE,
@@ -124,7 +125,7 @@
  ******* functions ************************************************************
  ******************************************************************************/
 	void	img_iface_cleanup_main	(void);
-	void	img_iface_load		(void);
+	void	img_iface_load		(const char *fpath, const char *fname);
 	void	img_iface_cleanup	(void);
 		/* data should *always* be NULL */ 
 	void	img_iface_act		(int action, void *data);

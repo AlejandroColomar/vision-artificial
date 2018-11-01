@@ -13,7 +13,7 @@
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-	# define	LOG_LEN		(1024)
+	# define	LOG_LEN		(1048576)
 	# define	LOG_LINE_LEN	(35)
 
 
@@ -42,6 +42,7 @@
 		USER_IFACE_ACT_BGR2GRAY,
 		USER_IFACE_ACT_COMPONENT,
 		USER_IFACE_ACT_SMOOTH,
+		USER_IFACE_ACT_SOBEL,
 		USER_IFACE_ACT_THRESHOLD,
 		USER_IFACE_ACT_ADAPTIVE_THRESHOLD,
 		USER_IFACE_ACT_DILATE,
@@ -116,8 +117,7 @@ extern	"C" {
 	void	user_iface_cleanup	(void);
 	void	user_iface		(void);
 	void	user_iface_show_log	(const char *title, const char *subtitle);
-	void	user_iface_save_name	(const char *filepath, char *filename,
-					int destsize);
+	void	user_iface_fname	(const char *filepath, char *filename);
 	double	user_iface_getdbl	(double m, double def, double M,
 					const char *title, const char *help);
 	int64_t	user_iface_getint	(double m, int64_t def, double M,

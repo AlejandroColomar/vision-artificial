@@ -25,16 +25,20 @@
 
 	# define	USER_PROG_DIR		"vision-artificial/"
 	# define	USER_SAVED_DIR		"vision-artificial/saved/"
+	# define	USER_LABELS_DIR		"vision-artificial/labels/"
+	# define	USER_LABELS_FAIL_DIR	"vision-artificial/labels/fail"
 	# define	SAVED_NAME_DEFAULT	"saved"
 
 
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	char		home_path [FILENAME_MAX];
-	extern	char		user_prog_path [FILENAME_MAX];
-	extern	char		saved_path [FILENAME_MAX];
-	extern	char		saved_name [FILENAME_MAX];
+	extern	char	home_path [FILENAME_MAX];
+	extern	char	user_prog_path [FILENAME_MAX];
+	extern	char	saved_path [FILENAME_MAX];
+	extern	char	labels_path [FILENAME_MAX];
+	extern	char	labels_fail_path [FILENAME_MAX];
+	extern	char	saved_name [FILENAME_MAX];
 
 
 /******************************************************************************
@@ -43,8 +47,8 @@
 	void	save_init	(void);
 	void	save_cleanup	(void);
 	void	save_clr	(void);
-	void	load_image_file	(void);
-	void	save_image_file	(const char *save_as);
+	void	load_image_file	(const char *fpath, const char *fname);
+	void	save_image_file	(const char *fpath, const char *save_as);
 
 
 /******************************************************************************

@@ -112,6 +112,7 @@ export	BIN_NAME
   LD		= ld
 
 export	CC
+export	CXX
 export	AS
 export	LD
 

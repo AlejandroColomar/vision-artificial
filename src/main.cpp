@@ -26,8 +26,8 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-void	init_all	(int *argc, char *(*argv[]));
-void	cleanup		(void);
+static	void	init_all	(int *argc, char *(*argv[]));
+static	void	cleanup		(void);
 
 
 /******************************************************************************
@@ -53,7 +53,7 @@ int	main	(int argc, char *argv[])
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-void	init_all	(int *argc, char *(*argv[]))
+static	void	init_all	(int *argc, char *(*argv[]))
 {
 	/* Init curses */
 	alx_start_curses();
@@ -72,7 +72,7 @@ void	init_all	(int *argc, char *(*argv[]))
 	parser(*argc, *argv);
 }
 
-void	cleanup		(void)
+static	void	cleanup		(void)
 {
 	/* Clean img buffers */
 	img_iface_cleanup_main();

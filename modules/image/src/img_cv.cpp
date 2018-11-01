@@ -35,6 +35,7 @@ static	void	img_cv_invert		(class cv::Mat  *imgptr);
 static	void	img_cv_bgr2gray		(class cv::Mat  *imgptr);
 static	void	img_cv_component	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_smooth		(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_dilate		(class cv::Mat  *imgptr,  void  *data);
@@ -66,6 +67,9 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 
 	case IMG_CV_ACT_SMOOTH:
 		img_cv_smooth(imgptr, data);
+		break;
+	case IMG_CV_ACT_SOBEL:
+		img_cv_sobel(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_THRESHOLD:
@@ -156,26 +160,49 @@ static	void	img_cv_smooth		(class cv::Mat  *imgptr, void *data)
 	/* Smoothing method */
 	int	method;
 	method	= data_cast->method;
-	/* Mask size */
-	int	msk_siz;
-	msk_siz	= data_cast->msk_siz;
-	if (!(msk_siz % 2)) {
-		msk_siz++;
+	/* Kernel size */
+	int	ksize;
+	ksize	= data_cast->ksize;
+	if (!(ksize % 2)) {
+		ksize++;
 	}
 
 	switch (method) {
 	case IMGI_SMOOTH_MEAN:
-		cv::blur(*imgptr, *imgptr, cv::Size(msk_siz, msk_siz),
+		cv::blur(*imgptr, *imgptr, cv::Size(ksize, ksize),
 					cv::Point(-1,-1), cv::BORDER_DEFAULT);
 		break;
 	case IMGI_SMOOTH_GAUSS:
-		cv::GaussianBlur(*imgptr, *imgptr, cv::Size(msk_siz, msk_siz),
+		cv::GaussianBlur(*imgptr, *imgptr, cv::Size(ksize, ksize),
 					0, 0, cv::BORDER_DEFAULT);
 		break;
 	case IMGI_SMOOTH_MEDIAN:
-		cv::medianBlur(*imgptr, *imgptr, msk_siz);
+		cv::medianBlur(*imgptr, *imgptr, ksize);
 		break;
 	}
+}
+
+static	void	img_cv_sobel		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Sobel	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Sobel *)data;
+
+	/* Order of the derivative x */
+	int	dx;
+	dx	= data_cast->dx;
+	/* Order of the derivative y */
+	int	dy;
+	dy	= data_cast->dy;
+	/* Size of the extended Sobel kernel */
+	int	ksize;
+	ksize	= data_cast->ksize;
+	if (!(ksize % 2)) {
+		ksize++;
+	}
+
+	cv::Sobel(*imgptr, *imgptr, -1, dx, dy, ksize, 1, 0,
+							cv::BORDER_DEFAULT);
 }
 
 static	void	img_cv_threshold	(class cv::Mat  *imgptr, void *data)
@@ -211,14 +238,14 @@ static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr, void *data)
 	int	thr_typ;
 	thr_typ	= data_cast->thr_typ;
 	/* Neighbourhood size */
-	int	nbh_val;
-	nbh_val	= data_cast->nbh_val;
-	if (!(nbh_val % 2)) {
-		nbh_val++;
+	int	ksize;
+	ksize	= data_cast->ksize;
+	if (!(ksize % 2)) {
+		ksize++;
 	}
 
 	/* Apply adaptive threshold */
-	cv::adaptiveThreshold(*imgptr, *imgptr, 255, method, thr_typ, nbh_val,
+	cv::adaptiveThreshold(*imgptr, *imgptr, 255, method, thr_typ, ksize,
 									0);
 }
 
