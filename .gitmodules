@@ -1,0 +1,3 @@
+[submodule "libalx"]
+	path = libalx
+	url = https://github.com/AlejandroColomar/libalx
