@@ -78,6 +78,7 @@ static	void	img_iface_erode		(void *data);
 static	void	img_iface_contours	(void *data);
 static	void	img_iface_contours_size	(void *data);
 static	void	img_iface_min_area_rect	(void *data);
+static	void	img_iface_fit_ellipse	(void *data);
 static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
 static	void	img_iface_set_ROI	(void *data);
@@ -200,6 +201,9 @@ void	img_iface_act		(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_MIN_AREA_RECT:
 		img_iface_min_area_rect(data);
+		break;
+	case IMG_IFACE_ACT_FIT_ELLIPSE:
+		img_iface_fit_ellipse(data);
 		break;
 	case IMG_IFACE_ACT_ROTATE_ORTO:
 		img_iface_rotate_orto(data);
@@ -669,6 +673,38 @@ static	void	img_iface_min_area_rect	(void *data)
 
 	/* Enclosing rectangle */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_MIN_AREA_RECT, data);
+}
+
+static	void	img_iface_fit_ellipse	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_MinARect	data_tmp;
+	if (!data) {
+		if(!contours.size()) {
+			/* Write into log */
+			snprintf(user_iface_log.line[user_iface_log.len],
+							LOG_LINE_LEN,
+							"! Invalid input");
+			user_iface_log.lvl[user_iface_log.len]	= 1;
+			(user_iface_log.len)++;
+
+			return;
+		}
+		data_tmp.contour	= &(contours[0]);
+
+		data_tmp.rect		= &rectangle;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Fit ellipse");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Enclosing rectangle */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_FIT_ELLIPSE, data);
 }
 
 static	void	img_iface_rotate_orto	(void *data)

@@ -320,6 +320,9 @@ static	int	usr_input	(void)
 				case '2':
 					action	= USER_IFACE_ACT_MIN_AREA_RECT;
 					break;
+				case '3':
+					action	= USER_IFACE_ACT_FIT_ELLIPSE;
+					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
 					break;
@@ -502,6 +505,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f130");
 	mvwprintw(win_help, r++, c, " - Contours siz:%s",	"f131");
 	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f132");
+	mvwprintw(win_help, r++, c, " - Fit ellipse:	%s",	"f133");
 	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f140");
 	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f141");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f142");

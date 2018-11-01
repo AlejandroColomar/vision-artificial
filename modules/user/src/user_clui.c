@@ -213,6 +213,9 @@ static	int	usr_input	(void)
 				case '2':
 					action	= USER_IFACE_ACT_MIN_AREA_RECT;
 					break;
+				case '3':
+					action	= USER_IFACE_ACT_FIT_ELLIPSE;
+					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
 					break;
@@ -370,6 +373,7 @@ static	void	show_help	(void)
 	printf(" - Contours:	%s\n",	"f130");
 	printf(" - Contours siz:%s\n",	"f131");
 	printf(" - Min. A rect.:%s\n",	"f132");
+	printf(" - Fit ellipse:	%s\n",	"f133");
 	printf(" - Rotate orto.:%s\n",	"f140");
 	printf(" - Rotate:	%s\n",	"f141");
 	printf(" - Rotate 2rect:%s\n",	"f142");

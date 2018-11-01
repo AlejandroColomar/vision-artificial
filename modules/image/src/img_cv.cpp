@@ -43,6 +43,7 @@ static	void	img_cv_erode		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_contours		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_contours_size	(void  *data);
 static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
@@ -94,6 +95,9 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 		break;
 	case IMG_CV_ACT_MIN_AREA_RECT:
 		img_cv_min_area_rect(imgptr, data);
+		break;
+	case IMG_CV_ACT_FIT_ELLIPSE:
+		img_cv_fit_ellipse(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_ROTATE_ORTO:
@@ -329,10 +333,43 @@ static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr, void *data)
 	contour	= data_cast->contour;
 	/* Rotated rectangle */
 	class cv::RotatedRect			*rect;
-	rect		= data_cast->rect;
+	rect	= data_cast->rect;
 
 	/* Get rectangle */
 	*rect	= cv::minAreaRect(*contour);
+
+	/* Draw rectangle */
+	class cv::Point_<float>	vertices[4];
+	rect->points(vertices);
+	cv::line(*imgptr, cv::Point(vertices[0].x, vertices[0].y),
+				cv::Point(vertices[1].x, vertices[1].y),
+				CV_RGB(0, 0, 255), 1, 8, 0);
+	cv::line(*imgptr, cv::Point(vertices[1].x, vertices[1].y),
+				cv::Point(vertices[2].x, vertices[2].y),
+				CV_RGB(0, 0, 255), 1, 8, 0);
+	cv::line(*imgptr, cv::Point(vertices[2].x, vertices[2].y),
+				cv::Point(vertices[3].x, vertices[3].y),
+				CV_RGB(0, 0, 255), 1, 8, 0);
+	cv::line(*imgptr, cv::Point(vertices[3].x, vertices[3].y),
+				cv::Point(vertices[0].x, vertices[0].y),
+				CV_RGB(0, 0, 255), 1, 8, 0);
+}
+
+static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_MinARect	*data_cast;
+	data_cast	= (struct Img_Iface_Data_MinARect *)data;
+
+	/* Contours */
+	std::vector <class cv::Point_ <int>>	*contour;
+	contour	= data_cast->contour;
+	/* Rotated rectangle */
+	class cv::RotatedRect			*rect;
+	rect	= data_cast->rect;
+
+	/* Get rectangle */
+	*rect	= cv::fitEllipse(*contour);
 
 	/* Draw rectangle */
 	class cv::Point_<float>	vertices[4];
