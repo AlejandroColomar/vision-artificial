@@ -105,7 +105,7 @@ void	user_iface		(void)
 		/* Do action */
 		switch (user_action & 0xF000) {
 		case USER_IFACE_ACT_PROC:
-			proc_iface_single();
+			proc_iface_single(user_action);
 			break;
 		default:
 			user_iface_act(user_action);
@@ -127,15 +127,15 @@ void	user_iface_show_log	(const char *title, const char *subtitle)
 	}
 }
 
-void	user_iface_save_name	(const char *filepath, char *filename, int destsize)
+void	user_iface_fname	(const char *filepath, char *filename)
 {
 	switch (user_iface_mode) {
 	case USER_IFACE_CLUI:
-		user_clui_save_name(filepath, filename, destsize);
+		user_clui_fname(filepath, filename);
 		break;
 
 	case USER_IFACE_TUI:
-		user_tui_save_name(filepath, filename, destsize);
+		user_tui_fname(filepath, filename);
 		break;
 	}
 }

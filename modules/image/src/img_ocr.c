@@ -64,19 +64,19 @@ static	void	img_ocr_read	(void *data)
 	char	lang_str [20 + 1];
 	lang	= data_cast->lang;
 	switch (lang) {
-	case 0:
+	case IMG_IFACE_OCR_LANG_ENG:
 		sprintf(lang_str, "eng");
 		break;
-	case 1:
+	case IMG_IFACE_OCR_LANG_SPA:
 		sprintf(lang_str, "spa");
 		break;
-	case 2:
+	case IMG_IFACE_OCR_LANG_CAT:
 		sprintf(lang_str, "cat");
 		break;
-	case 3:
+	case IMG_IFACE_OCR_LANG_DIGITS:
 		sprintf(lang_str, "digits");
 		break;
-	case 4:
+	case IMG_IFACE_OCR_LANG_DIGITS_COMMA:
 		sprintf(lang_str, "digits_comma");
 		break;
 	}
@@ -86,7 +86,7 @@ static	void	img_ocr_read	(void *data)
 	char	conf_str [FILENAME_MAX];
 	conf	= data_cast->conf;
 	switch (conf) {
-	case 1:
+	case IMG_IFACE_OCR_CONF_PRICE:
 		sprintf(conf_str, "%s/%s", share_path, "price");
 		break;
 	}
@@ -94,8 +94,8 @@ static	void	img_ocr_read	(void *data)
 	/* init OCR */
 	handle_ocr	= TessBaseAPICreate();
 	TessBaseAPIInit2(handle_ocr, NULL, lang_str,
-						OEM_DEFAULT);
-//						OEM_LSTM_ONLY);
+//						OEM_DEFAULT);
+						OEM_LSTM_ONLY);
 //						OEM_TESSERACT_LSTM_COMBINED);
 	if (conf) {
 		/* Configure OCR (whitelist chars) */

@@ -42,6 +42,7 @@
 		IMG_IFACE_ACT_BGR2GRAY,
 		IMG_IFACE_ACT_COMPONENT,
 		IMG_IFACE_ACT_SMOOTH,
+		IMG_IFACE_ACT_SOBEL,
 		IMG_IFACE_ACT_THRESHOLD,
 		IMG_IFACE_ACT_ADAPTIVE_THRESHOLD,
 		IMG_IFACE_ACT_DILATE,
@@ -113,7 +114,13 @@
 
 	struct	Img_Iface_Data_Smooth {
 		int	method;
-		int	msk_siz;
+		int	ksize;
+	};
+
+	struct	Img_Iface_Data_Sobel {
+		int	dx;
+		int	dy;
+		int	ksize;
 	};
 
 	struct	Img_Iface_Data_Threshold {
@@ -124,7 +131,7 @@
 	struct	Img_Iface_Data_Adaptive_Thr {
 		int	method;
 		int	thr_typ;
-		int	nbh_val;
+		int	ksize;
 	};
 
 	struct	Img_Iface_Data_Dilate_Erode {
@@ -205,7 +212,7 @@ extern	"C" {
  ******* functions ************************************************************
  ******************************************************************************/
 	void	img_iface_cleanup_main	(void);
-	void	img_iface_load		(void);
+	void	img_iface_load		(const char *fpath, const char *fname);
 	void	img_iface_cleanup	(void);
 	void	img_iface_act		(int action, void *data);
 	void	img_iface_show		(void);

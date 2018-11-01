@@ -6,15 +6,15 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Standard	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Standard C ----------------------------------------------------------------*/
 		/* printf() & fgets() & sscanf() */
 	#include <stdio.h>
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Other	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Project -------------------------------------------------------------------*/
+		/*img_ocr_text */
+	#include "img_iface.h"
+
+/* Module --------------------------------------------------------------------*/
 		/* user_iface_log */
 	#include "user_iface.h"
 
@@ -30,7 +30,7 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-	/* Play */
+	/* Log */
 static	void	log_loop	(void);
 	/* Input */
 static	int	usr_input	(void);
@@ -53,11 +53,11 @@ int	user_clui		(const char *title, const char *subtitle)
 	return	action;
 }
 
-void	user_clui_save_name	(const char *filepath, char *filename, int destsize)
+void	user_clui_fname		(const char *filepath, char *filename)
 {
 	puts("File name:");
 	puts("Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff");
-	fgets(filename, destsize, stdin);
+	fgets(filename, FILENAME_MAX, stdin);
 }
 
 void	user_clui_show_log	(const char *title, const char *subtitle)
@@ -77,10 +77,7 @@ void	user_clui_show_log	(const char *title, const char *subtitle)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Log	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-
+/* Log -----------------------------------------------------------------------*/
 static	void	log_loop	(void)
 {
 	static	int	i	= 0;
@@ -98,9 +95,7 @@ static	void	log_loop	(void)
 	putchar('\n');
 }
 
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Input	*	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
+/* Input ---------------------------------------------------------------------*/
 static	int	usr_input	(void)
 {
 	int	action;
@@ -119,19 +114,24 @@ static	int	usr_input	(void)
 	/* Interpret input */
 	sscanf(buff, " %c%c%c%c%c", &ch[0], &ch[1], &ch[2], &ch[3], &ch[4]);
 	switch (ch[0]) {
-	case ' ':
+	case '+':
 		action	= USER_IFACE_ACT_APPLY;
 		break;
 
-		/* ASCII 0x08 is BS */
-	case 0x7F:
-	case 0x08:
+	case '-':
 		action	= USER_IFACE_ACT_DISCARD;
 		break;
 
 	case 'e':
 		/* Exercises from class */
 		switch (ch[1]) {
+		case '1':
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_PROC_LABEL;
+				break;
+			}
+			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
 			break;
@@ -141,11 +141,148 @@ static	int	usr_input	(void)
 	case 'f':
 		/* Use simple funtions */
 		switch (ch[1]) {
-		case '0':
-			action	= USER_IFACE_ACT_INVERT;
-			break;
 		case '1':
-			action	= USER_IFACE_ACT_BGR2GRAY;
+			/* img_cv */
+			switch (ch[2]) {
+			case '0':
+				/* color manipulation */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_INVERT;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_BGR2GRAY;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_COMPONENT;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '1':
+				/* grayscale filters */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_SMOOTH;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_SOBEL;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_THRESHOLD;
+					break;
+				case '3':
+					action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '2':
+				/* black & white filters */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_DILATE;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_ERODE;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_DILATE_ERODE;
+					break;
+				case '3':
+					action	= USER_IFACE_ACT_ERODE_DILATE;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '3':
+				/* contour */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_CONTOURS;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_CONTOURS_SIZE;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_MIN_AREA_RECT;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '4':
+				/* contour */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_ROTATE_ORTO;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_ROTATE;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_ROTATE_2RECT;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '5':
+				/* ROI */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_SET_ROI;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '2':
+			/* img_zbar */
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_DECODE;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '3':
+			/* img_ocr */
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_READ;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '4':
+			/* img_ocr */
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_ALIGN;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
 			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
@@ -165,8 +302,24 @@ static	int	usr_input	(void)
 		action	= USER_IFACE_ACT_QUIT;
 		break;
 
+	case 'r':
+		action	= USER_IFACE_ACT_SAVE_REF;
+		break;
+
 	case 's':
 		action	= USER_IFACE_ACT_SAVE_FILE;
+		break;
+
+	case 'u':
+		/* User iface actions */
+		switch (ch[1]) {
+		case '1':
+			action	= USER_IFACE_ACT_SHOW_OCR;
+			break;
+		default:
+			action	= USER_IFACE_ACT_FOO;
+			break;
+		}
 		break;
 
 	case 'x':
@@ -175,7 +328,7 @@ static	int	usr_input	(void)
 			if (ch[2] == 'z') {
 			if (ch[3] == 'z') {
 			if (ch[4] == 'y') {
-				action =	USER_IFACE_ACT_FOO;
+				action	= USER_IFACE_ACT_FOO;
 			}
 			}
 			}
@@ -196,6 +349,39 @@ static	int	usr_input	(void)
 static	void	show_help	(void)
 {
 	// FIXME
+	printf("Apply:		%s\n",	"Space");
+	printf("Discard:	%s\n",	"Backspace");
+	printf("Save to mem:	%c\n",	'm');
+	printf("Load from mem:	%c\n",	'l');
+	printf("Save to ref:	%c\n",	'r');
+	printf("Save to file:	%c\n",	's');
+	printf("Functions:\n");
+	printf(" - Invert:	%s\n",	"f100");
+	printf(" - BGR -> Gray:	%s\n",	"f101");
+	printf(" - Component:	%s\n",	"f102");
+	printf(" - Smooth:	%s\n",	"f110");
+	printf(" - Sobel:	%s\n",	"f111");
+	printf(" - Threshold:	%s\n",	"f112");
+	printf(" - Adaptive Thr:%s\n",	"f113");
+	printf(" - Dilate:	%s\n",	"f120");
+	printf(" - Erode:	%s\n",	"f121");
+	printf(" - D-E:		%s\n",	"f122");
+	printf(" - E-D:		%s\n",	"f123");
+	printf(" - Contours:	%s\n",	"f130");
+	printf(" - Contours siz:%s\n",	"f131");
+	printf(" - Min. A rect.:%s\n",	"f132");
+	printf(" - Rotate orto.:%s\n",	"f140");
+	printf(" - Rotate:	%s\n",	"f141");
+	printf(" - Rotate 2rect:%s\n",	"f142");
+	printf(" - Set ROI:	%s\n",	"f150");
+	printf(" - Scan codes:	%s\n",	"f20");
+	printf(" - Scan text:	%s\n",	"f30");
+	printf(" - Align:	%s\n",	"f40");
+	printf("Exercises:\n");
+	printf(" - Etiqueta:	%s\n",	"e10");
+	printf("Other:\n");
+	printf(" - Show OCR:	%s\n",	"u1");
+	printf("Quit:		%c\n",	'q');
 }
 
 

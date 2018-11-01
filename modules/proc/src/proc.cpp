@@ -53,23 +53,19 @@ static	void	result_label		(int status);
 static	void	proc_save_mem		(int n);
 static	void	proc_load_mem		(int n);
 static	void	proc_cmp		(int cmp);
-static	void	proc_smooth		(int method, int mask_size);
-static	void	proc_adaptive_threshold	(int method, int type, int size);
-static	void	proc_threshold		(int type, int size);
+static	void	proc_smooth		(int method, int ksize);
+static	void	proc_adaptive_threshold	(int method, int type, int ksize);
+static	void	proc_threshold		(int type, int ksize);
 static	void	proc_invert		(void);
 static	void	proc_dilate		(int size);
 static	void	proc_erode		(int size);
 static	void	proc_dilate_erode	(int size);
-static	void	proc_contours		(std::vector <
-						std::vector <
-							class cv::Point_ <int>
-						>
-					>  *contours,
-					class cv::Mat  *hierarchy);
-static	void	proc_min_area_rect	(std::vector <
-						class cv::Point_ <int>
-					>  *contour,
-					class cv::RotatedRect  *rect);
+static	void	proc_contours		(
+			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
+			class cv::Mat  *hierarchy);
+static	void	proc_min_area_rect	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::RotatedRect  *rect);
 static	void	proc_rotate		(class cv::RotatedRect  *rect);
 static	void	proc_ROI		(int x, int y, int w, int h);
 static	void	proc_OCR		(int lang, int conf);
@@ -81,7 +77,7 @@ static	void	proc_show_img		(void);
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-int	proc_iface_single	(void)
+int	proc_iface_single	(int action)
 {
 	int	error;
 	clock_t	time_0;
@@ -92,7 +88,7 @@ int	proc_iface_single	(void)
 	time_0	= clock();
 
 	/* Process */
-	switch (proc_mode) {
+	switch (action) {
 	case PROC_MODE_LABEL:
 		error	= proc_label();
 		break;
@@ -138,28 +134,34 @@ void	proc_iface_series	(void)
 		snprintf(file_name, FILENAME_MAX, "%s%04i%s",
 						file_basename, i, file_ext);
 
-		file_error	= alx_sscan_fname(saved_path, saved_name,
+		file_error	= alx_sscan_fname(labels_path, file_name,
 						true, file_name);
 
 		if (file_error) {
 			wh	= false;
 		} else {
 			errno	= 0;
-			img_iface_load();
+			img_iface_load(labels_path, file_name);
 
 			if (!errno) {
 				/* Process */
-				proc_error	= proc_iface_single();
-				/* Show log */
-				user_iface_show_log(saved_name, NULL);
+				proc_error	= proc_iface_single(proc_mode);
 
 				if (proc_error) {
+					/* Save failed image into file */
 					img_iface_show();
 					snprintf(save_error_as, FILENAME_MAX,
-						"%s%04i_err%s",
-						file_basename, i, file_ext);
-					save_image_file(save_error_as);
+							"%s%04i_err%s",
+							file_basename, i,
+							file_ext);
+					save_image_file(labels_fail_path,
+							save_error_as);
 				}
+
+				/* Show log */
+				char	txt_tmp [80];
+				snprintf(txt_tmp, 80, "%04i", i);
+				user_iface_show_log(txt_tmp, "Label");
 			} else {
 				printf("errno:%i\n", errno);
 			}
@@ -175,7 +177,9 @@ static	int	proc_label		(void)
 {
 	int	status;
 
-	char	price [80];
+	double	times;
+	clock_t	time_0;
+	clock_t	time_1;
 
 	std::vector <std::vector <cv::Point_ <int>>>	contours;
 	class cv::Mat					hierarchy;
@@ -185,9 +189,14 @@ static	int	proc_label		(void)
 	int	w;
 	int	h;
 
+	char	price [80];
+
 	proc_save_mem(0);
 	/* Find label (position and angle) */
 	{
+		/* Measure time */
+		time_0		= clock();
+
 		proc_cmp(IMG_IFACE_CMP_BLUE);
 		proc_smooth(IMGI_SMOOTH_MEDIAN, 7);
 		#if 0
@@ -218,16 +227,39 @@ static	int	proc_label		(void)
 			rect.size.width		= rect.size.height;
 			rect.size.height	= tmp;
 		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time0:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 	/* Align label and extract green component */
 	{
+		/* Measure time */
+		time_0		= clock();
+
 		proc_load_mem(0);
 		proc_rotate(&rect);
 		proc_cmp(IMG_IFACE_CMP_GREEN);
 		proc_save_mem(1);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time1:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 	/* Find "Cerdo" in aligned image */
 	{
+		/* Measure time */
+		time_0		= clock();
 
 		x	= rect.center.x - (1.05 * rect.size.width / 2);
 		if (x < 0) {
@@ -253,9 +285,21 @@ static	int	proc_label		(void)
 			result_label(status);
 			return	status;
 		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time2:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 	/* Read barcode in original image */
 	{
+		/* Measure time */
+		time_0		= clock();
+
 		proc_load_mem(0);
 		proc_cmp(IMG_IFACE_CMP_GREEN);
 		proc_zbar(zbar::ZBAR_EAN13);
@@ -266,9 +310,21 @@ static	int	proc_label		(void)
 			result_label(status);
 			return	status;
 		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time3:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 	/* Check product code in barcode */
 	{
+		/* Measure time */
+		time_0		= clock();
+
 		bool	prod_nok;
 		prod_nok	= strncmp(zb_codes.arr[0].data, "2301703",
 							strlen("2301703"));
@@ -277,9 +333,21 @@ static	int	proc_label		(void)
 			result_label(status);
 			return	status;
 		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time4:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 	/* Read price in aligned image (green component) */
 	{
+		/* Measure time */
+		time_0		= clock();
+
 		proc_load_mem(1);
 
 		x	= rect.center.x + (0.33 * rect.size.width / 2);
@@ -292,9 +360,21 @@ static	int	proc_label		(void)
 		proc_dilate_erode(1);
 		proc_threshold(cv::THRESH_BINARY, 1);
 		proc_OCR(IMG_IFACE_OCR_LANG_DIGITS, IMG_IFACE_OCR_CONF_PRICE);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time5:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 	/* Extract price from barcode */
 	{
+		/* Measure time */
+		time_0		= clock();
+
 		if (zb_codes.arr[0].data[8] != '0') {
 			snprintf(price, 80, "%c%c.%c%c",
 						zb_codes.arr[0].data[8],
@@ -307,9 +387,21 @@ static	int	proc_label		(void)
 						zb_codes.arr[0].data[10],
 						zb_codes.arr[0].data[11]);
 		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time6:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 	/* Check label price with barcode price */
 	{
+		/* Measure time */
+		time_0		= clock();
+
 		bool	price_nok;
 		price_nok	= strncmp(img_ocr_text, price, strlen(price));
 		if (price_nok) {
@@ -317,6 +409,15 @@ static	int	proc_label		(void)
 			result_label(status);
 			return	status;
 		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time7:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 	}
 
 	status	= LABEL_OK;
@@ -385,22 +486,22 @@ static	void	proc_cmp		(int cmp)
 	proc_show_img();
 }
 
-static	void	proc_smooth		(int method, int mask_size)
+static	void	proc_smooth		(int method, int ksize)
 {
 	struct Img_Iface_Data_Smooth		data;
 	data.method	= method;
-	data.msk_siz	= mask_size;
+	data.ksize	= ksize;
 	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
 
 	proc_show_img();
 }
 
-static	void	proc_adaptive_threshold	(int method, int type, int size)
+static	void	proc_adaptive_threshold	(int method, int type, int ksize)
 {
 	struct Img_Iface_Data_Adaptive_Thr	data;
 	data.method	= method;
 	data.thr_typ	= type;
-	data.nbh_val	= size;
+	data.ksize	= ksize;
 	img_iface_act(USER_IFACE_ACT_ADAPTIVE_THRESHOLD, (void *)&data);
 
 	proc_show_img();

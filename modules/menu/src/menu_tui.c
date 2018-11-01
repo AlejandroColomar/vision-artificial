@@ -258,11 +258,12 @@ static	void	menu_tui_devel		(void)
 	r	= 1;
 	c	= (80 - w) / 2;
 	int	N;
-	N	= 3;
-	struct Alx_Menu	mnu[3]	= {
-		{5, 4, "[0]	Back"},
+	N	= 4;
+	struct Alx_Menu	mnu[4]	= {
+		{6, 4, "[0]	Back"},
 		{2, 4, "[1]	Change process mode"},
-		{3, 4, "[2]	Change log mode"}
+		{3, 4, "[2]	Change log mode"},
+		{4, 4, "[3]	Change user iface mode"}
 	};
 
 	/* Input box */
@@ -272,7 +273,8 @@ static	void	menu_tui_devel		(void)
 	r2	= r + h - 5;
 	char	*txt[]	= {
 		"Modes: 0=Auto; 1=Stop@prod; 2=Delay@step; 3=Stop@step",
-		"Modes: 0=Results; 1=Operations; 2=All"
+		"Modes: 0=Results; 1=Operations; 2=All",
+		"Modes: 1=CLUI; 2=TUI"
 	};
 
 	/* Menu */
@@ -292,14 +294,19 @@ static	void	menu_tui_devel		(void)
 			break;
 
 		case 1:
-			proc_debug	= alx_w_getint(w2, r2, txt[0],
-					PROC_DBG_NO, 0, PROC_DBG_STOP_STEP,
+			proc_debug		= alx_w_getint(w2, r2, txt[0],
+						PROC_DBG_NO, 0, PROC_DBG_STOP_STEP,
 									NULL);
 			break;
 
 		case 2:
 			user_iface_log.visible	= alx_w_getint(w2, r2, txt[1],
 								0, 2, 2, NULL);
+			break;
+
+		case 3:
+			user_iface_mode		= alx_w_getint(w2, r2, txt[2],
+								1, 2, 2, NULL);
 			break;
 		}
 	}
