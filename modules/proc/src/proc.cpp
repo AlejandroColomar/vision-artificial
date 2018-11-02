@@ -595,7 +595,7 @@ static	int	proc_resistor		(void)
 		/* hue:  bkgd->black; */
 		proc_cmp(IMG_IFACE_CMP_HUE);
 		proc_invert();
-//		proc_threshold(cv::THRESH_TOZERO_INV, 255 - 15);
+		proc_threshold(cv::THRESH_TOZERO_INV, 255 - 15);
 		proc_threshold(cv::THRESH_TOZERO, 255 - 23);
 		proc_threshold(cv::THRESH_BINARY_INV, 1);
 		proc_save_mem(3);
@@ -604,14 +604,14 @@ static	int	proc_resistor		(void)
 		proc_load_mem(2);
 		proc_cmp(IMG_IFACE_CMP_SATURATION);
 		proc_threshold(cv::THRESH_TOZERO_INV, 163);
-//		proc_threshold(cv::THRESH_TOZERO, 50);
+		proc_threshold(cv::THRESH_TOZERO, 50);
 		proc_threshold(cv::THRESH_BINARY_INV, 1);
 		proc_save_mem(4);
 
 		/* value:  bkgd->black; */
 		proc_load_mem(2);
 		proc_cmp(IMG_IFACE_CMP_VALUE);
-//		proc_threshold(cv::THRESH_TOZERO_INV, 240);
+		proc_threshold(cv::THRESH_TOZERO_INV, 240);
 		proc_threshold(cv::THRESH_TOZERO, 100);
 		proc_threshold(cv::THRESH_BINARY_INV, 1);
 		proc_save_mem(5);
