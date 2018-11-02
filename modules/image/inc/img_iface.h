@@ -33,8 +33,10 @@
 
 		IMG_IFACE_ACT_CV = 0x0100,
 		IMG_IFACE_ACT_INVERT,
-		IMG_IFACE_ACT_BGR2GRAY,
+		IMG_IFACE_ACT_CVT_COLOR,
 		IMG_IFACE_ACT_COMPONENT,
+		IMG_IFACE_ACT_HISTOGRAM,
+		IMG_IFACE_ACT_HISTOGRAM_C3,
 		IMG_IFACE_ACT_SMOOTH,
 		IMG_IFACE_ACT_SOBEL,
 		IMG_IFACE_ACT_THRESHOLD,
@@ -73,10 +75,16 @@
 		IMG_IFACE_ACT_SAVE_FILE
 	};
 
-	enum	Img_Iface_Cmp {
+	enum	Img_Iface_Cmp_BGR {
 		IMG_IFACE_CMP_BLUE = 0,
 		IMG_IFACE_CMP_GREEN,
 		IMG_IFACE_CMP_RED
+	};
+
+	enum	Img_Iface_Cmp_HSV {
+		IMG_IFACE_CMP_HUE = 0,
+		IMG_IFACE_CMP_SATURATION,
+		IMG_IFACE_CMP_VALUE
 	};
 
 	enum	ImgI_Smooth {
@@ -130,7 +138,9 @@
 	void	img_iface_cleanup	(void);
 		/* data should *always* be NULL */ 
 	void	img_iface_act		(int action, void *data);
-	void	img_iface_show		(void);
+	void	img_iface_show_img	(void);
+	void	img_iface_show_hist_c1	(void);
+	void	img_iface_show_hist_c3	(void);
 
 
 /******************************************************************************

@@ -32,8 +32,10 @@
  ******************************************************************************/
 	/* Filters */
 static	void	img_cv_invert		(class cv::Mat  *imgptr);
-static	void	img_cv_bgr2gray		(class cv::Mat  *imgptr);
+static	void	img_cv_cvt_color	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_component	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_histogram	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_smooth		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
@@ -59,13 +61,19 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 		img_cv_invert(imgptr);
 		break;
 
-	case IMG_CV_ACT_BGR2GRAY:
-		img_cv_bgr2gray(imgptr);
+	case IMG_CV_ACT_CVT_COLOR:
+		img_cv_cvt_color(imgptr, data);
 		break;
 	case IMG_CV_ACT_COMPONENT:
 		img_cv_component(imgptr, data);
 		break;
 
+	case IMG_CV_ACT_HISTOGRAM:
+		img_cv_histogram(imgptr, data);
+		break;
+	case IMG_CV_ACT_HISTOGRAM_C3:
+		img_cv_histogram_c3(imgptr, data);
+		break;
 	case IMG_CV_ACT_SMOOTH:
 		img_cv_smooth(imgptr, data);
 		break;
@@ -125,9 +133,17 @@ static	void	img_cv_invert		(class cv::Mat  *imgptr)
 	cv::bitwise_not(*imgptr, *imgptr);
 }
 
-static	void	img_cv_bgr2gray		(class cv::Mat  *imgptr)
+static	void	img_cv_cvt_color	(class cv::Mat  *imgptr, void *data)
 {
-	cv::cvtColor(*imgptr, *imgptr, cv::COLOR_BGR2GRAY, 0);
+	/* Data */
+	struct Img_Iface_Data_Cvt_Color	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Cvt_Color *)data;
+
+	/* Conversion method */
+	int	method;
+	method	= data_cast->method;
+
+	cv::cvtColor(*imgptr, *imgptr, method, 0);
 }
 
 static	void	img_cv_component	(class cv::Mat  *imgptr, void *data)
@@ -150,6 +166,118 @@ static	void	img_cv_component	(class cv::Mat  *imgptr, void *data)
 	cmp_img[cmp].copyTo(*imgptr);
 
 	/* clean up */
+	cmp_img[0].release();
+	cmp_img[1].release();
+	cmp_img[2].release();
+}
+
+static	void	img_cv_histogram	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Histogram	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Histogram *)data;
+
+	/* Contours */
+	class cv::Mat	*hist;
+	hist		= data_cast->hist_c0;
+	class cv::Mat	*hist_img;
+	hist_img	= data_cast->hist_img;
+
+	/* Write components into cmp_img[] */
+	int		h_size		= 256;
+	float		h_range_arr[]	= {0.0, 256.0};
+	const float	*h_range	= {h_range_arr};
+	cv::calcHist(imgptr, 1, 0, cv::Mat(), *hist, 1, &h_size, &h_range,
+								true, false);
+
+	/* Init */
+	hist_img->setTo(cv::Scalar(0));
+
+	/* Normalize the result to [0, hist_img->rows - 1] */
+	cv::normalize(*hist, *hist, 0, hist_img->rows - 1, cv::NORM_MINMAX, -1,
+								cv::Mat());
+
+	/* Draw hist into hist_img */
+	int	i;
+	for(i = 0; i < 256; i++ ) {
+		cv::line(*hist_img, cv::Point(i, hist_img->rows - 0),
+				cv::Point(i, hist_img->rows - hist->at<float>(i)),
+				cv::Scalar(255, 0, 0), 1, 8, 0);
+	}
+
+	/* Show histogram */
+	img_iface_show_hist_c1();
+}
+
+static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr, void *data)
+{
+	class cv::Mat	cmp_img[3];
+
+	/* Write components into cmp_img[] */
+	cv::split(*imgptr, cmp_img);
+
+	/* Data */
+	struct Img_Iface_Data_Histogram	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Histogram *)data;
+
+	/* Contours */
+	class cv::Mat	*hist_c0;
+	hist_c0		= data_cast->hist_c0;
+	class cv::Mat	*hist_c1;
+	hist_c1		= data_cast->hist_c1;
+	class cv::Mat	*hist_c2;
+	hist_c2		= data_cast->hist_c2;
+	class cv::Mat	*hist_img;
+	hist_img	= data_cast->hist_img;
+
+	/* Write components into cmp_img[] */
+	int		h_size		= 256;
+	float		h_range_arr[]	= {0.0, 256.0};
+	const float	*h_range	= {h_range_arr};
+	cv::calcHist(&cmp_img[0], 1, 0, cv::Mat(), *hist_c0, 1, &h_size,
+							&h_range, true, false);
+	cv::calcHist(&cmp_img[1], 1, 0, cv::Mat(), *hist_c1, 1, &h_size,
+							&h_range, true, false);
+	cv::calcHist(&cmp_img[2], 1, 0, cv::Mat(), *hist_c2, 1, &h_size,
+							&h_range, true, false);
+
+	/* Init */
+	hist_img->setTo(cv::Scalar(0));
+
+	/* Normalize the result to [0, hist_img->rows - 1] */
+	cv::normalize(*hist_c0, *hist_c0, 0, hist_img->rows - 1,
+						cv::NORM_MINMAX, -1, cv::Mat());
+	cv::normalize(*hist_c1, *hist_c1, 0, hist_img->rows - 1,
+						cv::NORM_MINMAX, -1, cv::Mat());
+	cv::normalize(*hist_c2, *hist_c2, 0, hist_img->rows - 1,
+						cv::NORM_MINMAX, -1, cv::Mat());
+
+	/* Draw hist into hist_img */
+	int	i;
+	int	j;
+	for(i = 0; i < 256; i++ ) {
+		cv::line(*hist_img, cv::Point(3*i, hist_img->rows - 0),
+				cv::Point(3*i,
+				hist_img->rows - hist_c0->at<float>(i)),
+				cv::Scalar(255, 0, 0), 1, 8, 0);
+	}
+	for(i = 0; i < 256; i++ ) {
+		cv::line(*hist_img, cv::Point(3*i + 1, hist_img->rows - 0),
+				cv::Point(3*i+1,
+				hist_img->rows - hist_c1->at<float>(i)),
+				cv::Scalar(0, 255, 0), 1, 8, 0);
+	}
+	for(i = 0; i < 256; i++ ) {
+		cv::line(*hist_img, cv::Point(3*i + 2, hist_img->rows - 0),
+				cv::Point(3*i + 2,
+				hist_img->rows - hist_c2->at<float>(i)),
+				cv::Scalar(0, 0, 255), 1, 8, 0);
+	}
+
+	/* Show histogram */
+	img_iface_show_hist_c3();
+
+	/* Cleanup */
 	cmp_img[0].release();
 	cmp_img[1].release();
 	cmp_img[2].release();

@@ -242,16 +242,12 @@ clean:
 	$(Q)cd $(LIBALX_DIR) && $(MAKE) clean && cd ..
 	$(Q)cd $(MODULES_DIR) && $(MAKE) clean && cd ..
 	$(Q)cd $(TMP_DIR) && $(MAKE) clean && cd ..
-
-PHONY += mrproper
-mrproper: clean
 	$(Q)cd $(BIN_DIR) && $(MAKE) clean && cd ..
 
 PHONY += help
 help:
 	@echo  'Cleaning targets:'
-	@echo  '  clean		  - Remove all object files, but keep the binary'
-	@echo  '  mrproper	  - Remove all generated files'
+	@echo  '  clean		  - Remove all generated files'
 	@echo  ''
 	@echo  'Other generic targets:'
 	@echo  '  all		  - Build all targets marked with [*]'
