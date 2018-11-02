@@ -41,7 +41,9 @@
  ******* macros ***************************************************************
  ******************************************************************************/
 	# define	IMG_MEM_SIZE	(10)
-	# define	WIN_NAME	"Image"
+
+	# define	WIN_NAME_IMG	"Image"
+	# define	WIN_NAME_HIST	"Hist"
 	# define	WIN_TIMEOUT	(500)
 
 
@@ -57,6 +59,11 @@ static	class cv::Mat					image_copy_old;
 static	class cv::Mat					image_copy_tmp;
 static	class cv::Mat					image_mem [IMG_MEM_SIZE];
 static	class cv::Mat					image_ref;
+static	class cv::Mat					histogram_c0;
+static	class cv::Mat					histogram_c1;
+static	class cv::Mat					histogram_c2;
+static	class cv::Mat					hist_img_c1;
+static	class cv::Mat					hist_img_c3;
 static	std::vector <std::vector <cv::Point_ <int>>>	contours;
 static	class cv::Mat					hierarchy;
 static	class cv::RotatedRect				rectangle;
@@ -67,8 +74,10 @@ static	class cv::RotatedRect				rectangle;
  ******************************************************************************/
 	/* img_cv */
 static	void	img_iface_invert	(void);
-static	void	img_iface_bgr2gray	(void);
+static	void	img_iface_cvt_color	(void *data);
 static	void	img_iface_component	(void *data);
+static	void	img_iface_histogram	(void *data);
+static	void	img_iface_histogram_c3	(void *data);
 static	void	img_iface_smooth	(void *data);
 static	void	img_iface_sobel		(void *data);
 static	void	img_iface_threshold	(void *data);
@@ -78,6 +87,7 @@ static	void	img_iface_erode		(void *data);
 static	void	img_iface_contours	(void *data);
 static	void	img_iface_contours_size	(void *data);
 static	void	img_iface_min_area_rect	(void *data);
+static	void	img_iface_fit_ellipse	(void *data);
 static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
 static	void	img_iface_set_ROI	(void *data);
@@ -106,7 +116,13 @@ static	void	img_iface_save_file	(void);
  ******************************************************************************/
 void	img_iface_init		(void)
 {
-	cv::namedWindow(WIN_NAME, cv::WINDOW_NORMAL);
+	cv::namedWindow(WIN_NAME_IMG, cv::WINDOW_NORMAL);
+	cv::namedWindow(WIN_NAME_HIST, cv::WINDOW_NORMAL);
+
+	hist_img_c1.release();
+	hist_img_c1	= cv::Mat::zeros(cv::Size(256, 100), CV_8UC3);
+	hist_img_c3.release();
+	hist_img_c3	= cv::Mat::zeros(cv::Size(256 * 3, 100), CV_8UC3);
 }
 
 void	img_iface_cleanup_main	(void)
@@ -159,6 +175,11 @@ void	img_iface_cleanup	(void)
 {
 	image_copy_old.release();
 	image_copy_tmp.release();
+	histogram_c0.release();
+	histogram_c1.release();
+	histogram_c2.release();
+	hist_img_c1.release();
+	hist_img_c3.release();
 }
 
 void	img_iface_act		(int action, void *data)
@@ -168,11 +189,17 @@ void	img_iface_act		(int action, void *data)
 	case IMG_IFACE_ACT_INVERT:
 		img_iface_invert();
 		break;
-	case IMG_IFACE_ACT_BGR2GRAY:
-		img_iface_bgr2gray();
+	case IMG_IFACE_ACT_CVT_COLOR:
+		img_iface_cvt_color(data);
 		break;
 	case IMG_IFACE_ACT_COMPONENT:
 		img_iface_component(data);
+		break;
+	case IMG_IFACE_ACT_HISTOGRAM:
+		img_iface_histogram(data);
+		break;
+	case IMG_IFACE_ACT_HISTOGRAM_C3:
+		img_iface_histogram_c3(data);
 		break;
 	case IMG_IFACE_ACT_SMOOTH:
 		img_iface_smooth(data);
@@ -200,6 +227,9 @@ void	img_iface_act		(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_MIN_AREA_RECT:
 		img_iface_min_area_rect(data);
+		break;
+	case IMG_IFACE_ACT_FIT_ELLIPSE:
+		img_iface_fit_ellipse(data);
 		break;
 	case IMG_IFACE_ACT_ROTATE_ORTO:
 		img_iface_rotate_orto(data);
@@ -264,9 +294,21 @@ void	img_iface_act		(int action, void *data)
 	}
 }
 
-void	img_iface_show		(void)
+void	img_iface_show_img	(void)
 {
-	cv::imshow(WIN_NAME, image_copy_tmp);
+	cv::imshow(WIN_NAME_IMG, image_copy_tmp);
+	cv::waitKey(WIN_TIMEOUT);
+}
+
+void	img_iface_show_hist_c1	(void)
+{
+	cv::imshow(WIN_NAME_HIST, hist_img_c1);
+	cv::waitKey(WIN_TIMEOUT);
+}
+
+void	img_iface_show_hist_c3	(void)
+{
+	cv::imshow(WIN_NAME_HIST, hist_img_c3);
 	cv::waitKey(WIN_TIMEOUT);
 }
 
@@ -287,10 +329,10 @@ static	void	img_iface_invert	(void)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_INVERT, NULL);
 }
 
-static	void	img_iface_bgr2gray	(void)
+static	void	img_iface_cvt_color	(void *data)
 {
-	/* Must have 3 channels */
-	if (image_copy_tmp.channels() != 3) {
+	/* Must have at least 3 channels */
+	if (image_copy_tmp.channels() < 3) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
@@ -300,20 +342,36 @@ static	void	img_iface_bgr2gray	(void)
 		return;
 	}
 
+	/* Data */
+	struct Img_Iface_Data_Cvt_Color	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Method: BGR2GRAY = 6, BGR2HSV = 40");
+		data_tmp.method	= user_iface_getint(0, 0,
+							cv::COLOR_COLORCVT_MAX,
+							title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
 	/* Write into log */
+	struct Img_Iface_Data_Cvt_Color	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Cvt_Color *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"BGR -> Gray");
+						"Convert color %i",
+						data_cast->method);
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
 	/* Filter: BGR to gray */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_BGR2GRAY, NULL);
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_CVT_COLOR, data);
 }
 
 static	void	img_iface_component	(void *data)
 {
-	/* Must have 3 channels */
-	if (image_copy_tmp.channels() != 3) {
+	/* Must have at least 3 channels */
+	if (image_copy_tmp.channels() < 3) {
 		/* Write into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"! Invalid input");
@@ -328,8 +386,10 @@ static	void	img_iface_component	(void *data)
 	if (!data) {
 		/* Ask user */
 		char	title [80];
-		snprintf(title, 80, "Component: B = 0, G = 1, R = 2");
-		data_tmp.cmp	= user_iface_getint(0, 0, 2, title, NULL);
+		snprintf(title, 80, "Component:");
+		data_tmp.cmp	= user_iface_getint(0, 0,
+						image_copy_tmp.channels() - 1,
+						title, NULL);
 
 		data	= (void *)&data_tmp;
 	}
@@ -347,7 +407,7 @@ static	void	img_iface_component	(void *data)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_COMPONENT, data);
 }
 
-static	void	img_iface_smooth	(void *data)
+static	void	img_iface_histogram	(void *data)
 {
 	/* Must have 1 channel */
 	if (image_copy_tmp.channels() != 1) {
@@ -360,6 +420,61 @@ static	void	img_iface_smooth	(void *data)
 		return;
 	}
 
+	/* Data */
+	struct Img_Iface_Data_Histogram	data_tmp;
+	if (!data) {
+		data_tmp.hist_c0		= &histogram_c0;
+		data_tmp.hist_img	= &hist_img_c1;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Histogram");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Histogram */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_HISTOGRAM, data);
+}
+
+static	void	img_iface_histogram_c3	(void *data)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 3) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Data */
+	struct Img_Iface_Data_Histogram	data_tmp;
+	if (!data) {
+		data_tmp.hist_c0	= &histogram_c0;
+		data_tmp.hist_c1	= &histogram_c1;
+		data_tmp.hist_c2	= &histogram_c2;
+		data_tmp.hist_img	= &hist_img_c3;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Histogram (3 channels)");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Histogram */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_HISTOGRAM_C3, data);
+}
+
+static	void	img_iface_smooth	(void *data)
+{
 	/* Data */
 	struct Img_Iface_Data_Smooth	data_tmp;
 	if (!data) {
@@ -423,7 +538,7 @@ static	void	img_iface_sobel		(void *data)
 	struct Img_Iface_Data_Sobel	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Sobel *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Smooth dx=%i;dy=%i [ks=%i]",
+						"Sobel dx=%i;dy=%i [ks=%i]",
 						data_cast->dx,
 						data_cast->dy,
 						data_cast->ksize);
@@ -601,8 +716,8 @@ static	void	img_iface_contours	(void *data)
 	struct Img_Iface_Data_Contours	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Contours *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-					"Contours n=%i",
-					(int)data_cast->contours->size());
+						"Contours n=%i",
+						(int)data_cast->contours->size());
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 }
@@ -617,7 +732,7 @@ static	void	img_iface_contours_size	(void *data)
 		data	= (void *)&data_tmp;
 	}
 
-	/* Contours */
+	/* Contours size */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_CONTOURS_SIZE, data);
 
 	/* Write into log */
@@ -669,6 +784,38 @@ static	void	img_iface_min_area_rect	(void *data)
 
 	/* Enclosing rectangle */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_MIN_AREA_RECT, data);
+}
+
+static	void	img_iface_fit_ellipse	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_MinARect	data_tmp;
+	if (!data) {
+		if(!contours.size()) {
+			/* Write into log */
+			snprintf(user_iface_log.line[user_iface_log.len],
+							LOG_LINE_LEN,
+							"! Invalid input");
+			user_iface_log.lvl[user_iface_log.len]	= 1;
+			(user_iface_log.len)++;
+
+			return;
+		}
+		data_tmp.contour	= &(contours[0]);
+
+		data_tmp.rect		= &rectangle;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Fit ellipse");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Enclosing rectangle */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_FIT_ELLIPSE, data);
 }
 
 static	void	img_iface_rotate_orto	(void *data)
