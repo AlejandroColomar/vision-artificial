@@ -222,8 +222,14 @@ static	int	usr_input	(void)
 			ch = wgetch(win_log);
 
 			switch (ch) {
-			case '0':
+			case '1':
 				action	= USER_IFACE_ACT_PROC_LABEL;
+				break;
+			case '2':
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			case '3':
+				action	= USER_IFACE_ACT_PROC_RESISTOR;
 				break;
 			}
 			break;
@@ -252,7 +258,7 @@ static	int	usr_input	(void)
 					action	= USER_IFACE_ACT_INVERT;
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_BGR2GRAY;
+					action	= USER_IFACE_ACT_CVT_COLOR;
 					break;
 				case '2':
 					action	= USER_IFACE_ACT_COMPONENT;
@@ -268,15 +274,21 @@ static	int	usr_input	(void)
 
 				switch (ch) {
 				case '0':
-					action	= USER_IFACE_ACT_SMOOTH;
+					action	= USER_IFACE_ACT_HISTOGRAM;
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_SOBEL;
+					action	= USER_IFACE_ACT_HISTOGRAM_C3;
 					break;
 				case '2':
-					action	= USER_IFACE_ACT_THRESHOLD;
+					action	= USER_IFACE_ACT_SMOOTH;
 					break;
 				case '3':
+					action	= USER_IFACE_ACT_SOBEL;
+					break;
+				case '4':
+					action	= USER_IFACE_ACT_THRESHOLD;
+					break;
+				case '5':
 					action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 					break;
 				default:
@@ -319,6 +331,9 @@ static	int	usr_input	(void)
 					break;
 				case '2':
 					action	= USER_IFACE_ACT_MIN_AREA_RECT;
+					break;
+				case '3':
+					action	= USER_IFACE_ACT_FIT_ELLIPSE;
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -489,12 +504,14 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to file:	%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
 	mvwprintw(win_help, r++, c, " - Invert:	%s",		"f100");
-	mvwprintw(win_help, r++, c, " - BGR -> Gray:	%s",	"f101");
+	mvwprintw(win_help, r++, c, " - Cvt color:	%s",	"f101");
 	mvwprintw(win_help, r++, c, " - Component:	%s",	"f102");
-	mvwprintw(win_help, r++, c, " - Smooth:	%s",		"f110");
-	mvwprintw(win_help, r++, c, " - Sobel:	%s",		"f111");
-	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f112");
-	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f113");
+	mvwprintw(win_help, r++, c, " - Histogram:	%s",	"f110");
+	mvwprintw(win_help, r++, c, " - Histogram_c3:%s",	"f111");
+	mvwprintw(win_help, r++, c, " - Smooth:	%s",		"f112");
+	mvwprintw(win_help, r++, c, " - Sobel:	%s",		"f113");
+	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f114");
+	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f115");
 	mvwprintw(win_help, r++, c, " - Dilate:	%s",		"f120");
 	mvwprintw(win_help, r++, c, " - Erode:	%s",		"f121");
 	mvwprintw(win_help, r++, c, " - D-E:		%s",	"f122");
@@ -502,6 +519,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f130");
 	mvwprintw(win_help, r++, c, " - Contours siz:%s",	"f131");
 	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f132");
+	mvwprintw(win_help, r++, c, " - Fit ellipse:	%s",	"f133");
 	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f140");
 	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f141");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f142");
@@ -510,7 +528,8 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Align:	%s",		"f40");
 	mvwprintw(win_help, r++, c, "Exercises:");
-	mvwprintw(win_help, r++, c, " - Etiqueta:	%s",	"e10");
+	mvwprintw(win_help, r++, c, " - Label:	%s",		"e11");
+	mvwprintw(win_help, r++, c, " - Resistor:	%s",	"e13");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:	%s",	"u1");
 	mvwprintw(win_help, r++, c, "Quit:		%c",	'q');

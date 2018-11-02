@@ -89,7 +89,7 @@ void	user_iface		(void)
 
 	do {
 		/* Display image */
-		img_iface_show();
+		img_iface_show_img();
 
 		/* Request user action */
 		switch (user_iface_mode) {

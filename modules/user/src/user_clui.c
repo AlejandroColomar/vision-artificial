@@ -127,8 +127,14 @@ static	int	usr_input	(void)
 		switch (ch[1]) {
 		case '1':
 			switch (ch[2]) {
-			case '0':
+			case '1':
 				action	= USER_IFACE_ACT_PROC_LABEL;
+				break;
+			case '2':
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			case '3':
+				action	= USER_IFACE_ACT_PROC_RESISTOR;
 				break;
 			}
 			break;
@@ -151,7 +157,7 @@ static	int	usr_input	(void)
 					action	= USER_IFACE_ACT_INVERT;
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_BGR2GRAY;
+					action	= USER_IFACE_ACT_CVT_COLOR;
 					break;
 				case '2':
 					action	= USER_IFACE_ACT_COMPONENT;
@@ -165,15 +171,21 @@ static	int	usr_input	(void)
 				/* grayscale filters */
 				switch (ch[3]) {
 				case '0':
-					action	= USER_IFACE_ACT_SMOOTH;
+					action	= USER_IFACE_ACT_HISTOGRAM;
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_SOBEL;
+					action	= USER_IFACE_ACT_HISTOGRAM_C3;
 					break;
 				case '2':
-					action	= USER_IFACE_ACT_THRESHOLD;
+					action	= USER_IFACE_ACT_SMOOTH;
 					break;
 				case '3':
+					action	= USER_IFACE_ACT_SOBEL;
+					break;
+				case '4':
+					action	= USER_IFACE_ACT_THRESHOLD;
+					break;
+				case '5':
 					action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 					break;
 				default:
@@ -212,6 +224,9 @@ static	int	usr_input	(void)
 					break;
 				case '2':
 					action	= USER_IFACE_ACT_MIN_AREA_RECT;
+					break;
+				case '3':
+					action	= USER_IFACE_ACT_FIT_ELLIPSE;
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -357,12 +372,14 @@ static	void	show_help	(void)
 	printf("Save to file:	%c\n",	's');
 	printf("Functions:\n");
 	printf(" - Invert:	%s\n",	"f100");
-	printf(" - BGR -> Gray:	%s\n",	"f101");
+	printf(" - Cvt color:	%s\n",	"f101");
 	printf(" - Component:	%s\n",	"f102");
-	printf(" - Smooth:	%s\n",	"f110");
-	printf(" - Sobel:	%s\n",	"f111");
-	printf(" - Threshold:	%s\n",	"f112");
-	printf(" - Adaptive Thr:%s\n",	"f113");
+	printf(" - Histogram:	%s\n",	"f110");
+	printf(" - Histogram c3:%s\n",	"f111");
+	printf(" - Smooth:	%s\n",	"f112");
+	printf(" - Sobel:	%s\n",	"f113");
+	printf(" - Threshold:	%s\n",	"f114");
+	printf(" - Adaptive Thr:%s\n",	"f115");
 	printf(" - Dilate:	%s\n",	"f120");
 	printf(" - Erode:	%s\n",	"f121");
 	printf(" - D-E:		%s\n",	"f122");
@@ -370,6 +387,7 @@ static	void	show_help	(void)
 	printf(" - Contours:	%s\n",	"f130");
 	printf(" - Contours siz:%s\n",	"f131");
 	printf(" - Min. A rect.:%s\n",	"f132");
+	printf(" - Fit ellipse:	%s\n",	"f133");
 	printf(" - Rotate orto.:%s\n",	"f140");
 	printf(" - Rotate:	%s\n",	"f141");
 	printf(" - Rotate 2rect:%s\n",	"f142");
@@ -378,7 +396,8 @@ static	void	show_help	(void)
 	printf(" - Scan text:	%s\n",	"f30");
 	printf(" - Align:	%s\n",	"f40");
 	printf("Exercises:\n");
-	printf(" - Etiqueta:	%s\n",	"e10");
+	printf(" - Label:	%s\n",	"e11");
+	printf(" - Resistor:	%s\n",	"e13");
 	printf("Other:\n");
 	printf(" - Show OCR:	%s\n",	"u1");
 	printf("Quit:		%c\n",	'q');
