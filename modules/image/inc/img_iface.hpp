@@ -38,7 +38,9 @@
 		IMG_IFACE_ACT_FOO = 0,
 
 		IMG_IFACE_ACT_CV = 0x0100,
-		IMG_IFACE_ACT_INVERT,
+		IMG_IFACE_ACT_NOT,
+		IMG_IFACE_ACT_OR_2REF,
+		IMG_IFACE_ACT_AND_2REF,
 		IMG_IFACE_ACT_CVT_COLOR,
 		IMG_IFACE_ACT_COMPONENT,
 		IMG_IFACE_ACT_HISTOGRAM,
@@ -56,6 +58,7 @@
 		IMG_IFACE_ACT_ROTATE_ORTO,
 		IMG_IFACE_ACT_ROTATE,
 		IMG_IFACE_ACT_SET_ROI,
+		IMG_IFACE_ACT_PIXEL_VALUE,
 
 		IMG_IFACE_ACT_DILATE_ERODE,
 		IMG_IFACE_ACT_ERODE_DILATE,
@@ -165,13 +168,14 @@
 
 	struct	Img_Iface_Data_Contours_Size {
 		std::vector <std::vector <class cv::Point_ <int>>>	*contours;
-		double							area [CONTOURS_MAX];
-		double							perimeter [CONTOURS_MAX];
+		double							*area;
+		double							*perimeter;
 	};
 
 	struct	Img_Iface_Data_MinARect {
 		std::vector <class cv::Point_ <int>>	*contour;
 		class cv::RotatedRect			*rect;
+		bool					show;
 	};
 
 	struct	Img_Iface_Data_Rotate_Orto {
@@ -185,6 +189,12 @@
 
 	struct	Img_Iface_Data_SetROI {
 		class cv::Rect_ <int>	rect;
+	};
+
+	struct	Img_Iface_Data_Pixel_Value {
+		unsigned char	*val;
+		int		x;
+		int		y;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/

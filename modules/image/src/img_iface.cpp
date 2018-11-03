@@ -65,6 +65,8 @@ static	class cv::Mat					histogram_c2;
 static	class cv::Mat					hist_img_c1;
 static	class cv::Mat					hist_img_c3;
 static	std::vector <std::vector <cv::Point_ <int>>>	contours;
+static	double						area [CONTOURS_MAX];
+static	double						perimeter [CONTOURS_MAX];
 static	class cv::Mat					hierarchy;
 static	class cv::RotatedRect				rectangle;
 
@@ -73,7 +75,9 @@ static	class cv::RotatedRect				rectangle;
  ******* static functions *****************************************************
  ******************************************************************************/
 	/* img_cv */
-static	void	img_iface_invert	(void);
+static	void	img_iface_not		(void);
+static	void	img_iface_or_2ref	(void);
+static	void	img_iface_and_2ref	(void);
 static	void	img_iface_cvt_color	(void *data);
 static	void	img_iface_component	(void *data);
 static	void	img_iface_histogram	(void *data);
@@ -91,6 +95,7 @@ static	void	img_iface_fit_ellipse	(void *data);
 static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
 static	void	img_iface_set_ROI	(void *data);
+static	void	img_iface_pixel_value	(void *data);
 
 static	void	img_iface_dilate_erode	(void *data);
 static	void	img_iface_erode_dilate	(void *data);
@@ -116,8 +121,8 @@ static	void	img_iface_save_file	(void);
  ******************************************************************************/
 void	img_iface_init		(void)
 {
-	cv::namedWindow(WIN_NAME_IMG, cv::WINDOW_NORMAL);
 	cv::namedWindow(WIN_NAME_HIST, cv::WINDOW_NORMAL);
+	cv::namedWindow(WIN_NAME_IMG, cv::WINDOW_NORMAL);
 
 	hist_img_c1.release();
 	hist_img_c1	= cv::Mat::zeros(cv::Size(256, 100), CV_8UC3);
@@ -186,8 +191,14 @@ void	img_iface_act		(int action, void *data)
 {
 	switch (action) {
 	/* img_cv */
-	case IMG_IFACE_ACT_INVERT:
-		img_iface_invert();
+	case IMG_IFACE_ACT_NOT:
+		img_iface_not();
+		break;
+	case IMG_IFACE_ACT_OR_2REF:
+		img_iface_or_2ref();
+		break;
+	case IMG_IFACE_ACT_AND_2REF:
+		img_iface_and_2ref();
 		break;
 	case IMG_IFACE_ACT_CVT_COLOR:
 		img_iface_cvt_color(data);
@@ -239,6 +250,9 @@ void	img_iface_act		(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_SET_ROI:
 		img_iface_set_ROI(data);
+		break;
+	case IMG_IFACE_ACT_PIXEL_VALUE:
+		img_iface_pixel_value(data);
 		break;
 
 	case IMG_IFACE_ACT_DILATE_ERODE:
@@ -317,7 +331,7 @@ void	img_iface_show_hist_c3	(void)
  ******* static functions *****************************************************
  ******************************************************************************/
 /* img_cv --------------------------------------------------------------------*/
-static	void	img_iface_invert	(void)
+static	void	img_iface_not	(void)
 {
 	/* Write into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
@@ -325,8 +339,54 @@ static	void	img_iface_invert	(void)
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 
-	/* Filter: invert color */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_INVERT, NULL);
+	/* Bitwise NOT */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_NOT, NULL);
+}
+
+static	void	img_iface_or_2ref	(void)
+{
+	/* Must have same channels */
+	if (image_copy_tmp.channels() != image_ref.channels()) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Bitwise OR");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Bitwise OR to reference */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_OR_2REF, (void *)&image_ref);
+}
+
+static	void	img_iface_and_2ref	(void)
+{
+	/* Must have same channels */
+	if (image_copy_tmp.channels() != image_ref.channels()) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Bitwise AND");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Bitwise AND to reference */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_AND_2REF, (void *)&image_ref);
 }
 
 static	void	img_iface_cvt_color	(void *data)
@@ -728,6 +788,8 @@ static	void	img_iface_contours_size	(void *data)
 	struct Img_Iface_Data_Contours_Size	data_tmp;
 	if (!data) {
 		data_tmp.contours	= &contours;
+		data_tmp.area		= area;
+		data_tmp.perimeter	= perimeter;
 
 		data	= (void *)&data_tmp;
 	}
@@ -770,8 +832,8 @@ static	void	img_iface_min_area_rect	(void *data)
 			return;
 		}
 		data_tmp.contour	= &(contours[0]);
-
 		data_tmp.rect		= &rectangle;
+		data_tmp.show		= true;
 
 		data	= (void *)&data_tmp;
 	}
@@ -924,6 +986,45 @@ static	void	img_iface_set_ROI	(void *data)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_SET_ROI, data);
 }
 
+static	void	img_iface_pixel_value	(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Pixel_Value	data_tmp;
+	unsigned char				val;
+	if (!data) {
+		data_tmp.val		= &val;
+
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "x:");
+		data_tmp.x		= user_iface_getint(0, 0,
+					image_copy_tmp.cols,
+					title, NULL);
+
+		snprintf(title, 80, "y:");
+		data_tmp.y		= user_iface_getint(0, 0,
+					image_copy_tmp.rows,
+					title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Contours size */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_PIXEL_VALUE, data);
+
+	/* Write into log */
+	struct Img_Iface_Data_Pixel_Value	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Pixel_Value *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Pixel value:  (%i, %i): %i",
+						data_cast->x,
+						data_cast->y,
+						*(data_cast->val));
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+/* img_cv:  composite --------------------------------------------------------*/
 static	void	img_iface_dilate_erode	(void *data)
 {
 	/* Data */

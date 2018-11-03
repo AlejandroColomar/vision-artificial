@@ -53,14 +53,14 @@ void	user_tui_init		(void)
 	alx_resume_curses();
 
 	/* Dimensions: log */
-	const int	h1 =	48;
+	const int	h1 =	54;
 	const int	w1 =	50;
 	const int	r1 =	0;
 	const int	c1 =	30;
 	win_log		= newwin(h1, w1, r1, c1);
 
 	/* Dimensions: help */
-	const int	h2 =	48;
+	const int	h2 =	54;
 	const int	w2 =	30;
 	const int	r2 =	0;
 	const int	c2 =	0;
@@ -173,8 +173,8 @@ static	void	log_loop	(void)
 	int	l;
 	int	l_0;
 
-	if ((user_iface_log.len - 40) > 0) {
-		i_0	= user_iface_log.len - 21;
+	if (user_iface_log.len > 51) {
+		i_0	= user_iface_log.len - 51;
 		l_0	= 1;
 		mvwprintw(win_log, 1, 10, "...");
 	} else {
@@ -250,18 +250,18 @@ static	int	usr_input	(void)
 
 			switch (ch) {
 			case '0':
-				/* color manipulation */
+				/* bitwise manipulation */
 				ch = wgetch(win_log);
 
 				switch (ch) {
 				case '0':
-					action	= USER_IFACE_ACT_INVERT;
+					action	= USER_IFACE_ACT_NOT;
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_CVT_COLOR;
+					action	= USER_IFACE_ACT_OR_2REF;
 					break;
 				case '2':
-					action	= USER_IFACE_ACT_COMPONENT;
+					action	= USER_IFACE_ACT_AND_2REF;
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -269,6 +269,22 @@ static	int	usr_input	(void)
 				}
 				break;
 			case '1':
+				/* color manipulation */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_CVT_COLOR;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_COMPONENT;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '2':
 				/* grayscale filters */
 				ch = wgetch(win_log);
 
@@ -296,7 +312,7 @@ static	int	usr_input	(void)
 					break;
 				}
 				break;
-			case '2':
+			case '3':
 				/* black & white filters */
 				ch = wgetch(win_log);
 
@@ -318,7 +334,7 @@ static	int	usr_input	(void)
 					break;
 				}
 				break;
-			case '3':
+			case '4':
 				/* contour */
 				ch = wgetch(win_log);
 
@@ -340,7 +356,7 @@ static	int	usr_input	(void)
 					break;
 				}
 				break;
-			case '4':
+			case '5':
 				/* rotation */
 				ch = wgetch(win_log);
 
@@ -359,7 +375,7 @@ static	int	usr_input	(void)
 					break;
 				}
 				break;
-			case '5':
+			case '6':
 				/* ROI */
 				ch = wgetch(win_log);
 
@@ -503,27 +519,29 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to ref:	%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:	%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
-	mvwprintw(win_help, r++, c, " - Invert:	%s",		"f100");
-	mvwprintw(win_help, r++, c, " - Cvt color:	%s",	"f101");
-	mvwprintw(win_help, r++, c, " - Component:	%s",	"f102");
-	mvwprintw(win_help, r++, c, " - Histogram:	%s",	"f110");
-	mvwprintw(win_help, r++, c, " - Histogram_c3:%s",	"f111");
-	mvwprintw(win_help, r++, c, " - Smooth:	%s",		"f112");
-	mvwprintw(win_help, r++, c, " - Sobel:	%s",		"f113");
-	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f114");
-	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f115");
-	mvwprintw(win_help, r++, c, " - Dilate:	%s",		"f120");
-	mvwprintw(win_help, r++, c, " - Erode:	%s",		"f121");
-	mvwprintw(win_help, r++, c, " - D-E:		%s",	"f122");
-	mvwprintw(win_help, r++, c, " - E-D:		%s",	"f123");
-	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f130");
-	mvwprintw(win_help, r++, c, " - Contours siz:%s",	"f131");
-	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f132");
-	mvwprintw(win_help, r++, c, " - Fit ellipse:	%s",	"f133");
-	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f140");
-	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f141");
-	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f142");
-	mvwprintw(win_help, r++, c, " - Set ROI:	%s",	"f150");
+	mvwprintw(win_help, r++, c, " - Bitwise NOT:	%s",	"f100");
+	mvwprintw(win_help, r++, c, " - BW. OR 2ref:	%s",	"f101");
+	mvwprintw(win_help, r++, c, " - BW. AND 2ref:%s",	"f102");
+	mvwprintw(win_help, r++, c, " - Cvt color:	%s",	"f110");
+	mvwprintw(win_help, r++, c, " - Component:	%s",	"f111");
+	mvwprintw(win_help, r++, c, " - Histogram:	%s",	"f120");
+	mvwprintw(win_help, r++, c, " - Histogram_c3:%s",	"f121");
+	mvwprintw(win_help, r++, c, " - Smooth:	%s",		"f122");
+	mvwprintw(win_help, r++, c, " - Sobel:	%s",		"f123");
+	mvwprintw(win_help, r++, c, " - Threshold:	%s",	"f124");
+	mvwprintw(win_help, r++, c, " - Adaptive Thr:%s",	"f125");
+	mvwprintw(win_help, r++, c, " - Dilate:	%s",		"f130");
+	mvwprintw(win_help, r++, c, " - Erode:	%s",		"f131");
+	mvwprintw(win_help, r++, c, " - D-E:		%s",	"f132");
+	mvwprintw(win_help, r++, c, " - E-D:		%s",	"f133");
+	mvwprintw(win_help, r++, c, " - Contours:	%s",	"f140");
+	mvwprintw(win_help, r++, c, " - Contours siz:%s",	"f141");
+	mvwprintw(win_help, r++, c, " - Min. A rect.:%s",	"f142");
+	mvwprintw(win_help, r++, c, " - Fit ellipse:	%s",	"f143");
+	mvwprintw(win_help, r++, c, " - Rotate orto.:%s",	"f150");
+	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f151");
+	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f152");
+	mvwprintw(win_help, r++, c, " - Set ROI:	%s",	"f160");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Align:	%s",		"f40");

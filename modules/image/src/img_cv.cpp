@@ -7,6 +7,8 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
+		/* fabs */
+	#include <cmath>
 		/* true & false */
 	#include <cstdbool>
 		/* snprintf() */
@@ -31,7 +33,9 @@
  ******* static functions *****************************************************
  ******************************************************************************/
 	/* Filters */
-static	void	img_cv_invert		(class cv::Mat  *imgptr);
+static	void	img_cv_not		(class cv::Mat  *imgptr);
+static	void	img_cv_or_2ref		(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_and_2ref		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_cvt_color	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_component	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_histogram	(class cv::Mat  *imgptr,  void  *data);
@@ -49,6 +53,7 @@ static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_pixel_value	(class cv::Mat  *imgptr,  void  *data);
 
 
 /******************************************************************************
@@ -57,8 +62,14 @@ static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
 void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 {
 	switch (action) {
-	case IMG_CV_ACT_INVERT:
-		img_cv_invert(imgptr);
+	case IMG_CV_ACT_NOT:
+		img_cv_not(imgptr);
+		break;
+	case IMG_CV_ACT_OR_2REF:
+		img_cv_or_2ref(imgptr, data);
+		break;
+	case IMG_CV_ACT_AND_2REF:
+		img_cv_and_2ref(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_CVT_COLOR:
@@ -118,6 +129,10 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 	case IMG_CV_ACT_SET_ROI:
 		img_cv_set_ROI(imgptr, data);
 		break;
+
+	case IMG_CV_ACT_PIXEL_VALUE:
+		img_cv_pixel_value(imgptr, data);
+		break;
 	}
 }
 
@@ -125,12 +140,25 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-/*	*	*	*	*	*	*	*	*	*
- *	*	* Filters	*	*	*	*	*	*
- *	*	*	*	*	*	*	*	*	*/
-static	void	img_cv_invert		(class cv::Mat  *imgptr)
+static	void	img_cv_not		(class cv::Mat  *imgptr)
 {
 	cv::bitwise_not(*imgptr, *imgptr);
+}
+
+static	void	img_cv_or_2ref		(class cv::Mat  *imgptr, void *data)
+{
+	class cv::Mat	*img_ref;
+	img_ref	= (class cv::Mat *)data;
+
+	cv::bitwise_or(*imgptr, *img_ref, *imgptr);
+}
+
+static	void	img_cv_and_2ref		(class cv::Mat  *imgptr, void *data)
+{
+	class cv::Mat	*img_ref;
+	img_ref	= (class cv::Mat *)data;
+
+	cv::bitwise_and(*imgptr, *img_ref, *imgptr);
 }
 
 static	void	img_cv_cvt_color	(class cv::Mat  *imgptr, void *data)
@@ -445,8 +473,10 @@ static	void	img_cv_contours_size	(void *data)
 	/* Get area and perimeter */
 	int	i;
 	for (i = 0; i < contours->size(); i++) {
-		data_cast->area[i]	= cv::contourArea((*contours)[i], false);
-		data_cast->perimeter[i]	= cv::arcLength((*contours)[i], true);
+		data_cast->area[i]	= cv::contourArea(
+							(*contours)[i], false);
+		data_cast->perimeter[i]	= cv::arcLength(
+							(*contours)[i], true);
 	}
 }
 
@@ -462,25 +492,30 @@ static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr, void *data)
 	/* Rotated rectangle */
 	class cv::RotatedRect			*rect;
 	rect	= data_cast->rect;
+	/* Show rectangle ? */
+	bool					show;
+	show	= data_cast->show;
 
 	/* Get rectangle */
 	*rect	= cv::minAreaRect(*contour);
 
 	/* Draw rectangle */
 	class cv::Point_<float>	vertices[4];
-	rect->points(vertices);
-	cv::line(*imgptr, cv::Point(vertices[0].x, vertices[0].y),
-				cv::Point(vertices[1].x, vertices[1].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
-	cv::line(*imgptr, cv::Point(vertices[1].x, vertices[1].y),
-				cv::Point(vertices[2].x, vertices[2].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
-	cv::line(*imgptr, cv::Point(vertices[2].x, vertices[2].y),
-				cv::Point(vertices[3].x, vertices[3].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
-	cv::line(*imgptr, cv::Point(vertices[3].x, vertices[3].y),
-				cv::Point(vertices[0].x, vertices[0].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
+	if (show) {
+		rect->points(vertices);
+		cv::line(*imgptr, cv::Point(vertices[0].x, vertices[0].y),
+					cv::Point(vertices[1].x, vertices[1].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[1].x, vertices[1].y),
+					cv::Point(vertices[2].x, vertices[2].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[2].x, vertices[2].y),
+					cv::Point(vertices[3].x, vertices[3].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[3].x, vertices[3].y),
+					cv::Point(vertices[0].x, vertices[0].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+	}
 }
 
 static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr, void *data)
@@ -560,13 +595,16 @@ static	void	img_cv_rotate		(class cv::Mat  *imgptr, void *data)
 	double				angle;
 	angle		= data_cast->angle;
 
-	/* Get map_matrix */
-	map_matrix	= cv::getRotationMatrix2D(*center, angle, 1);
+	/* Don't rotate if angle is negligible */
+	if (fabs(angle) < 1.0) {
+		/* Get map_matrix */
+		map_matrix	= cv::getRotationMatrix2D(*center, angle, 1);
 
-	/* Rotate */
-	cv::warpAffine(*imgptr, *imgptr, map_matrix, imgptr->size(),
-				cv::INTER_LINEAR, cv::BORDER_CONSTANT,
-				cv::Scalar(0, 0, 0));
+		/* Rotate */
+		cv::warpAffine(*imgptr, *imgptr, map_matrix, imgptr->size(),
+					cv::INTER_LINEAR, cv::BORDER_CONSTANT,
+					cv::Scalar(0, 0, 0));
+	}
 
 	/* clean up */
 	map_matrix.release();
@@ -584,6 +622,25 @@ static	void	img_cv_set_ROI		(class cv::Mat  *imgptr, void *data)
 
 	/* Set ROI */
 	*imgptr	= (*imgptr)(*rect);
+}
+
+static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Pixel_Value	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Pixel_Value *)data;
+
+	/* Value */
+	unsigned char	*val;
+	val		= data_cast->val;
+	/* Position */
+	int		x;
+	x		= data_cast->x;
+	int		y;
+	y		= data_cast->y;
+
+	/* Get value */
+	*val	= imgptr->at<unsigned char>(y, x);
 }
 
 
