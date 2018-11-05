@@ -388,6 +388,32 @@ static	int	usr_input	(void)
 					break;
 				}
 				break;
+			case '7':
+				/* Pixel */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_PIXEL_VALUE;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '8':
+				/* Transforms */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
 				break;
@@ -542,6 +568,8 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Rotate:	%s",		"f151");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect:%s",	"f152");
 	mvwprintw(win_help, r++, c, " - Set ROI:	%s",	"f160");
+	mvwprintw(win_help, r++, c, " - Pixel value:	%s",	"f170");
+	mvwprintw(win_help, r++, c, " - Distance tr.:%s",	"f180");
 	mvwprintw(win_help, r++, c, " - Scan codes:	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan text:	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Align:	%s",		"f40");

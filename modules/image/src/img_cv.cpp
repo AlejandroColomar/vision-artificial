@@ -54,6 +54,7 @@ static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_pixel_value	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_distance_transform	(class cv::Mat  *imgptr);
 
 
 /******************************************************************************
@@ -132,6 +133,10 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 
 	case IMG_CV_ACT_PIXEL_VALUE:
 		img_cv_pixel_value(imgptr, data);
+		break;
+
+	case IMG_CV_ACT_DISTANCE_TRANSFORM:
+		img_cv_distance_transform(imgptr);
 		break;
 	}
 }
@@ -596,7 +601,7 @@ static	void	img_cv_rotate		(class cv::Mat  *imgptr, void *data)
 	angle		= data_cast->angle;
 
 	/* Don't rotate if angle is negligible */
-	if (fabs(angle) < 1.0) {
+	if (fabs(angle) > 1.0) {
 		/* Get map_matrix */
 		map_matrix	= cv::getRotationMatrix2D(*center, angle, 1);
 
@@ -641,6 +646,20 @@ static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
 
 	/* Get value */
 	*val	= imgptr->at<unsigned char>(y, x);
+}
+
+static	void	img_cv_distance_transform	(class cv::Mat  *imgptr)
+{
+	class cv::Mat	imgtmp;
+
+	/* Get transform */
+	cv::distanceTransform(*imgptr, imgtmp, CV_DIST_L2, CV_DIST_MASK_PRECISE);
+
+	/* DistanceTransform  gives CV_32F image */
+	imgtmp.convertTo(*imgptr, CV_8U);
+
+	/* Cleanup */
+	imgtmp.release();
 }
 
 

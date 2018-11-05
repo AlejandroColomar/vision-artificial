@@ -96,6 +96,7 @@ static	void	img_iface_rotate_orto	(void *data);
 static	void	img_iface_rotate	(void *data);
 static	void	img_iface_set_ROI	(void *data);
 static	void	img_iface_pixel_value	(void *data);
+static	void	img_iface_distance_transform	(void);
 
 static	void	img_iface_dilate_erode	(void *data);
 static	void	img_iface_erode_dilate	(void *data);
@@ -253,6 +254,9 @@ void	img_iface_act		(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_PIXEL_VALUE:
 		img_iface_pixel_value(data);
+		break;
+	case IMG_IFACE_ACT_DISTANCE_TRANSFORM:
+		img_iface_distance_transform();
 		break;
 
 	case IMG_IFACE_ACT_DILATE_ERODE:
@@ -1022,6 +1026,29 @@ static	void	img_iface_pixel_value	(void *data)
 						*(data_cast->val));
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
+}
+
+static	void	img_iface_distance_transform	(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Distance transform");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Distance transform */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_DISTANCE_TRANSFORM, NULL);
 }
 
 /* img_cv:  composite --------------------------------------------------------*/

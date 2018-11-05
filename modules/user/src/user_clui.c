@@ -285,6 +285,28 @@ static	int	usr_input	(void)
 					break;
 				}
 				break;
+			case '7':
+				/* Pixel */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_PIXEL_VALUE;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '8':
+				/* Transforms */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
 				break;
@@ -418,6 +440,8 @@ static	void	show_help	(void)
 	printf(" - Rotate:	%s\n",	"f151");
 	printf(" - Rotate 2rect:%s\n",	"f152");
 	printf(" - Set ROI:	%s\n",	"f160");
+	printf(" - Pixel value:	%s\n",	"f170");
+	printf(" - Distance tr.:%s\n",	"f180");
 	printf(" - Scan codes:	%s\n",	"f20");
 	printf(" - Scan text:	%s\n",	"f30");
 	printf(" - Align:	%s\n",	"f40");
