@@ -539,7 +539,7 @@ static	int	proc_resistor		(void)
 
 	char	code [6]	= {'\0', '\0', '\0', '\0', '\0', '\0'};
 	float	resistance;
-	float	tolerance;
+	int	tolerance;
 
 	int	i;
 	int	j;
@@ -814,7 +814,8 @@ static	int	proc_resistor		(void)
 
 		/* Write bands' code into log */
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"Code:	\"%s\"", code);
+							"Code:		\"%s\"",
+							code);
 		user_iface_log.lvl[user_iface_log.len]	= 0;
 		(user_iface_log.len)++;
 
@@ -888,6 +889,13 @@ static	int	proc_resistor		(void)
 			result_label(status);
 			return	status;
 		}
+
+		/* Write resistance value into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistance:	%.2E ± %i% Ohm",
+						resistance, tolerance);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
 
 		/* Measure time */
 		time_1	= clock();
