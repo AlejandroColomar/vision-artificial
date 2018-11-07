@@ -271,40 +271,16 @@ static	int	usr_input	(void)
 					/* Miscellaneous image transformations */
 					switch (ch[4]) {
 					case '0':
-						/* Threshold */
-						switch (ch[5]) {
-						case '0':
-							action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
-							break;
-						case '1':
-							action	= USER_IFACE_ACT_THRESHOLD;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 						break;
 					case '1':
-						/* Color */
-						switch (ch[5]) {
-						case '0':
-							action	= USER_IFACE_ACT_CVT_COLOR;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_CVT_COLOR;
 						break;
 					case '2':
-						/* Transforms */
-						switch (ch[5]) {
-						case '0':
-							action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_THRESHOLD;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -479,10 +455,10 @@ static	void	show_help	(void)
 	printf(" - Rotate ortogonally:	%s\n",	"f1110");
 	printf(" - Rotate:		%s\n",	"f1111");
 	printf(" - Rotate 2rect_rot:	%s\n",	"f1112");
-	printf(" - Adaptive threshold:	%s\n",	"f11200");
-	printf(" - Threshold:		%s\n",	"f11201");
-	printf(" - Cvt color:		%s\n",	"f11210");
-	printf(" - Distance transform:	%s\n",	"f11220");
+	printf(" - Adaptive threshold:	%s\n",	"f1120");
+	printf(" - Threshold:		%s\n",	"f1121");
+	printf(" - Cvt color:		%s\n",	"f1122");
+	printf(" - Distance transform:	%s\n",	"f1123");
 	printf(" - Histogram:		%s\n",	"f1130");
 	printf(" - Histogram (3 chan):	%s\n",	"f1131");
 	printf(" - Contours:		%s\n",	"f1140");

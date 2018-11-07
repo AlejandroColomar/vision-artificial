@@ -378,46 +378,16 @@ static	int	usr_input	(void)
 
 					switch (ch) {
 					case '0':
-						/* Threshold */
-						ch = wgetch(win_log);
-
-						switch (ch) {
-						case '0':
-							action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
-							break;
-						case '1':
-							action	= USER_IFACE_ACT_THRESHOLD;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 						break;
 					case '1':
-						/* Color */
-						ch = wgetch(win_log);
-
-						switch (ch) {
-						case '0':
-							action	= USER_IFACE_ACT_CVT_COLOR;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_CVT_COLOR;
 						break;
 					case '2':
-						/* Transforms */
-						ch = wgetch(win_log);
-
-						switch (ch) {
-						case '0':
-							action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_THRESHOLD;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -617,10 +587,10 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Rotate ortogonally:	%s",	"f1110");
 	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f1111");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect_rot:	%s",	"f1112");
-	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f11200");
-	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f11201");
-	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f11210");
-	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f11220");
+	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f1120");
+	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f1121");
+	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f1122");
+	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f1123");
 	mvwprintw(win_help, r++, c, " - Histogram:		%s",	"f1130");
 	mvwprintw(win_help, r++, c, " - Histogram (3 chan):	%s",	"f1131");
 	mvwprintw(win_help, r++, c, " - Contours:		%s",	"f1140");

@@ -52,13 +52,10 @@ static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
 		/* Miscellaneous image transformations */
-			/* threshold */
 static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
-			/* color */
 static	void	img_cv_cvt_color	(class cv::Mat  *imgptr,  void  *data);
-			/* transforms */
 static	void	img_cv_distance_transform	(class cv::Mat  *imgptr);
+static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
 		/* Histograms */
 static	void	img_cv_histogram	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr,  void  *data);
@@ -120,16 +117,14 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 	case IMG_CV_ACT_ADAPTIVE_THRESHOLD:
 		img_cv_adaptive_thr(imgptr, data);
 		break;
-	case IMG_CV_ACT_THRESHOLD:
-		img_cv_threshold(imgptr, data);
-		break;
-
 	case IMG_CV_ACT_CVT_COLOR:
 		img_cv_cvt_color(imgptr, data);
 		break;
-
 	case IMG_CV_ACT_DISTANCE_TRANSFORM:
 		img_cv_distance_transform(imgptr);
+		break;
+	case IMG_CV_ACT_THRESHOLD:
+		img_cv_threshold(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_HISTOGRAM:
@@ -407,26 +402,6 @@ static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr, void *data)
 									0);
 }
 
-static	void	img_cv_threshold	(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Threshold	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Threshold *)data;
-
-	/* Threshold type */
-	int	thr_typ;
-	thr_typ	= data_cast->thr_typ;
-	/* Threshold value */
-	int	thr_val;
-	thr_val	= data_cast->thr_val;
-	if (thr_val == -1) {
-		thr_typ	|= cv::THRESH_OTSU;
-	}
-
-	/* Threshold */
-	cv::threshold(*imgptr, *imgptr, thr_val, 0xFF, thr_typ);
-}
-
 static	void	img_cv_cvt_color	(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -452,6 +427,26 @@ static	void	img_cv_distance_transform	(class cv::Mat  *imgptr)
 
 	/* Cleanup */
 	imgtmp.release();
+}
+
+static	void	img_cv_threshold	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Threshold	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Threshold *)data;
+
+	/* Threshold type */
+	int	thr_typ;
+	thr_typ	= data_cast->thr_typ;
+	/* Threshold value */
+	int	thr_val;
+	thr_val	= data_cast->thr_val;
+	if (thr_val == -1) {
+		thr_typ	|= cv::THRESH_OTSU;
+	}
+
+	/* Threshold */
+	cv::threshold(*imgptr, *imgptr, thr_val, 0xFF, thr_typ);
 }
 
 static	void	img_cv_histogram	(class cv::Mat  *imgptr, void *data)

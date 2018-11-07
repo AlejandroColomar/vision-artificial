@@ -100,13 +100,10 @@ static	void	img_iface_rotate_orto		(void *data);
 static	void	img_iface_rotate		(void *data);
 static	void	img_iface_rotate_2rect		(void *data);
 			/* Miscellaneous image transformations */
-				/* threshold */
 static	void	img_iface_adaptive_thr		(void *data);
-static	void	img_iface_threshold		(void *data);
-				/* color */
 static	void	img_iface_cvt_color		(void *data);
-				/* transforms */
 static	void	img_iface_distance_transform	(void);
+static	void	img_iface_threshold		(void *data);
 			/* Histograms */
 static	void	img_iface_histogram		(void *data);
 static	void	img_iface_histogram_c3		(void *data);
@@ -264,20 +261,17 @@ void	img_iface_act		(int action, void *data)
 		img_iface_rotate_2rect(data);
 		break;
 			/* Miscellaneous image transformations */
-				/* threshold */
 	case IMG_IFACE_ACT_ADAPTIVE_THRESHOLD:
 		img_iface_adaptive_thr(data);
 		break;
-	case IMG_IFACE_ACT_THRESHOLD:
-		img_iface_threshold(data);
-		break;
-				/* color */
 	case IMG_IFACE_ACT_CVT_COLOR:
 		img_iface_cvt_color(data);
 		break;
-				/* transforms */
 	case IMG_IFACE_ACT_DISTANCE_TRANSFORM:
 		img_iface_distance_transform();
+		break;
+	case IMG_IFACE_ACT_THRESHOLD:
+		img_iface_threshold(data);
 		break;
 			/* Histograms */
 	case IMG_IFACE_ACT_HISTOGRAM:
@@ -865,7 +859,6 @@ static	void	img_iface_rotate_2rect		(void *data)
 }
 
 /* ----- ------- Miscellaneous image transformations */
-/* ----- ------- ------- threshold */
 static	void	img_iface_adaptive_thr		(void *data)
 {
 	/* Must have 1 channel */
@@ -911,48 +904,6 @@ static	void	img_iface_adaptive_thr		(void *data)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_ADAPTIVE_THRESHOLD, data);
 }
 
-static	void	img_iface_threshold		(void *data)
-{
-	/* Must have 1 channel */
-	if (image_copy_tmp.channels() != 1) {
-		/* Write into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"! Invalid input");
-		user_iface_log.lvl[user_iface_log.len]	= 1;
-		(user_iface_log.len)++;
-
-		return;
-	}
-
-	/* Data */
-	struct Img_Iface_Data_Threshold	data_tmp;
-	if (!data) {
-		/* Ask user */
-		char	title [80];
-		snprintf(title, 80, "Type: BIN=0, BIN_INV=1, TRUNC=2, TOZ=3, TOZ_INV=4");
-		data_tmp.thr_typ	= user_iface_getint(0, 0, 4, title, NULL);
-
-		snprintf(title, 80, "Value: 0 to 255 (or -1 for Otsu's algorithm)");
-		data_tmp.thr_val	= user_iface_getint(-1, 0, 255, title, NULL);
-
-		data	= (void *)&data_tmp;
-	}
-
-	/* Write into log */
-	struct Img_Iface_Data_Threshold	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Threshold *)data;
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Threshold typ=%i, val=%i",
-						data_cast->thr_typ,
-						data_cast->thr_val);
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
-	/* Filter: threshold */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_THRESHOLD, data);
-}
-
-/* ----- ------- ------- color */
 static	void	img_iface_cvt_color		(void *data)
 {
 	/* Must have at least 3 channels */
@@ -992,7 +943,6 @@ static	void	img_iface_cvt_color		(void *data)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_CVT_COLOR, data);
 }
 
-/* ----- ------- ------- transforms */
 static	void	img_iface_distance_transform	(void)
 {
 	/* Must have 1 channel */
@@ -1014,6 +964,47 @@ static	void	img_iface_distance_transform	(void)
 
 	/* Distance transform */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_DISTANCE_TRANSFORM, NULL);
+}
+
+static	void	img_iface_threshold		(void *data)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Data */
+	struct Img_Iface_Data_Threshold	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Type: BIN=0, BIN_INV=1, TRUNC=2, TOZ=3, TOZ_INV=4");
+		data_tmp.thr_typ	= user_iface_getint(0, 0, 4, title, NULL);
+
+		snprintf(title, 80, "Value: 0 to 255 (or -1 for Otsu's algorithm)");
+		data_tmp.thr_val	= user_iface_getint(-1, 0, 255, title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_Threshold	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Threshold *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Threshold typ=%i, val=%i",
+						data_cast->thr_typ,
+						data_cast->thr_val);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Filter: threshold */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_THRESHOLD, data);
 }
 
 /* ----- ------- Histograms */
