@@ -28,6 +28,12 @@
 
 
 /******************************************************************************
+ ******* static variables *****************************************************
+ ******************************************************************************/
+static	int	log_pos;
+
+
+/******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
 	/* Log */
@@ -41,6 +47,11 @@ static	void	show_help	(void);
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
+void	user_clui_init		(void)
+{
+	log_pos	= 0;
+}
+
 int	user_clui		(const char *title, const char *subtitle)
 {
 	int	action;
@@ -80,16 +91,15 @@ void	user_clui_show_log	(const char *title, const char *subtitle)
 /* Log -----------------------------------------------------------------------*/
 static	void	log_loop	(void)
 {
-	static	int	i	= 0;
 	int	lvl;
 
 	putchar('\n');
-	for (; i < user_iface_log.len; i++) {
-		if (user_iface_log.lvl[i] <= user_iface_log.visible) {
-			for (lvl = 0; lvl < user_iface_log.lvl[i]; lvl++) {
+	for (; log_pos < user_iface_log.len; log_pos++) {
+		if (user_iface_log.lvl[log_pos] <= user_iface_log.visible) {
+			for (lvl = 0; lvl < user_iface_log.lvl[log_pos]; lvl++) {
 				printf("\t");
 			}
-			printf("%s\n", user_iface_log.line[i]);
+			printf("%s\n", user_iface_log.line[log_pos]);
 		}
 	}
 	putchar('\n');
@@ -100,15 +110,16 @@ static	int	usr_input	(void)
 {
 	int	action;
 
-	/* Wait for input */
 	char	buff [BUFF_SIZE];
-	char	ch [5];
+	char	ch [10];
+
+	int	i;
+	for (i = 0; i < 10; i++) {
+		ch[i]	= '\0';
+	}
 	buff[0]	= '\0';
-	ch[0]	= '\0';
-	ch[1]	= '\0';
-	ch[2]	= '\0';
-	ch[3]	= '\0';
-	ch[4]	= '\0';
+
+	/* Wait for input */
 	fgets(buff, BUFF_SIZE, stdin);
 
 	/* Interpret input */
@@ -127,14 +138,21 @@ static	int	usr_input	(void)
 		switch (ch[1]) {
 		case '1':
 			switch (ch[2]) {
-			case '1':
+			case '0':
 				action	= USER_IFACE_ACT_PROC_LABEL;
 				break;
-			case '2':
+			default:
 				action	= USER_IFACE_ACT_FOO;
 				break;
-			case '3':
+			}
+			break;
+		case '3':
+			switch (ch[2]) {
+			case '0':
 				action	= USER_IFACE_ACT_PROC_RESISTOR;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -151,16 +169,52 @@ static	int	usr_input	(void)
 			/* img_cv */
 			switch (ch[2]) {
 			case '0':
-				/* color manipulation */
+				/* Core: The core functionality */
 				switch (ch[3]) {
 				case '0':
-					action	= USER_IFACE_ACT_INVERT;
+					/* Pixel */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_PIXEL_VALUE;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_CVT_COLOR;
+					/* ROI */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_SET_ROI;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_SET_ROI_2RECT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '2':
-					action	= USER_IFACE_ACT_COMPONENT;
+					/* Operations on Arrays */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_AND_2REF;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_NOT;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_OR_2REF;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_COMPONENT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -168,93 +222,131 @@ static	int	usr_input	(void)
 				}
 				break;
 			case '1':
-				/* grayscale filters */
+				/* Imgproc: Image processing */
 				switch (ch[3]) {
 				case '0':
-					action	= USER_IFACE_ACT_HISTOGRAM;
+					/* Image filtering */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_DILATE;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_ERODE;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_DILATE_ERODE;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_ERODE_DILATE;
+						break;
+					case '4':
+						action	= USER_IFACE_ACT_SMOOTH;
+						break;
+					case '5':
+						action	= USER_IFACE_ACT_SOBEL;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_HISTOGRAM_C3;
+					/* Geometric image transformations */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_ROTATE_ORTO;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_ROTATE;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_ROTATE_2RECT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '2':
-					action	= USER_IFACE_ACT_SMOOTH;
+					/* Miscellaneous image transformations */
+					switch (ch[4]) {
+					case '0':
+						/* Threshold */
+						switch (ch[5]) {
+						case '0':
+							action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
+							break;
+						case '1':
+							action	= USER_IFACE_ACT_THRESHOLD;
+							break;
+						default:
+							action	= USER_IFACE_ACT_FOO;
+							break;
+						}
+						break;
+					case '1':
+						/* Color */
+						switch (ch[5]) {
+						case '0':
+							action	= USER_IFACE_ACT_CVT_COLOR;
+							break;
+						default:
+							action	= USER_IFACE_ACT_FOO;
+							break;
+						}
+						break;
+					case '2':
+						/* Transforms */
+						switch (ch[5]) {
+						case '0':
+							action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+							break;
+						default:
+							action	= USER_IFACE_ACT_FOO;
+							break;
+						}
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '3':
-					action	= USER_IFACE_ACT_SOBEL;
+					/* Histograms */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_HISTOGRAM;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_HISTOGRAM_C3;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '4':
-					action	= USER_IFACE_ACT_THRESHOLD;
-					break;
-				case '5':
-					action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '2':
-				/* black & white filters */
-				switch (ch[3]) {
-				case '0':
-					action	= USER_IFACE_ACT_DILATE;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_ERODE;
-					break;
-				case '2':
-					action	= USER_IFACE_ACT_DILATE_ERODE;
-					break;
-				case '3':
-					action	= USER_IFACE_ACT_ERODE_DILATE;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '3':
-				/* contour */
-				switch (ch[3]) {
-				case '0':
-					action	= USER_IFACE_ACT_CONTOURS;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_CONTOURS_SIZE;
-					break;
-				case '2':
-					action	= USER_IFACE_ACT_MIN_AREA_RECT;
-					break;
-				case '3':
-					action	= USER_IFACE_ACT_FIT_ELLIPSE;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '4':
-				/* contour */
-				switch (ch[3]) {
-				case '0':
-					action	= USER_IFACE_ACT_ROTATE_ORTO;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_ROTATE;
-					break;
-				case '2':
-					action	= USER_IFACE_ACT_ROTATE_2RECT;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '5':
-				/* ROI */
-				switch (ch[3]) {
-				case '0':
-					action	= USER_IFACE_ACT_SET_ROI;
+					/* Structural analysis and shape descriptors */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_CONTOURS;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_CONTOURS_SIZE;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_BOUNDING_RECT;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_FIT_ELLIPSE;
+						break;
+					case '4':
+						action	= USER_IFACE_ACT_MIN_AREA_RECT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -267,6 +359,17 @@ static	int	usr_input	(void)
 			}
 			break;
 		case '2':
+			/* img_orb */
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_ALIGN;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '3':
 			/* img_zbar */
 			switch (ch[2]) {
 			case '0':
@@ -277,22 +380,11 @@ static	int	usr_input	(void)
 				break;
 			}
 			break;
-		case '3':
-			/* img_ocr */
-			switch (ch[2]) {
-			case '0':
-				action	= USER_IFACE_ACT_READ;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
-			}
-			break;
 		case '4':
 			/* img_ocr */
 			switch (ch[2]) {
 			case '0':
-				action	= USER_IFACE_ACT_ALIGN;
+				action	= USER_IFACE_ACT_READ;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -364,42 +456,48 @@ static	int	usr_input	(void)
 static	void	show_help	(void)
 {
 	// FIXME
-	printf("Apply:		%s\n",	"Space");
-	printf("Discard:	%s\n",	"Backspace");
-	printf("Save to mem:	%c\n",	'm');
-	printf("Load from mem:	%c\n",	'l');
-	printf("Save to ref:	%c\n",	'r');
-	printf("Save to file:	%c\n",	's');
+	printf("Apply:			%s\n",	"Space");
+	printf("Discard:		%s\n",	"Backspace");
+	printf("Save to mem:		%c\n",	'm');
+	printf("Load from mem:		%c\n",	'l');
+	printf("Save to ref:		%c\n",	'r');
+	printf("Save to file:		%c\n",	's');
 	printf("Functions:\n");
-	printf(" - Invert:	%s\n",	"f100");
-	printf(" - Cvt color:	%s\n",	"f101");
-	printf(" - Component:	%s\n",	"f102");
-	printf(" - Histogram:	%s\n",	"f110");
-	printf(" - Histogram c3:%s\n",	"f111");
-	printf(" - Smooth:	%s\n",	"f112");
-	printf(" - Sobel:	%s\n",	"f113");
-	printf(" - Threshold:	%s\n",	"f114");
-	printf(" - Adaptive Thr:%s\n",	"f115");
-	printf(" - Dilate:	%s\n",	"f120");
-	printf(" - Erode:	%s\n",	"f121");
-	printf(" - D-E:		%s\n",	"f122");
-	printf(" - E-D:		%s\n",	"f123");
-	printf(" - Contours:	%s\n",	"f130");
-	printf(" - Contours siz:%s\n",	"f131");
-	printf(" - Min. A rect.:%s\n",	"f132");
-	printf(" - Fit ellipse:	%s\n",	"f133");
-	printf(" - Rotate orto.:%s\n",	"f140");
-	printf(" - Rotate:	%s\n",	"f141");
-	printf(" - Rotate 2rect:%s\n",	"f142");
-	printf(" - Set ROI:	%s\n",	"f150");
-	printf(" - Scan codes:	%s\n",	"f20");
-	printf(" - Scan text:	%s\n",	"f30");
-	printf(" - Align:	%s\n",	"f40");
+	printf(" - Pixel value:		%s\n",	"f1000");
+	printf(" - Set ROI:		%s\n",	"f1010");
+	printf(" - Set ROI 2rect:	%s\n",	"f1011");
+	printf(" - Bitwise AND 2ref:	%s\n",	"f1020");
+	printf(" - Bitwise NOT:		%s\n",	"f1021");
+	printf(" - Bitwise OR 2ref:	%s\n",	"f1022");
+	printf(" - Component:		%s\n",	"f1023");
+	printf(" - Dilate:		%s\n",	"f1100");
+	printf(" - Erode:		%s\n",	"f1101");
+	printf(" - D-E:			%s\n",	"f1102");
+	printf(" - E-D:			%s\n",	"f1103");
+	printf(" - Smooth:		%s\n",	"f1104");
+	printf(" - Sobel:		%s\n",	"f1105");
+	printf(" - Rotate ortogonally:	%s\n",	"f1110");
+	printf(" - Rotate:		%s\n",	"f1111");
+	printf(" - Rotate 2rect_rot:	%s\n",	"f1112");
+	printf(" - Adaptive threshold:	%s\n",	"f11200");
+	printf(" - Threshold:		%s\n",	"f11201");
+	printf(" - Cvt color:		%s\n",	"f11210");
+	printf(" - Distance transform:	%s\n",	"f11220");
+	printf(" - Histogram:		%s\n",	"f1130");
+	printf(" - Histogram (3 chan):	%s\n",	"f1131");
+	printf(" - Contours:		%s\n",	"f1140");
+	printf(" - Contours size:	%s\n",	"f1141");
+	printf(" - Bounding rectangle:	%s\n",	"f1142");
+	printf(" - Fit ellipse:		%s\n",	"f1143");
+	printf(" - Min. area rectangle:	%s\n",	"f1144");
+	printf(" - Align 2ref (ORB):	%s\n",	"f20");
+	printf(" - Scan codes (ZBAR):	%s\n",	"f30");
+	printf(" - Scan text (OCR):	%s\n",	"f40");
 	printf("Exercises:\n");
-	printf(" - Label:	%s\n",	"e11");
-	printf(" - Resistor:	%s\n",	"e13");
+	printf(" - Label:		%s\n",	"e10");
+	printf(" - Resistor:		%s\n",	"e30");
 	printf("Other:\n");
-	printf(" - Show OCR:	%s\n",	"u1");
+	printf(" - Show OCR text:	%s\n",	"u1");
 	printf("Quit:		%c\n",	'q');
 }
 

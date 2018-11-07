@@ -38,28 +38,33 @@
 		IMG_IFACE_ACT_FOO = 0,
 
 		IMG_IFACE_ACT_CV = 0x0100,
-		IMG_IFACE_ACT_INVERT,
-		IMG_IFACE_ACT_CVT_COLOR,
+		IMG_IFACE_ACT_PIXEL_VALUE,
+		IMG_IFACE_ACT_SET_ROI,
+		IMG_IFACE_ACT_SET_ROI_2RECT,
+		IMG_IFACE_ACT_AND_2REF,
+		IMG_IFACE_ACT_NOT,
+		IMG_IFACE_ACT_OR_2REF,
 		IMG_IFACE_ACT_COMPONENT,
-		IMG_IFACE_ACT_HISTOGRAM,
-		IMG_IFACE_ACT_HISTOGRAM_C3,
-		IMG_IFACE_ACT_SMOOTH,
-		IMG_IFACE_ACT_SOBEL,
-		IMG_IFACE_ACT_THRESHOLD,
-		IMG_IFACE_ACT_ADAPTIVE_THRESHOLD,
 		IMG_IFACE_ACT_DILATE,
 		IMG_IFACE_ACT_ERODE,
-		IMG_IFACE_ACT_CONTOURS,
-		IMG_IFACE_ACT_CONTOURS_SIZE,
-		IMG_IFACE_ACT_MIN_AREA_RECT,
-		IMG_IFACE_ACT_FIT_ELLIPSE,
-		IMG_IFACE_ACT_ROTATE_ORTO,
-		IMG_IFACE_ACT_ROTATE,
-		IMG_IFACE_ACT_SET_ROI,
-
 		IMG_IFACE_ACT_DILATE_ERODE,
 		IMG_IFACE_ACT_ERODE_DILATE,
+		IMG_IFACE_ACT_SMOOTH,
+		IMG_IFACE_ACT_SOBEL,
+		IMG_IFACE_ACT_ROTATE_ORTO,
+		IMG_IFACE_ACT_ROTATE,
 		IMG_IFACE_ACT_ROTATE_2RECT,
+		IMG_IFACE_ACT_ADAPTIVE_THRESHOLD,
+		IMG_IFACE_ACT_THRESHOLD,
+		IMG_IFACE_ACT_CVT_COLOR,
+		IMG_IFACE_ACT_DISTANCE_TRANSFORM,
+		IMG_IFACE_ACT_HISTOGRAM,
+		IMG_IFACE_ACT_HISTOGRAM_C3,
+		IMG_IFACE_ACT_CONTOURS,
+		IMG_IFACE_ACT_CONTOURS_SIZE,
+		IMG_IFACE_ACT_BOUNDING_RECT,
+		IMG_IFACE_ACT_FIT_ELLIPSE,
+		IMG_IFACE_ACT_MIN_AREA_RECT,
 
 		IMG_IFACE_ACT_ZB = 0x0200,
 		IMG_IFACE_ACT_DECODE,
@@ -117,13 +122,24 @@
  ******* structs **************************************************************
  ******************************************************************************/
 /* img_cv --------------------------------------------------------------------*/
+	struct	Img_Iface_Data_Component {
+		int	cmp;
+	};
+
+	struct	Img_Iface_Data_Adaptive_Thr {
+		int	method;
+		int	thr_typ;
+		int	ksize;
+	};
+
+	struct	Img_Iface_Data_Threshold {
+		int	thr_typ;
+		int	thr_val;
+	};
 	struct	Img_Iface_Data_Cvt_Color {
 		int	method;
 	};
 
-	struct	Img_Iface_Data_Component {
-		int	cmp;
-	};
 
 	struct	Img_Iface_Data_Histogram {
 		class cv::Mat	*hist_c0;
@@ -137,25 +153,14 @@
 		int	ksize;
 	};
 
+	struct	Img_Iface_Data_Dilate_Erode {
+		int	i;
+	};
+
 	struct	Img_Iface_Data_Sobel {
 		int	dx;
 		int	dy;
 		int	ksize;
-	};
-
-	struct	Img_Iface_Data_Threshold {
-		int	thr_typ;
-		int	thr_val;
-	};
-
-	struct	Img_Iface_Data_Adaptive_Thr {
-		int	method;
-		int	thr_typ;
-		int	ksize;
-	};
-
-	struct	Img_Iface_Data_Dilate_Erode {
-		int	i;
 	};
 
 	struct	Img_Iface_Data_Contours {
@@ -165,13 +170,20 @@
 
 	struct	Img_Iface_Data_Contours_Size {
 		std::vector <std::vector <class cv::Point_ <int>>>	*contours;
-		double							area [CONTOURS_MAX];
-		double							perimeter [CONTOURS_MAX];
+		double							*area;
+		double							*perimeter;
+	};
+
+	struct	Img_Iface_Data_Bounding_Rect {
+		std::vector <class cv::Point_ <int>>	*contour;
+		class cv::Rect_ <int>			*rect;
+		bool					show;
 	};
 
 	struct	Img_Iface_Data_MinARect {
 		std::vector <class cv::Point_ <int>>	*contour;
 		class cv::RotatedRect			*rect;
+		bool					show;
 	};
 
 	struct	Img_Iface_Data_Rotate_Orto {
@@ -185,6 +197,12 @@
 
 	struct	Img_Iface_Data_SetROI {
 		class cv::Rect_ <int>	rect;
+	};
+
+	struct	Img_Iface_Data_Pixel_Value {
+		unsigned char	*val;
+		int		x;
+		int		y;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/

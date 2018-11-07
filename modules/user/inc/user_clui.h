@@ -13,6 +13,7 @@
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
+void	user_clui_init		(void);
 int	user_clui		(const char *title, const char *subtitle);
 void	user_clui_fname		(const char *filepath, char *filename);
 void	user_clui_show_log	(const char *title, const char *subtitle);
