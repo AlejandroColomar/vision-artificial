@@ -59,18 +59,21 @@ static	void	proc_save_mem		(int n);
 static	void	proc_load_mem		(int n);
 static	void	proc_save_ref		(void);
 
-static	void	proc_cvt_color		(int method);
-static	void	proc_cmp		(int cmp);
-static	void	proc_smooth		(int method, int ksize);
-static	void	proc_adaptive_threshold	(int method, int type, int ksize);
-static	void	proc_threshold		(int type, int ksize);
+static	void	proc_pixel_value	(int x, int y, unsigned char *val);
+static	void	proc_ROI		(int x, int y, int w, int h);
+static	void	proc_and_2ref		(void);
 static	void	proc_not		(void);
 static	void	proc_or_2ref		(void);
-static	void	proc_and_2ref		(void);
+static	void	proc_cmp		(int cmp);
 static	void	proc_dilate		(int size);
 static	void	proc_erode		(int size);
 static	void	proc_dilate_erode	(int size);
 static	void	proc_erode_dilate	(int size);
+static	void	proc_smooth		(int method, int ksize);
+static	void	proc_rotate		(class cv::RotatedRect  *rect);
+static	void	proc_adaptive_threshold	(int method, int type, int ksize);
+static	void	proc_threshold		(int type, int ksize);
+static	void	proc_cvt_color		(int method);
 static	void	proc_contours		(
 			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
 			class cv::Mat  *hierarchy);
@@ -78,17 +81,14 @@ static	void	proc_contours_size		(
 			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
 			double  *area,
 			double  *perimeter);
-static	void	proc_min_area_rect	(
-			std::vector <class cv::Point_ <int>>  *contour,
-			class cv::RotatedRect  *rect,
-			bool show);
 static	void	proc_fit_ellipse	(
 			std::vector <class cv::Point_ <int>>  *contour,
 			class cv::RotatedRect  *rect,
 			bool show);
-static	void	proc_rotate		(class cv::RotatedRect  *rect);
-static	void	proc_ROI		(int x, int y, int w, int h);
-static	void	proc_pixel_value	(int x, int y, unsigned char *val);
+static	void	proc_min_area_rect	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::RotatedRect  *rect,
+			bool show);
 
 static	void	proc_OCR		(int lang, int conf);
 static	void	proc_zbar		(int type);
@@ -965,51 +965,30 @@ static	void	proc_save_ref		(void)
 	img_iface_act(IMG_IFACE_ACT_SAVE_REF, NULL);
 }
 
-static	void	proc_cvt_color		(int method)
+static	void	proc_pixel_value	(int x, int y, unsigned char *val)
 {
-	struct Img_Iface_Data_Cvt_Color	data;
-	data.method	= method;
-	img_iface_act(IMG_IFACE_ACT_CVT_COLOR, (void *)&data);
+	struct Img_Iface_Data_Pixel_Value	data;
+	data.x		= x;
+	data.y		= y;
+	data.val	= val;
+	img_iface_act(IMG_IFACE_ACT_PIXEL_VALUE, (void *)&data);
+}
+
+static	void	proc_ROI		(int x, int y, int w, int h)
+{
+	struct Img_Iface_Data_SetROI		data;
+	data.rect.x		= x;
+	data.rect.y		= y;
+	data.rect.width		= w;
+	data.rect.height	= h;
+	img_iface_act(IMG_IFACE_ACT_SET_ROI, (void *)&data);
 
 	proc_show_img();
 }
 
-static	void	proc_cmp		(int cmp)
+static	void	proc_and_2ref		(void)
 {
-	struct Img_Iface_Data_Component		data;
-	data.cmp	= cmp;
-	img_iface_act(IMG_IFACE_ACT_COMPONENT, (void *)&data);
-
-	proc_show_img();
-}
-
-static	void	proc_smooth		(int method, int ksize)
-{
-	struct Img_Iface_Data_Smooth		data;
-	data.method	= method;
-	data.ksize	= ksize;
-	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
-
-	proc_show_img();
-}
-
-static	void	proc_adaptive_threshold	(int method, int type, int ksize)
-{
-	struct Img_Iface_Data_Adaptive_Thr	data;
-	data.method	= method;
-	data.thr_typ	= type;
-	data.ksize	= ksize;
-	img_iface_act(USER_IFACE_ACT_ADAPTIVE_THRESHOLD, (void *)&data);
-
-	proc_show_img();
-}
-
-static	void	proc_threshold		(int type, int size)
-{
-	struct Img_Iface_Data_Threshold		data;
-	data.thr_typ	= type;
-	data.thr_val	= size;
-	img_iface_act(IMG_IFACE_ACT_THRESHOLD, (void *)&data);
+	img_iface_act(USER_IFACE_ACT_AND_2REF, NULL);
 
 	proc_show_img();
 }
@@ -1028,9 +1007,11 @@ static	void	proc_or_2ref		(void)
 	proc_show_img();
 }
 
-static	void	proc_and_2ref		(void)
+static	void	proc_cmp		(int cmp)
 {
-	img_iface_act(USER_IFACE_ACT_AND_2REF, NULL);
+	struct Img_Iface_Data_Component		data;
+	data.cmp	= cmp;
+	img_iface_act(IMG_IFACE_ACT_COMPONENT, (void *)&data);
 
 	proc_show_img();
 }
@@ -1071,6 +1052,57 @@ static	void	proc_erode_dilate	(int size)
 	proc_show_img();
 }
 
+static	void	proc_smooth		(int method, int ksize)
+{
+	struct Img_Iface_Data_Smooth		data;
+	data.method	= method;
+	data.ksize	= ksize;
+	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_rotate		(class cv::RotatedRect  *rect)
+{
+	struct Img_Iface_Data_Rotate		data;
+	data.center.x	= rect->center.x;
+	data.center.y	= rect->center.y;
+	data.angle	= rect->angle;
+	img_iface_act(IMG_IFACE_ACT_ROTATE, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_adaptive_threshold	(int method, int type, int ksize)
+{
+	struct Img_Iface_Data_Adaptive_Thr	data;
+	data.method	= method;
+	data.thr_typ	= type;
+	data.ksize	= ksize;
+	img_iface_act(USER_IFACE_ACT_ADAPTIVE_THRESHOLD, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_threshold		(int type, int size)
+{
+	struct Img_Iface_Data_Threshold		data;
+	data.thr_typ	= type;
+	data.thr_val	= size;
+	img_iface_act(IMG_IFACE_ACT_THRESHOLD, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_cvt_color		(int method)
+{
+	struct Img_Iface_Data_Cvt_Color	data;
+	data.method	= method;
+	img_iface_act(IMG_IFACE_ACT_CVT_COLOR, (void *)&data);
+
+	proc_show_img();
+}
+
 static	void	proc_contours		(
 			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
 			class cv::Mat  *hierarchy)
@@ -1095,22 +1127,6 @@ static	void	proc_contours_size		(
 	img_iface_act(IMG_IFACE_ACT_CONTOURS_SIZE, (void *)&data);
 }
 
-static	void	proc_min_area_rect	(
-			std::vector <class cv::Point_ <int>>  *contour,
-			class cv::RotatedRect  *rect,
-			bool  show)
-{
-	struct Img_Iface_Data_MinARect		data;
-	data.contour	= contour;
-	data.rect	= rect;
-	data.show	= show;
-	img_iface_act(IMG_IFACE_ACT_MIN_AREA_RECT, (void *)&data);
-
-	if (show) {
-		proc_show_img();
-	}
-}
-
 static	void	proc_fit_ellipse	(
 			std::vector <class cv::Point_ <int>>  *contour,
 			class cv::RotatedRect  *rect,
@@ -1128,36 +1144,20 @@ static	void	proc_fit_ellipse	(
 	}
 }
 
-static	void	proc_rotate		(class cv::RotatedRect  *rect)
+static	void	proc_min_area_rect	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::RotatedRect  *rect,
+			bool  show)
 {
-	struct Img_Iface_Data_Rotate		data;
-	data.center.x	= rect->center.x;
-	data.center.y	= rect->center.y;
-	data.angle	= rect->angle;
-	img_iface_act(IMG_IFACE_ACT_ROTATE, (void *)&data);
+	struct Img_Iface_Data_MinARect		data;
+	data.contour	= contour;
+	data.rect	= rect;
+	data.show	= show;
+	img_iface_act(IMG_IFACE_ACT_MIN_AREA_RECT, (void *)&data);
 
-	proc_show_img();
-}
-
-static	void	proc_ROI		(int x, int y, int w, int h)
-{
-	struct Img_Iface_Data_SetROI		data;
-	data.rect.x		= x;
-	data.rect.y		= y;
-	data.rect.width		= w;
-	data.rect.height	= h;
-	img_iface_act(IMG_IFACE_ACT_SET_ROI, (void *)&data);
-
-	proc_show_img();
-}
-
-static	void	proc_pixel_value	(int x, int y, unsigned char *val)
-{
-	struct Img_Iface_Data_Pixel_Value	data;
-	data.x		= x;
-	data.y		= y;
-	data.val	= val;
-	img_iface_act(IMG_IFACE_ACT_PIXEL_VALUE, (void *)&data);
+	if (show) {
+		proc_show_img();
+	}
 }
 
 static	void	proc_OCR		(int lang, int conf)

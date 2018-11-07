@@ -32,39 +32,42 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-	/* Operations on Arrays */
+	/* Core: The core functionality */
+		/* Pixel */
+static	void	img_cv_pixel_value	(class cv::Mat  *imgptr,  void  *data);
+		/* ROI */
+static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
+		/* Operations on Arrays */
 static	void	img_cv_and_2ref		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_not		(class cv::Mat  *imgptr);
 static	void	img_cv_or_2ref		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_component	(class cv::Mat  *imgptr,  void  *data);
-	/* Misc. image transformations:  threshold */
-static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
-	/* Misc. image transformations:  color */
-static	void	img_cv_cvt_color	(class cv::Mat  *imgptr,  void  *data);
-	/* Misc. image transformations:  transforms */
-static	void	img_cv_distance_transform	(class cv::Mat  *imgptr);
-	/* Histograms */
-static	void	img_cv_histogram	(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr,  void  *data);
-	/* Image filtering */
+	/* Imgproc: Image processing */
+		/* Image filtering */
 static	void	img_cv_dilate		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_erode		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_smooth		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
-	/* Structural analysis and shape descriptors */
+		/* Geometric image transformations */
+static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
+		/* Miscellaneous image transformations */
+			/* threshold */
+static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
+			/* color */
+static	void	img_cv_cvt_color	(class cv::Mat  *imgptr,  void  *data);
+			/* transforms */
+static	void	img_cv_distance_transform	(class cv::Mat  *imgptr);
+		/* Histograms */
+static	void	img_cv_histogram	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr,  void  *data);
+		/* Structural analysis and shape descriptors */
 static	void	img_cv_contours		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_contours_size	(void  *data);
 static	void	img_cv_bounding_rect	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr,  void  *data);
-	/* Geometric image transformations */
-static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
-	/* ROI */
-static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
-	/* Pixel */
-static	void	img_cv_pixel_value	(class cv::Mat  *imgptr,  void  *data);
 
 
 /******************************************************************************
@@ -73,6 +76,14 @@ static	void	img_cv_pixel_value	(class cv::Mat  *imgptr,  void  *data);
 void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 {
 	switch (action) {
+	case IMG_CV_ACT_PIXEL_VALUE:
+		img_cv_pixel_value(imgptr, data);
+		break;
+
+	case IMG_CV_ACT_SET_ROI:
+		img_cv_set_ROI(imgptr, data);
+		break;
+
 	case IMG_CV_ACT_AND_2REF:
 		img_cv_and_2ref(imgptr, data);
 		break;
@@ -84,6 +95,26 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 		break;
 	case IMG_CV_ACT_COMPONENT:
 		img_cv_component(imgptr, data);
+		break;
+
+	case IMG_CV_ACT_DILATE:
+		img_cv_dilate(imgptr, data);
+		break;
+	case IMG_CV_ACT_ERODE:
+		img_cv_erode(imgptr, data);
+		break;
+	case IMG_CV_ACT_SMOOTH:
+		img_cv_smooth(imgptr, data);
+		break;
+	case IMG_CV_ACT_SOBEL:
+		img_cv_sobel(imgptr, data);
+		break;
+
+	case IMG_CV_ACT_ROTATE_ORTO:
+		img_cv_rotate_orto(imgptr, data);
+		break;
+	case IMG_CV_ACT_ROTATE:
+		img_cv_rotate(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_ADAPTIVE_THRESHOLD:
@@ -108,19 +139,6 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 		img_cv_histogram_c3(imgptr, data);
 		break;
 
-	case IMG_CV_ACT_DILATE:
-		img_cv_dilate(imgptr, data);
-		break;
-	case IMG_CV_ACT_ERODE:
-		img_cv_erode(imgptr, data);
-		break;
-	case IMG_CV_ACT_SMOOTH:
-		img_cv_smooth(imgptr, data);
-		break;
-	case IMG_CV_ACT_SOBEL:
-		img_cv_sobel(imgptr, data);
-		break;
-
 	case IMG_CV_ACT_CONTOURS:
 		img_cv_contours(imgptr, data);
 		break;
@@ -136,21 +154,6 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 	case IMG_CV_ACT_MIN_AREA_RECT:
 		img_cv_min_area_rect(imgptr, data);
 		break;
-
-	case IMG_CV_ACT_ROTATE_ORTO:
-		img_cv_rotate_orto(imgptr, data);
-		break;
-	case IMG_CV_ACT_ROTATE:
-		img_cv_rotate(imgptr, data);
-		break;
-
-	case IMG_CV_ACT_SET_ROI:
-		img_cv_set_ROI(imgptr, data);
-		break;
-
-	case IMG_CV_ACT_PIXEL_VALUE:
-		img_cv_pixel_value(imgptr, data);
-		break;
 	}
 }
 
@@ -158,6 +161,39 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
+static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Pixel_Value	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Pixel_Value *)data;
+
+	/* Value */
+	unsigned char	*val;
+	val		= data_cast->val;
+	/* Position */
+	int		x;
+	x		= data_cast->x;
+	int		y;
+	y		= data_cast->y;
+
+	/* Get value */
+	*val	= imgptr->at<unsigned char>(y, x);
+}
+
+static	void	img_cv_set_ROI		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_SetROI	*data_cast;
+	data_cast	= (struct Img_Iface_Data_SetROI *)data;
+
+	/* Rectangle */
+	class cv::Rect_ <int>	*rect;
+	rect		= &(data_cast->rect);
+
+	/* Set ROI */
+	*imgptr	= (*imgptr)(*rect);
+}
+
 static	void	img_cv_and_2ref		(class cv::Mat  *imgptr, void *data)
 {
 	class cv::Mat	*img_ref;
@@ -202,6 +238,149 @@ static	void	img_cv_component	(class cv::Mat  *imgptr, void *data)
 	cmp_img[0].release();
 	cmp_img[1].release();
 	cmp_img[2].release();
+}
+
+static	void	img_cv_dilate		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Dilate_Erode	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
+
+	/* Iterations */
+	int	i;
+	i	= data_cast->i;
+
+	/* Dilate */
+	cv::dilate(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
+							cv::BORDER_REPLICATE);
+}
+
+static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Dilate_Erode	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
+
+	/* Iterations */
+	int	i;
+	i	= data_cast->i;
+
+	/* Erode */
+	cv::erode(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
+							cv::BORDER_REPLICATE);
+}
+
+static	void	img_cv_smooth		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Smooth	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Smooth *)data;
+
+	/* Smoothing method */
+	int	method;
+	method	= data_cast->method;
+	/* Kernel size */
+	int	ksize;
+	ksize	= data_cast->ksize;
+	if (!(ksize % 2)) {
+		ksize++;
+	}
+
+	switch (method) {
+	case IMGI_SMOOTH_MEAN:
+		cv::blur(*imgptr, *imgptr, cv::Size(ksize, ksize),
+					cv::Point(-1,-1), cv::BORDER_DEFAULT);
+		break;
+	case IMGI_SMOOTH_GAUSS:
+		cv::GaussianBlur(*imgptr, *imgptr, cv::Size(ksize, ksize),
+					0, 0, cv::BORDER_DEFAULT);
+		break;
+	case IMGI_SMOOTH_MEDIAN:
+		cv::medianBlur(*imgptr, *imgptr, ksize);
+		break;
+	}
+}
+
+static	void	img_cv_sobel		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Sobel	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Sobel *)data;
+
+	/* Order of the derivative x */
+	int	dx;
+	dx	= data_cast->dx;
+	/* Order of the derivative y */
+	int	dy;
+	dy	= data_cast->dy;
+	/* Size of the extended Sobel kernel */
+	int	ksize;
+	ksize	= data_cast->ksize;
+	if (!(ksize % 2)) {
+		ksize++;
+	}
+
+	cv::Sobel(*imgptr, *imgptr, -1, dx, dy, ksize, 1, 0,
+							cv::BORDER_DEFAULT);
+}
+
+static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Rotate_Orto	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Rotate_Orto *)data;
+
+	/* Rotate n * pi/2 rad */
+	int	n;
+	n	= data_cast->n;
+
+	switch (n) {
+	case 1:
+		/* Rotate: transpose and flip around horizontal axis: flip_mode=0 */
+		cv::transpose(*imgptr, *imgptr);
+		cv::flip(*imgptr, *imgptr, 0);
+		break;
+
+	case 2:
+		/* Rotate: Flip both axises: flip_mode=-1 */
+		cv::flip(*imgptr, *imgptr, -1);
+		break;
+
+	case 3:
+		/* Rotate: transpose and flip around vertical axis: flip_mode=1 */
+		cv::transpose(*imgptr, *imgptr);
+		cv::flip(*imgptr, *imgptr, 1);
+		break;
+	}
+}
+
+static	void	img_cv_rotate		(class cv::Mat  *imgptr, void *data)
+{
+	class cv::Mat	map_matrix;
+
+	/* Data */
+	struct Img_Iface_Data_Rotate	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Rotate *)data;
+
+	/* Angle of rotation */
+	class cv::Point_ <float>	*center;
+	center		= &(data_cast->center);
+	double				angle;
+	angle		= data_cast->angle;
+
+	/* Don't rotate if angle is negligible */
+	if (fabs(angle) > 1.0) {
+		/* Get map_matrix */
+		map_matrix	= cv::getRotationMatrix2D(*center, angle, 1);
+
+		/* Rotate */
+		cv::warpAffine(*imgptr, *imgptr, map_matrix, imgptr->size(),
+					cv::INTER_LINEAR, cv::BORDER_CONSTANT,
+					cv::Scalar(0, 0, 0));
+	}
+
+	/* clean up */
+	map_matrix.release();
 }
 
 static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr, void *data)
@@ -387,90 +566,6 @@ static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr, void *data)
 	cmp_img[2].release();
 }
 
-static	void	img_cv_dilate		(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Dilate_Erode	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
-
-	/* Iterations */
-	int	i;
-	i	= data_cast->i;
-
-	/* Dilate */
-	cv::dilate(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_REPLICATE);
-}
-
-static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Dilate_Erode	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
-
-	/* Iterations */
-	int	i;
-	i	= data_cast->i;
-
-	/* Erode */
-	cv::erode(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_REPLICATE);
-}
-
-static	void	img_cv_smooth		(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Smooth	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Smooth *)data;
-
-	/* Smoothing method */
-	int	method;
-	method	= data_cast->method;
-	/* Kernel size */
-	int	ksize;
-	ksize	= data_cast->ksize;
-	if (!(ksize % 2)) {
-		ksize++;
-	}
-
-	switch (method) {
-	case IMGI_SMOOTH_MEAN:
-		cv::blur(*imgptr, *imgptr, cv::Size(ksize, ksize),
-					cv::Point(-1,-1), cv::BORDER_DEFAULT);
-		break;
-	case IMGI_SMOOTH_GAUSS:
-		cv::GaussianBlur(*imgptr, *imgptr, cv::Size(ksize, ksize),
-					0, 0, cv::BORDER_DEFAULT);
-		break;
-	case IMGI_SMOOTH_MEDIAN:
-		cv::medianBlur(*imgptr, *imgptr, ksize);
-		break;
-	}
-}
-
-static	void	img_cv_sobel		(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Sobel	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Sobel *)data;
-
-	/* Order of the derivative x */
-	int	dx;
-	dx	= data_cast->dx;
-	/* Order of the derivative y */
-	int	dy;
-	dy	= data_cast->dy;
-	/* Size of the extended Sobel kernel */
-	int	ksize;
-	ksize	= data_cast->ksize;
-	if (!(ksize % 2)) {
-		ksize++;
-	}
-
-	cv::Sobel(*imgptr, *imgptr, -1, dx, dy, ksize, 1, 0,
-							cv::BORDER_DEFAULT);
-}
-
 static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -631,98 +726,6 @@ static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr, void *data)
 					cv::Point(vertices[0].x, vertices[0].y),
 					CV_RGB(0, 0, 255), 1, 8, 0);
 	}
-}
-
-static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Rotate_Orto	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Rotate_Orto *)data;
-
-	/* Rotate n * pi/2 rad */
-	int	n;
-	n	= data_cast->n;
-
-	switch (n) {
-	case 1:
-		/* Rotate: transpose and flip around horizontal axis: flip_mode=0 */
-		cv::transpose(*imgptr, *imgptr);
-		cv::flip(*imgptr, *imgptr, 0);
-		break;
-
-	case 2:
-		/* Rotate: Flip both axises: flip_mode=-1 */
-		cv::flip(*imgptr, *imgptr, -1);
-		break;
-
-	case 3:
-		/* Rotate: transpose and flip around vertical axis: flip_mode=1 */
-		cv::transpose(*imgptr, *imgptr);
-		cv::flip(*imgptr, *imgptr, 1);
-		break;
-	}
-}
-
-static	void	img_cv_rotate		(class cv::Mat  *imgptr, void *data)
-{
-	class cv::Mat	map_matrix;
-
-	/* Data */
-	struct Img_Iface_Data_Rotate	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Rotate *)data;
-
-	/* Angle of rotation */
-	class cv::Point_ <float>	*center;
-	center		= &(data_cast->center);
-	double				angle;
-	angle		= data_cast->angle;
-
-	/* Don't rotate if angle is negligible */
-	if (fabs(angle) > 1.0) {
-		/* Get map_matrix */
-		map_matrix	= cv::getRotationMatrix2D(*center, angle, 1);
-
-		/* Rotate */
-		cv::warpAffine(*imgptr, *imgptr, map_matrix, imgptr->size(),
-					cv::INTER_LINEAR, cv::BORDER_CONSTANT,
-					cv::Scalar(0, 0, 0));
-	}
-
-	/* clean up */
-	map_matrix.release();
-}
-
-static	void	img_cv_set_ROI		(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_SetROI	*data_cast;
-	data_cast	= (struct Img_Iface_Data_SetROI *)data;
-
-	/* Rectangle */
-	class cv::Rect_ <int>	*rect;
-	rect		= &(data_cast->rect);
-
-	/* Set ROI */
-	*imgptr	= (*imgptr)(*rect);
-}
-
-static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Pixel_Value	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Pixel_Value *)data;
-
-	/* Value */
-	unsigned char	*val;
-	val		= data_cast->val;
-	/* Position */
-	int		x;
-	x		= data_cast->x;
-	int		y;
-	y		= data_cast->y;
-
-	/* Get value */
-	*val	= imgptr->at<unsigned char>(y, x);
 }
 
 

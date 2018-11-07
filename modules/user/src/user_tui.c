@@ -260,21 +260,60 @@ static	int	usr_input	(void)
 
 			switch (ch) {
 			case '0':
-				/* Operations on Arrays */
+				/* Core: The core functionality */
 				ch = wgetch(win_log);
 
 				switch (ch) {
 				case '0':
-					action	= USER_IFACE_ACT_AND_2REF;
+					/* Pixel */
+					ch = wgetch(win_log);
+
+					switch (ch) {
+					case '0':
+						action	= USER_IFACE_ACT_PIXEL_VALUE;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '1':
-					action	= USER_IFACE_ACT_NOT;
+					/* ROI */
+					ch = wgetch(win_log);
+
+					switch (ch) {
+					case '0':
+						action	= USER_IFACE_ACT_SET_ROI;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_SET_ROI_2RECT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '2':
-					action	= USER_IFACE_ACT_OR_2REF;
-					break;
-				case '3':
-					action	= USER_IFACE_ACT_COMPONENT;
+					/* Operations on Arrays */
+					ch = wgetch(win_log);
+
+					switch (ch) {
+					case '0':
+						action	= USER_IFACE_ACT_AND_2REF;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_NOT;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_OR_2REF;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_COMPONENT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -282,20 +321,32 @@ static	int	usr_input	(void)
 				}
 				break;
 			case '1':
-				/* Misc. image transformations */
+				/* Imgproc: Image processing */
 				ch = wgetch(win_log);
 
 				switch (ch) {
 				case '0':
-					/* Threshold */
+					/* Image filtering */
 					ch = wgetch(win_log);
 
 					switch (ch) {
 					case '0':
-						action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
+						action	= USER_IFACE_ACT_DILATE;
 						break;
 					case '1':
-						action	= USER_IFACE_ACT_THRESHOLD;
+						action	= USER_IFACE_ACT_ERODE;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_DILATE_ERODE;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_ERODE_DILATE;
+						break;
+					case '4':
+						action	= USER_IFACE_ACT_SMOOTH;
+						break;
+					case '5':
+						action	= USER_IFACE_ACT_SOBEL;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -303,12 +354,18 @@ static	int	usr_input	(void)
 					}
 					break;
 				case '1':
-					/* Color */
+					/* Geometric image transformations */
 					ch = wgetch(win_log);
 
 					switch (ch) {
 					case '0':
-						action	= USER_IFACE_ACT_CVT_COLOR;
+						action	= USER_IFACE_ACT_ROTATE_ORTO;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_ROTATE;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_ROTATE_2RECT;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -316,134 +373,97 @@ static	int	usr_input	(void)
 					}
 					break;
 				case '2':
-					/* Transforms */
+					/* Miscellaneous image transformations */
 					ch = wgetch(win_log);
 
 					switch (ch) {
 					case '0':
-						action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+						/* Threshold */
+						ch = wgetch(win_log);
+
+						switch (ch) {
+						case '0':
+							action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
+							break;
+						case '1':
+							action	= USER_IFACE_ACT_THRESHOLD;
+							break;
+						default:
+							action	= USER_IFACE_ACT_FOO;
+							break;
+						}
+						break;
+					case '1':
+						/* Color */
+						ch = wgetch(win_log);
+
+						switch (ch) {
+						case '0':
+							action	= USER_IFACE_ACT_CVT_COLOR;
+							break;
+						default:
+							action	= USER_IFACE_ACT_FOO;
+							break;
+						}
+						break;
+					case '2':
+						/* Transforms */
+						ch = wgetch(win_log);
+
+						switch (ch) {
+						case '0':
+							action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+							break;
+						default:
+							action	= USER_IFACE_ACT_FOO;
+							break;
+						}
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
 						break;
 					}
 					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '2':
-				/* Histograms */
-				ch = wgetch(win_log);
-
-				switch (ch) {
-				case '0':
-					action	= USER_IFACE_ACT_HISTOGRAM;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_HISTOGRAM_C3;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '3':
-				/* Image filtering */
-				ch = wgetch(win_log);
-
-				switch (ch) {
-				case '0':
-					action	= USER_IFACE_ACT_DILATE;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_ERODE;
-					break;
-				case '2':
-					action	= USER_IFACE_ACT_DILATE_ERODE;
-					break;
 				case '3':
-					action	= USER_IFACE_ACT_ERODE_DILATE;
+					/* Histograms */
+					ch = wgetch(win_log);
+
+					switch (ch) {
+					case '0':
+						action	= USER_IFACE_ACT_HISTOGRAM;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_HISTOGRAM_C3;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				case '4':
-					action	= USER_IFACE_ACT_SMOOTH;
-					break;
-				case '5':
-					action	= USER_IFACE_ACT_SOBEL;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '4':
-				/* Structural analysis and shape descriptors */
-				ch = wgetch(win_log);
+					/* Structural analysis and shape descriptors */
+					ch = wgetch(win_log);
 
-				switch (ch) {
-				case '0':
-					action	= USER_IFACE_ACT_CONTOURS;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_CONTOURS_SIZE;
-					break;
-				case '2':
-					action	= USER_IFACE_ACT_BOUNDING_RECT;
-					break;
-				case '3':
-					action	= USER_IFACE_ACT_FIT_ELLIPSE;
-					break;
-				case '4':
-					action	= USER_IFACE_ACT_MIN_AREA_RECT;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '5':
-				/* Geometric image transformations */
-				ch = wgetch(win_log);
-
-				switch (ch) {
-				case '0':
-					action	= USER_IFACE_ACT_ROTATE_ORTO;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_ROTATE;
-					break;
-				case '2':
-					action	= USER_IFACE_ACT_ROTATE_2RECT;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '6':
-				/* ROI */
-				ch = wgetch(win_log);
-
-				switch (ch) {
-				case '0':
-					action	= USER_IFACE_ACT_SET_ROI;
-					break;
-				case '1':
-					action	= USER_IFACE_ACT_SET_ROI_2RECT;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
-				}
-				break;
-			case '7':
-				/* Pixel */
-				ch = wgetch(win_log);
-
-				switch (ch) {
-				case '0':
-					action	= USER_IFACE_ACT_PIXEL_VALUE;
+					switch (ch) {
+					case '0':
+						action	= USER_IFACE_ACT_CONTOURS;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_CONTOURS_SIZE;
+						break;
+					case '2':
+						action	= USER_IFACE_ACT_BOUNDING_RECT;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_FIT_ELLIPSE;
+						break;
+					case '4':
+						action	= USER_IFACE_ACT_MIN_AREA_RECT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
 					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
@@ -456,6 +476,19 @@ static	int	usr_input	(void)
 			}
 			break;
 		case '2':
+			/* img_orb */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_ALIGN;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '3':
 			/* img_zbar */
 			ch = wgetch(win_log);
 
@@ -468,26 +501,13 @@ static	int	usr_input	(void)
 				break;
 			}
 			break;
-		case '3':
+		case '4':
 			/* img_ocr */
 			ch = wgetch(win_log);
 
 			switch (ch) {
 			case '0':
 				action	= USER_IFACE_ACT_READ;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
-			}
-			break;
-		case '4':
-			/* img_orb */
-			ch = wgetch(win_log);
-
-			switch (ch) {
-			case '0':
-				action	= USER_IFACE_ACT_ALIGN;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -581,36 +601,36 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to ref:		%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:		%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
-	mvwprintw(win_help, r++, c, " - Bitwise AND 2ref:	%s",	"f100");
-	mvwprintw(win_help, r++, c, " - Bitwise NOT:		%s",	"f101");
-	mvwprintw(win_help, r++, c, " - Bitwise OR 2ref:	%s",	"f102");
-	mvwprintw(win_help, r++, c, " - Component:		%s",	"f103");
-	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f1100");
-	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f1101");
-	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f1110");
-	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f1120");
-	mvwprintw(win_help, r++, c, " - Histogram:		%s",	"f120");
-	mvwprintw(win_help, r++, c, " - Histogram (3 chan):	%s",	"f121");
-	mvwprintw(win_help, r++, c, " - Dilate:		%s",		"f130");
-	mvwprintw(win_help, r++, c, " - Erode:		%s",		"f131");
-	mvwprintw(win_help, r++, c, " - D-E:			%s",	"f132");
-	mvwprintw(win_help, r++, c, " - E-D:			%s",	"f133");
-	mvwprintw(win_help, r++, c, " - Smooth:		%s",		"f134");
-	mvwprintw(win_help, r++, c, " - Sobel:		%s",		"f135");
-	mvwprintw(win_help, r++, c, " - Contours:		%s",	"f140");
-	mvwprintw(win_help, r++, c, " - Contours size:	%s",		"f141");
-	mvwprintw(win_help, r++, c, " - Bounding rectangle:	%s",	"f142");
-	mvwprintw(win_help, r++, c, " - Fit ellipse:		%s",	"f143");
-	mvwprintw(win_help, r++, c, " - Min. area rectangle:	%s",	"f144");
-	mvwprintw(win_help, r++, c, " - Rotate ortogonally:	%s",	"f150");
-	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f151");
-	mvwprintw(win_help, r++, c, " - Rotate 2rect_rot:	%s",	"f152");
-	mvwprintw(win_help, r++, c, " - Set ROI:		%s",	"f160");
-	mvwprintw(win_help, r++, c, " - Set ROI 2rect:	%s",		"f161");
-	mvwprintw(win_help, r++, c, " - Pixel value:		%s",	"f170");
-	mvwprintw(win_help, r++, c, " - Scan codes (ZBAR):	%s",	"f20");
-	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f30");
-	mvwprintw(win_help, r++, c, " - Align 2ref (ORB):	%s",	"f40");
+	mvwprintw(win_help, r++, c, " - Pixel value:		%s",	"f1000");
+	mvwprintw(win_help, r++, c, " - Set ROI:		%s",	"f1010");
+	mvwprintw(win_help, r++, c, " - Set ROI 2rect:	%s",		"f1011");
+	mvwprintw(win_help, r++, c, " - Bitwise AND 2ref:	%s",	"f1020");
+	mvwprintw(win_help, r++, c, " - Bitwise NOT:		%s",	"f1021");
+	mvwprintw(win_help, r++, c, " - Bitwise OR 2ref:	%s",	"f1022");
+	mvwprintw(win_help, r++, c, " - Component:		%s",	"f1023");
+	mvwprintw(win_help, r++, c, " - Dilate:		%s",		"f1100");
+	mvwprintw(win_help, r++, c, " - Erode:		%s",		"f1101");
+	mvwprintw(win_help, r++, c, " - D-E:			%s",	"f1102");
+	mvwprintw(win_help, r++, c, " - E-D:			%s",	"f1103");
+	mvwprintw(win_help, r++, c, " - Smooth:		%s",		"f1104");
+	mvwprintw(win_help, r++, c, " - Sobel:		%s",		"f1105");
+	mvwprintw(win_help, r++, c, " - Rotate ortogonally:	%s",	"f1110");
+	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f1111");
+	mvwprintw(win_help, r++, c, " - Rotate 2rect_rot:	%s",	"f1112");
+	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f11200");
+	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f11201");
+	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f11210");
+	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f11220");
+	mvwprintw(win_help, r++, c, " - Histogram:		%s",	"f1130");
+	mvwprintw(win_help, r++, c, " - Histogram (3 chan):	%s",	"f1131");
+	mvwprintw(win_help, r++, c, " - Contours:		%s",	"f1140");
+	mvwprintw(win_help, r++, c, " - Contours size:	%s",		"f1141");
+	mvwprintw(win_help, r++, c, " - Bounding rectangle:	%s",	"f1142");
+	mvwprintw(win_help, r++, c, " - Fit ellipse:		%s",	"f1143");
+	mvwprintw(win_help, r++, c, " - Min. area rectangle:	%s",	"f1144");
+	mvwprintw(win_help, r++, c, " - Align 2ref (ORB):	%s",	"f20");
+	mvwprintw(win_help, r++, c, " - Scan codes (ZBAR):	%s",	"f30");
+	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f40");
 	mvwprintw(win_help, r++, c, "Exercises:");
 	mvwprintw(win_help, r++, c, " - Label:		%s",		"e10");
 	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e30");
