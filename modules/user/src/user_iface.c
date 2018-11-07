@@ -56,6 +56,7 @@ void	user_iface_init		(void)
 
 	switch (user_iface_mode) {
 	case USER_IFACE_CLUI:
+		user_clui_init();
 		break;
 
 	case USER_IFACE_TUI:
