@@ -65,6 +65,8 @@ static	void	img_cv_contours_size	(void  *data);
 static	void	img_cv_bounding_rect	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr,  void  *data);
+		/* Feature detection */
+static	void	img_cv_hough_circles	(class cv::Mat  *imgptr, void *data);
 
 
 /******************************************************************************
@@ -149,6 +151,10 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 	case IMG_CV_ACT_MIN_AREA_RECT:
 		img_cv_min_area_rect(imgptr, data);
 		break;
+
+	case IMG_CV_ACT_HOUGH_CIRCLES:
+		img_cv_hough_circles(imgptr, data);
+		break;
 	}
 }
 
@@ -156,6 +162,8 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
+/* Core: The core functionality */
+/* ----- Pixel */
 static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -175,6 +183,7 @@ static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
 	*val	= imgptr->at<unsigned char>(y, x);
 }
 
+/* ----- ROI */
 static	void	img_cv_set_ROI		(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -189,6 +198,7 @@ static	void	img_cv_set_ROI		(class cv::Mat  *imgptr, void *data)
 	*imgptr	= (*imgptr)(*rect);
 }
 
+/* ----- Operations on arrays */
 static	void	img_cv_and_2ref		(class cv::Mat  *imgptr, void *data)
 {
 	class cv::Mat	*img_ref;
@@ -235,6 +245,8 @@ static	void	img_cv_component	(class cv::Mat  *imgptr, void *data)
 	cmp_img[2].release();
 }
 
+/* Imgproc: Image processing */
+/* ----- Image filtering */
 static	void	img_cv_dilate		(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -319,6 +331,7 @@ static	void	img_cv_sobel		(class cv::Mat  *imgptr, void *data)
 							cv::BORDER_DEFAULT);
 }
 
+/* ----- Geometric image transformations */
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -378,6 +391,7 @@ static	void	img_cv_rotate		(class cv::Mat  *imgptr, void *data)
 	map_matrix.release();
 }
 
+/* ----- Miscellaneous image transformations */
 static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -449,6 +463,7 @@ static	void	img_cv_threshold	(class cv::Mat  *imgptr, void *data)
 	cv::threshold(*imgptr, *imgptr, thr_val, 0xFF, thr_typ);
 }
 
+/* ----- Histograms */
 static	void	img_cv_histogram	(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -561,6 +576,7 @@ static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr, void *data)
 	cmp_img[2].release();
 }
 
+/* ----- Structural analysis and shape descriptors */
 static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -577,8 +593,11 @@ static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)
 	cv::findContours(*imgptr, *contours, *hierarchy, CV_RETR_EXTERNAL,
 							CV_CHAIN_APPROX_SIMPLE);
 
+	/* Set image to black */
+	imgptr->setTo(cv::Scalar(0));
+
 	/* Draw contours in color */
-	cv::drawContours(*imgptr, *contours, -1, cv::Scalar(255, 0, 0), 1, 8,
+	cv::drawContours(*imgptr, *contours, -1, cv::Scalar(255), 1, 8,
 						*hierarchy, 1, cvPoint(0, 0));
 }
 
@@ -720,6 +739,54 @@ static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr, void *data)
 		cv::line(*imgptr, cv::Point(vertices[3].x, vertices[3].y),
 					cv::Point(vertices[0].x, vertices[0].y),
 					CV_RGB(0, 0, 255), 1, 8, 0);
+	}
+}
+
+/* ----- Feature detection */
+static	void	img_cv_hough_circles	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Hough_Circles	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Hough_Circles *)data;
+
+	/* Contours */
+	std::vector <class cv::Vec <float, 3>>	*circles;
+	circles		= data_cast->circles;
+	/* Parameters */
+	double					dist_min;
+	double					param_1;
+	double					param_2;
+	int					radius_min;
+	int					radius_max;
+	dist_min	= data_cast->dist_min;
+	param_1		= data_cast->param_1;
+	param_2		= data_cast->param_2;
+	radius_min	= data_cast->radius_min;
+	radius_max	= data_cast->radius_max;
+
+	/* Get circles */
+	cv::HoughCircles(*imgptr, *circles, CV_HOUGH_GRADIENT, 1, dist_min,
+				param_1, param_2, radius_min, radius_max);
+
+	/* Set image to black */
+	imgptr->setTo(cv::Scalar(0));
+
+	/* Draw circles */
+	class cv::Point_ <int>	center;
+	int			radius;
+	int	i;
+	for (i = 0; i < circles->size(); i++) {
+		center.x	= cvRound((*circles)[i][0]);
+		center.y	= cvRound((*circles)[i][1]);
+		radius		= cvRound((*circles)[i][2]);
+
+		/* Draw the circle center */
+/*			cv::circle(*imgptr, center, 3,
+				cv::Scalar(0, 255, 0), -1, 8, 0);*/
+
+		/* Draw the circle outline */
+		cv::circle(*imgptr, center, radius,
+				cv::Scalar(250), 1, 8, 0);
 	}
 }
 

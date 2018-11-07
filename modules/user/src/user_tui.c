@@ -435,6 +435,19 @@ static	int	usr_input	(void)
 						break;
 					}
 					break;
+				case '5':
+					/* Feature detection */
+					ch = wgetch(win_log);
+
+					switch (ch) {
+					case '0':
+						action	= USER_IFACE_ACT_HOUGH_CIRCLES;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
+					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
 					break;
@@ -588,9 +601,9 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f1111");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect_rot:	%s",	"f1112");
 	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f1120");
-	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f1121");
-	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f1122");
-	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f1123");
+	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f1121");
+	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f1122");
+	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f1123");
 	mvwprintw(win_help, r++, c, " - Histogram:		%s",	"f1130");
 	mvwprintw(win_help, r++, c, " - Histogram (3 chan):	%s",	"f1131");
 	mvwprintw(win_help, r++, c, " - Contours:		%s",	"f1140");
@@ -598,6 +611,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Bounding rectangle:	%s",	"f1142");
 	mvwprintw(win_help, r++, c, " - Fit ellipse:		%s",	"f1143");
 	mvwprintw(win_help, r++, c, " - Min. area rectangle:	%s",	"f1144");
+	mvwprintw(win_help, r++, c, " - Hough circles:	%s",		"f1150");
 	mvwprintw(win_help, r++, c, " - Align 2ref (ORB):	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan codes (ZBAR):	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f40");

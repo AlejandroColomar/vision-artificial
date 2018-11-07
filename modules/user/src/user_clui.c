@@ -324,6 +324,17 @@ static	int	usr_input	(void)
 						break;
 					}
 					break;
+				case '5':
+					/* Feature detection */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_HOUGH_CIRCLES;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
+					break;
 				default:
 					action	= USER_IFACE_ACT_FOO;
 					break;
@@ -456,9 +467,9 @@ static	void	show_help	(void)
 	printf(" - Rotate:		%s\n",	"f1111");
 	printf(" - Rotate 2rect_rot:	%s\n",	"f1112");
 	printf(" - Adaptive threshold:	%s\n",	"f1120");
-	printf(" - Threshold:		%s\n",	"f1121");
-	printf(" - Cvt color:		%s\n",	"f1122");
-	printf(" - Distance transform:	%s\n",	"f1123");
+	printf(" - Cvt color:		%s\n",	"f1121");
+	printf(" - Distance transform:	%s\n",	"f1122");
+	printf(" - Threshold:		%s\n",	"f1123");
 	printf(" - Histogram:		%s\n",	"f1130");
 	printf(" - Histogram (3 chan):	%s\n",	"f1131");
 	printf(" - Contours:		%s\n",	"f1140");
@@ -466,6 +477,7 @@ static	void	show_help	(void)
 	printf(" - Bounding rectangle:	%s\n",	"f1142");
 	printf(" - Fit ellipse:		%s\n",	"f1143");
 	printf(" - Min. area rectangle:	%s\n",	"f1144");
+	printf(" - Hough circles:	%s\n",	"f1150");
 	printf(" - Align 2ref (ORB):	%s\n",	"f20");
 	printf(" - Scan codes (ZBAR):	%s\n",	"f30");
 	printf(" - Scan text (OCR):	%s\n",	"f40");

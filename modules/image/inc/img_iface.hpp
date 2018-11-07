@@ -65,6 +65,7 @@
 		IMG_IFACE_ACT_BOUNDING_RECT,
 		IMG_IFACE_ACT_FIT_ELLIPSE,
 		IMG_IFACE_ACT_MIN_AREA_RECT,
+		IMG_IFACE_ACT_HOUGH_CIRCLES,
 
 		IMG_IFACE_ACT_ZB = 0x0200,
 		IMG_IFACE_ACT_DECODE,
@@ -203,6 +204,15 @@
 		std::vector <class cv::Point_ <int>>	*contour;
 		class cv::RotatedRect			*rect;
 		bool					show;
+	};
+
+	struct	Img_Iface_Data_Hough_Circles {
+		std::vector <class cv::Vec <float, 3>>	*circles;
+		double					dist_min;
+		double					param_1;
+		double					param_2;
+		int					radius_min;
+		int					radius_max;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/

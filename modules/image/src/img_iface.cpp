@@ -70,6 +70,7 @@ static	double						perimeter [CONTOURS_MAX];
 static	class cv::Mat					hierarchy;
 static	class cv::Rect_ <int>				rectangle;
 static	class cv::RotatedRect				rectangle_rot;
+static	std::vector <class cv::Vec <float, 3>>		circles;
 
 
 /******************************************************************************
@@ -113,6 +114,8 @@ static	void	img_iface_contours_size		(void *data);
 static	void	img_iface_bounding_rect		(void *data);
 static	void	img_iface_fit_ellipse		(void *data);
 static	void	img_iface_min_area_rect		(void *data);
+			/* Feature detection */
+static	void	img_iface_hough_circles		(void *data);
 
 	/* img_zbar */
 static	void	img_iface_decode		(void *data);
@@ -296,7 +299,15 @@ void	img_iface_act		(int action, void *data)
 	case IMG_IFACE_ACT_MIN_AREA_RECT:
 		img_iface_min_area_rect(data);
 		break;
+			/* Feature detection */
+	case IMG_IFACE_ACT_HOUGH_CIRCLES:
+		img_iface_hough_circles(data);
+		break;
 
+	/* img_orb */
+	case IMG_IFACE_ACT_ALIGN:
+		img_iface_align();
+		break;
 
 	/* img_zbar */
 	case IMG_IFACE_ACT_DECODE:
@@ -306,11 +317,6 @@ void	img_iface_act		(int action, void *data)
 	/* img_ocr */
 	case IMG_IFACE_ACT_READ:
 		img_iface_read(data);
-		break;
-
-	/* img_orb */
-	case IMG_IFACE_ACT_ALIGN:
-		img_iface_align();
 		break;
 
 	/* img_iface */
@@ -773,7 +779,7 @@ static	void	img_iface_sobel			(void *data)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_SOBEL, data);
 }
 
-/* ----- Geometric image transformations */
+/* ----- ------- Geometric image transformations */
 static	void	img_iface_rotate_orto		(void *data)
 {
 	/* Data */
@@ -1074,7 +1080,7 @@ static	void	img_iface_histogram_c3		(void *data)
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_HISTOGRAM_C3, data);
 }
 
-/* ----- Structural analysis and shape descriptors */
+/* ----- ------- Structural analysis and shape descriptors */
 static	void	img_iface_contours		(void *data)
 {
 	/* Must have 1 channel */
@@ -1238,6 +1244,58 @@ static	void	img_iface_min_area_rect		(void *data)
 
 	/* Enclosing rectangle */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_MIN_AREA_RECT, data);
+}
+
+/* ----- ------- Feature detection */
+static	void	img_iface_hough_circles		(void *data)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Data */
+	struct Img_Iface_Data_Hough_Circles	data_tmp;
+	if (!data) {
+		data_tmp.circles	= &circles;
+
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Minimum distance:");
+		data_tmp.dist_min	= user_iface_getdbl(0, 5, INFINITY, title, NULL);
+
+		snprintf(title, 80, "param 1:");
+		data_tmp.param_1	= user_iface_getdbl(0, 200, INFINITY, title, NULL);
+
+		snprintf(title, 80, "param 2:");
+		data_tmp.param_2	= user_iface_getdbl(0, 100, INFINITY, title, NULL);
+
+		snprintf(title, 80, "Minimum radius");
+		data_tmp.radius_min	= user_iface_getint(0, 10, INFINITY, title, NULL);
+
+		snprintf(title, 80, "Maximum radius");
+		data_tmp.radius_max	= user_iface_getint(0, 0, INFINITY, title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Circles */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_HOUGH_CIRCLES, data);
+
+	/* Write into log */
+	struct Img_Iface_Data_Hough_Circles	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Hough_Circles *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Circles n=%i",
+						(int)data_cast->circles->size());
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
 }
 
 /* img_zbar ------------------------------------------------------------------*/
