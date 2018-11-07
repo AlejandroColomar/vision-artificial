@@ -32,29 +32,39 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-	/* Filters */
+	/* Operations on Arrays */
+static	void	img_cv_and_2ref		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_not		(class cv::Mat  *imgptr);
 static	void	img_cv_or_2ref		(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_and_2ref		(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_cvt_color	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_component	(class cv::Mat  *imgptr,  void  *data);
+	/* Misc. image transformations:  threshold */
+static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
+	/* Misc. image transformations:  color */
+static	void	img_cv_cvt_color	(class cv::Mat  *imgptr,  void  *data);
+	/* Misc. image transformations:  transforms */
+static	void	img_cv_distance_transform	(class cv::Mat  *imgptr);
+	/* Histograms */
 static	void	img_cv_histogram	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_smooth		(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_threshold	(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr,  void  *data);
+	/* Image filtering */
 static	void	img_cv_dilate		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_erode		(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_smooth		(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
+	/* Structural analysis and shape descriptors */
 static	void	img_cv_contours		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_contours_size	(void  *data);
-static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_bounding_rect	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr,  void  *data);
+	/* Geometric image transformations */
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
+	/* ROI */
 static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
+	/* Pixel */
 static	void	img_cv_pixel_value	(class cv::Mat  *imgptr,  void  *data);
-static	void	img_cv_distance_transform	(class cv::Mat  *imgptr);
 
 
 /******************************************************************************
@@ -63,21 +73,32 @@ static	void	img_cv_distance_transform	(class cv::Mat  *imgptr);
 void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 {
 	switch (action) {
+	case IMG_CV_ACT_AND_2REF:
+		img_cv_and_2ref(imgptr, data);
+		break;
 	case IMG_CV_ACT_NOT:
 		img_cv_not(imgptr);
 		break;
 	case IMG_CV_ACT_OR_2REF:
 		img_cv_or_2ref(imgptr, data);
 		break;
-	case IMG_CV_ACT_AND_2REF:
-		img_cv_and_2ref(imgptr, data);
+	case IMG_CV_ACT_COMPONENT:
+		img_cv_component(imgptr, data);
+		break;
+
+	case IMG_CV_ACT_ADAPTIVE_THRESHOLD:
+		img_cv_adaptive_thr(imgptr, data);
+		break;
+	case IMG_CV_ACT_THRESHOLD:
+		img_cv_threshold(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_CVT_COLOR:
 		img_cv_cvt_color(imgptr, data);
 		break;
-	case IMG_CV_ACT_COMPONENT:
-		img_cv_component(imgptr, data);
+
+	case IMG_CV_ACT_DISTANCE_TRANSFORM:
+		img_cv_distance_transform(imgptr);
 		break;
 
 	case IMG_CV_ACT_HISTOGRAM:
@@ -86,25 +107,18 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 	case IMG_CV_ACT_HISTOGRAM_C3:
 		img_cv_histogram_c3(imgptr, data);
 		break;
-	case IMG_CV_ACT_SMOOTH:
-		img_cv_smooth(imgptr, data);
-		break;
-	case IMG_CV_ACT_SOBEL:
-		img_cv_sobel(imgptr, data);
-		break;
-
-	case IMG_CV_ACT_THRESHOLD:
-		img_cv_threshold(imgptr, data);
-		break;
-	case IMG_CV_ACT_ADAPTIVE_THRESHOLD:
-		img_cv_adaptive_thr(imgptr, data);
-		break;
 
 	case IMG_CV_ACT_DILATE:
 		img_cv_dilate(imgptr, data);
 		break;
 	case IMG_CV_ACT_ERODE:
 		img_cv_erode(imgptr, data);
+		break;
+	case IMG_CV_ACT_SMOOTH:
+		img_cv_smooth(imgptr, data);
+		break;
+	case IMG_CV_ACT_SOBEL:
+		img_cv_sobel(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_CONTOURS:
@@ -113,11 +127,14 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 	case IMG_CV_ACT_CONTOURS_SIZE:
 		img_cv_contours_size(data);
 		break;
-	case IMG_CV_ACT_MIN_AREA_RECT:
-		img_cv_min_area_rect(imgptr, data);
+	case IMG_CV_ACT_BOUNDING_RECT:
+		img_cv_bounding_rect(imgptr, data);
 		break;
 	case IMG_CV_ACT_FIT_ELLIPSE:
 		img_cv_fit_ellipse(imgptr, data);
+		break;
+	case IMG_CV_ACT_MIN_AREA_RECT:
+		img_cv_min_area_rect(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_ROTATE_ORTO:
@@ -134,10 +151,6 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 	case IMG_CV_ACT_PIXEL_VALUE:
 		img_cv_pixel_value(imgptr, data);
 		break;
-
-	case IMG_CV_ACT_DISTANCE_TRANSFORM:
-		img_cv_distance_transform(imgptr);
-		break;
 	}
 }
 
@@ -145,6 +158,14 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
+static	void	img_cv_and_2ref		(class cv::Mat  *imgptr, void *data)
+{
+	class cv::Mat	*img_ref;
+	img_ref	= (class cv::Mat *)data;
+
+	cv::bitwise_and(*imgptr, *img_ref, *imgptr);
+}
+
 static	void	img_cv_not		(class cv::Mat  *imgptr)
 {
 	cv::bitwise_not(*imgptr, *imgptr);
@@ -156,27 +177,6 @@ static	void	img_cv_or_2ref		(class cv::Mat  *imgptr, void *data)
 	img_ref	= (class cv::Mat *)data;
 
 	cv::bitwise_or(*imgptr, *img_ref, *imgptr);
-}
-
-static	void	img_cv_and_2ref		(class cv::Mat  *imgptr, void *data)
-{
-	class cv::Mat	*img_ref;
-	img_ref	= (class cv::Mat *)data;
-
-	cv::bitwise_and(*imgptr, *img_ref, *imgptr);
-}
-
-static	void	img_cv_cvt_color	(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Cvt_Color	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Cvt_Color *)data;
-
-	/* Conversion method */
-	int	method;
-	method	= data_cast->method;
-
-	cv::cvtColor(*imgptr, *imgptr, method, 0);
 }
 
 static	void	img_cv_component	(class cv::Mat  *imgptr, void *data)
@@ -202,6 +202,77 @@ static	void	img_cv_component	(class cv::Mat  *imgptr, void *data)
 	cmp_img[0].release();
 	cmp_img[1].release();
 	cmp_img[2].release();
+}
+
+static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Adaptive_Thr	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Adaptive_Thr *)data;
+
+	/* Threshold method */
+	int	method;
+	method	= data_cast->method;
+	/* Threshold type */
+	int	thr_typ;
+	thr_typ	= data_cast->thr_typ;
+	/* Neighbourhood size */
+	int	ksize;
+	ksize	= data_cast->ksize;
+	if (!(ksize % 2)) {
+		ksize++;
+	}
+
+	/* Apply adaptive threshold */
+	cv::adaptiveThreshold(*imgptr, *imgptr, 255, method, thr_typ, ksize,
+									0);
+}
+
+static	void	img_cv_threshold	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Threshold	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Threshold *)data;
+
+	/* Threshold type */
+	int	thr_typ;
+	thr_typ	= data_cast->thr_typ;
+	/* Threshold value */
+	int	thr_val;
+	thr_val	= data_cast->thr_val;
+	if (thr_val == -1) {
+		thr_typ	|= cv::THRESH_OTSU;
+	}
+
+	/* Threshold */
+	cv::threshold(*imgptr, *imgptr, thr_val, 0xFF, thr_typ);
+}
+
+static	void	img_cv_cvt_color	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Cvt_Color	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Cvt_Color *)data;
+
+	/* Conversion method */
+	int	method;
+	method	= data_cast->method;
+
+	cv::cvtColor(*imgptr, *imgptr, method, 0);
+}
+
+static	void	img_cv_distance_transform	(class cv::Mat  *imgptr)
+{
+	class cv::Mat	imgtmp;
+
+	/* Get transform */
+	cv::distanceTransform(*imgptr, imgtmp, CV_DIST_L2, CV_DIST_MASK_PRECISE);
+
+	/* DistanceTransform  gives CV_32F image */
+	imgtmp.convertTo(*imgptr, CV_8U);
+
+	/* Cleanup */
+	imgtmp.release();
 }
 
 static	void	img_cv_histogram	(class cv::Mat  *imgptr, void *data)
@@ -316,6 +387,36 @@ static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr, void *data)
 	cmp_img[2].release();
 }
 
+static	void	img_cv_dilate		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Dilate_Erode	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
+
+	/* Iterations */
+	int	i;
+	i	= data_cast->i;
+
+	/* Dilate */
+	cv::dilate(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
+							cv::BORDER_REPLICATE);
+}
+
+static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Dilate_Erode	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
+
+	/* Iterations */
+	int	i;
+	i	= data_cast->i;
+
+	/* Erode */
+	cv::erode(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
+							cv::BORDER_REPLICATE);
+}
+
 static	void	img_cv_smooth		(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -370,80 +471,6 @@ static	void	img_cv_sobel		(class cv::Mat  *imgptr, void *data)
 							cv::BORDER_DEFAULT);
 }
 
-static	void	img_cv_threshold	(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Threshold	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Threshold *)data;
-
-	/* Threshold type */
-	int	thr_typ;
-	thr_typ	= data_cast->thr_typ;
-	/* Threshold value */
-	int	thr_val;
-	thr_val	= data_cast->thr_val;
-	if (thr_val == -1) {
-		thr_typ	|= cv::THRESH_OTSU;
-	}
-
-	/* Threshold */
-	cv::threshold(*imgptr, *imgptr, thr_val, 0xFF, thr_typ);
-}
-
-static	void	img_cv_adaptive_thr	(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Adaptive_Thr	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Adaptive_Thr *)data;
-
-	/* Threshold method */
-	int	method;
-	method	= data_cast->method;
-	/* Threshold type */
-	int	thr_typ;
-	thr_typ	= data_cast->thr_typ;
-	/* Neighbourhood size */
-	int	ksize;
-	ksize	= data_cast->ksize;
-	if (!(ksize % 2)) {
-		ksize++;
-	}
-
-	/* Apply adaptive threshold */
-	cv::adaptiveThreshold(*imgptr, *imgptr, 255, method, thr_typ, ksize,
-									0);
-}
-
-static	void	img_cv_dilate		(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Dilate_Erode	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
-
-	/* Iterations */
-	int	i;
-	i	= data_cast->i;
-
-	/* Dilate */
-	cv::dilate(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_REPLICATE);
-}
-
-static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_Dilate_Erode	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Dilate_Erode *)data;
-
-	/* Iterations */
-	int	i;
-	i	= data_cast->i;
-
-	/* Erode */
-	cv::erode(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_REPLICATE);
-}
-
 static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -485,6 +512,89 @@ static	void	img_cv_contours_size	(void *data)
 	}
 }
 
+static	void	img_cv_bounding_rect	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Bounding_Rect	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Bounding_Rect *)data;
+
+	/* Contours */
+	std::vector <class cv::Point_ <int>>	*contour;
+	contour	= data_cast->contour;
+	/* Rotated rectangle */
+	class cv::Rect_ <int>			*rect;
+	rect	= data_cast->rect;
+	/* Show rectangle ? */
+	bool					show;
+	show	= data_cast->show;
+
+	/* Get rectangle */
+	*rect	= cv::boundingRect(*contour);
+
+	/* Draw rectangle */
+	class cv::Point_<float>	vertices[4];
+	if (show) {
+		vertices[0].x	= rect->x;
+		vertices[0].y	= rect->y;
+		vertices[1].x	= rect->x + rect->width;
+		vertices[1].y	= rect->y;
+		vertices[2].x	= rect->x + rect->width;
+		vertices[2].y	= rect->y + rect->height;
+		vertices[3].x	= rect->x;
+		vertices[3].y	= rect->y + rect->height;
+		cv::line(*imgptr, cv::Point(vertices[0].x, vertices[0].y),
+					cv::Point(vertices[1].x, vertices[1].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[1].x, vertices[1].y),
+					cv::Point(vertices[2].x, vertices[2].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[2].x, vertices[2].y),
+					cv::Point(vertices[3].x, vertices[3].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[3].x, vertices[3].y),
+					cv::Point(vertices[0].x, vertices[0].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+	}
+}
+
+static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr, void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_MinARect	*data_cast;
+	data_cast	= (struct Img_Iface_Data_MinARect *)data;
+
+	/* Contours */
+	std::vector <class cv::Point_ <int>>	*contour;
+	contour	= data_cast->contour;
+	/* Rotated rectangle */
+	class cv::RotatedRect			*rect;
+	rect	= data_cast->rect;
+	/* Show rectangle ? */
+	bool					show;
+	show	= data_cast->show;
+
+	/* Get rectangle */
+	*rect	= cv::fitEllipse(*contour);
+
+	/* Draw rectangle */
+	class cv::Point_<float>	vertices[4];
+	if (show) {
+		rect->points(vertices);
+		cv::line(*imgptr, cv::Point(vertices[0].x, vertices[0].y),
+					cv::Point(vertices[1].x, vertices[1].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[1].x, vertices[1].y),
+					cv::Point(vertices[2].x, vertices[2].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[2].x, vertices[2].y),
+					cv::Point(vertices[3].x, vertices[3].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+		cv::line(*imgptr, cv::Point(vertices[3].x, vertices[3].y),
+					cv::Point(vertices[0].x, vertices[0].y),
+					CV_RGB(0, 0, 255), 1, 8, 0);
+	}
+}
+
 static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */
@@ -521,39 +631,6 @@ static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr, void *data)
 					cv::Point(vertices[0].x, vertices[0].y),
 					CV_RGB(0, 0, 255), 1, 8, 0);
 	}
-}
-
-static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr, void *data)
-{
-	/* Data */
-	struct Img_Iface_Data_MinARect	*data_cast;
-	data_cast	= (struct Img_Iface_Data_MinARect *)data;
-
-	/* Contours */
-	std::vector <class cv::Point_ <int>>	*contour;
-	contour	= data_cast->contour;
-	/* Rotated rectangle */
-	class cv::RotatedRect			*rect;
-	rect	= data_cast->rect;
-
-	/* Get rectangle */
-	*rect	= cv::fitEllipse(*contour);
-
-	/* Draw rectangle */
-	class cv::Point_<float>	vertices[4];
-	rect->points(vertices);
-	cv::line(*imgptr, cv::Point(vertices[0].x, vertices[0].y),
-				cv::Point(vertices[1].x, vertices[1].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
-	cv::line(*imgptr, cv::Point(vertices[1].x, vertices[1].y),
-				cv::Point(vertices[2].x, vertices[2].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
-	cv::line(*imgptr, cv::Point(vertices[2].x, vertices[2].y),
-				cv::Point(vertices[3].x, vertices[3].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
-	cv::line(*imgptr, cv::Point(vertices[3].x, vertices[3].y),
-				cv::Point(vertices[0].x, vertices[0].y),
-				CV_RGB(0, 0, 255), 1, 8, 0);
 }
 
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr, void *data)
@@ -646,20 +723,6 @@ static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
 
 	/* Get value */
 	*val	= imgptr->at<unsigned char>(y, x);
-}
-
-static	void	img_cv_distance_transform	(class cv::Mat  *imgptr)
-{
-	class cv::Mat	imgtmp;
-
-	/* Get transform */
-	cv::distanceTransform(*imgptr, imgtmp, CV_DIST_L2, CV_DIST_MASK_PRECISE);
-
-	/* DistanceTransform  gives CV_32F image */
-	imgtmp.convertTo(*imgptr, CV_8U);
-
-	/* Cleanup */
-	imgtmp.release();
 }
 
 
