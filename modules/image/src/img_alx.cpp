@@ -80,7 +80,7 @@ static	void	img_alx_local_max	(class cv::Mat  *imgptr)
 		for (k = i - dist_min; (k < i + dist_min+1) && local_max; k++) {
 		for (l = j - dist_min; (l < j + dist_min+1) && local_max; l++) {
 			near_pix	= imgptr->data + k * imgptr->step + l;
-			if (j >= 0  &&  j < imgptr->rows) {
+			if (k >= 0  &&  k < imgptr->rows) {
 			if (l >= 0  &&  l < imgptr->cols) {
 				if (*img_pix < *near_pix) {
 					local_max	= false;
