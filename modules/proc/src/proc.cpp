@@ -266,7 +266,7 @@ static	int	proc_label		(void)
 		/* If angle is < -45º, it is taking into acount the incorrect side */
 		if (rect.angle < -45.0) {
 			int	tmp;
-			rect.angle		= rect.angle + 90.0;
+			rect.angle		+= 90.0;
 			tmp			= rect.size.width;
 			rect.size.width		= rect.size.height;
 			rect.size.height	= tmp;
@@ -1009,7 +1009,7 @@ static	int	proc_resistor		(void)
 		/* If angle is < -45º, it is taking into acount the incorrect side */
 		if (rect.angle < -45.0) {
 			int	tmp;
-			rect.angle		= rect.angle + 90.0;
+			rect.angle		+= 90.0;
 			tmp			= rect.size.width;
 			rect.size.width		= rect.size.height;
 			rect.size.height	= tmp;

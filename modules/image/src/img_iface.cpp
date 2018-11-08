@@ -883,6 +883,11 @@ static	void	img_iface_rotate_2rect		(void *data)
 		data_tmp.center.y	= rectangle_rot.center.y;
 		data_tmp.angle		= rectangle_rot.angle;
 
+		/* If angle is < -45º, it is taking into acount the incorrect side */
+		if (data_tmp.angle < -45.0) {
+			data_tmp.angle	+= 90.0;
+		}
+
 		data	= (void *)&data_tmp;
 	}
 
