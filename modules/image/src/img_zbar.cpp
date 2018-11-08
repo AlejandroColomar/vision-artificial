@@ -18,10 +18,6 @@
 		/* zbar */
 	#include <zbar.h>
 
-/* Project -------------------------------------------------------------------*/
-		/* user_iface_log */
-	#include "user_iface.hpp"
-
 /* Module --------------------------------------------------------------------*/
 		/* data & zb_codes */
 	#include "img_iface.hpp"

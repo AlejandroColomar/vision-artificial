@@ -25,6 +25,8 @@
 	#include "user_iface.hpp"
 
 /* Module --------------------------------------------------------------------*/
+		/* img_alx_act() */
+	#include "img_alx.hpp"
 		/* img_cv_act() */
 	#include "img_cv.hpp"
 		/* img_zb_act() */
@@ -76,6 +78,9 @@ static	std::vector <class cv::Vec <float, 3>>		circles;
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
+	/* img_alx */
+static	void	img_iface_local_max		(void);
+
 	/* img_cv */
 		/* Core: The core functionality */
 			/* Pixel */
@@ -207,6 +212,11 @@ void	img_iface_cleanup	(void)
 void	img_iface_act		(int action, void *data)
 {
 	switch (action) {
+	/* img_alx */
+	case IMG_IFACE_ACT_LOCAL_MAX:
+		img_iface_local_max();
+		break;
+
 	/* img_cv */
 		/* Core: The core functionality */
 			/* Pixel */
@@ -369,6 +379,30 @@ void	img_iface_show_hist_c3	(void)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
+/* img_alx --------------------------------------------------------------------*/
+static	void	img_iface_local_max		(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Local maxima */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_LOCAL_MAX, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Local maxima");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
 /* img_cv --------------------------------------------------------------------*/
 /* ----- Core: The core functionality */
 /* ----- ------- Pixel */

@@ -18,10 +18,6 @@
 		/* opencv */
 	#include <opencv2/opencv.hpp>
 
-/* Project -------------------------------------------------------------------*/
-		/* user_iface_log */
-	#include "user_iface.hpp"
-
 /* Module --------------------------------------------------------------------*/
 		/* data */
 	#include "img_iface.hpp"
@@ -66,7 +62,7 @@ static	void	img_cv_bounding_rect	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr,  void  *data);
 		/* Feature detection */
-static	void	img_cv_hough_circles	(class cv::Mat  *imgptr, void *data);
+static	void	img_cv_hough_circles	(class cv::Mat  *imgptr,  void  *data);
 
 
 /******************************************************************************

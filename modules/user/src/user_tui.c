@@ -254,6 +254,19 @@ static	int	usr_input	(void)
 		ch = wgetch(win_log);
 
 		switch (ch) {
+		case '0':
+			/* img_alx */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_LOCAL_MAX;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
 		case '1':
 			/* img_cv */
 			ch = wgetch(win_log);
@@ -584,6 +597,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to ref:		%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:		%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
+	mvwprintw(win_help, r++, c, " - Local maxima:	%s",	"f00");
 	mvwprintw(win_help, r++, c, " - Pixel value:		%s",	"f1000");
 	mvwprintw(win_help, r++, c, " - Set ROI:		%s",	"f1010");
 	mvwprintw(win_help, r++, c, " - Set ROI 2rect:	%s",		"f1011");

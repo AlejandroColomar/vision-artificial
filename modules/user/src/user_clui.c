@@ -165,6 +165,17 @@ static	int	usr_input	(void)
 	case 'f':
 		/* Use simple funtions */
 		switch (ch[1]) {
+		case '0':
+			/* img_alx */
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_LOCAL_MAX;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
 		case '1':
 			/* img_cv */
 			switch (ch[2]) {
@@ -450,6 +461,7 @@ static	void	show_help	(void)
 	printf("Save to ref:		%c\n",	'r');
 	printf("Save to file:		%c\n",	's');
 	printf("Functions:\n");
+	printf(" - Local maxima:	%s\n",	"f00");
 	printf(" - Pixel value:		%s\n",	"f1000");
 	printf(" - Set ROI:		%s\n",	"f1010");
 	printf(" - Set ROI 2rect:	%s\n",	"f1011");
