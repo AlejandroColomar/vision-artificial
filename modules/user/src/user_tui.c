@@ -236,6 +236,19 @@ static	int	usr_input	(void)
 
 			switch (ch) {
 			case '0':
+				action	= USER_IFACE_ACT_PROC_COINS;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '4':
+			/* Resistor */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
 				action	= USER_IFACE_ACT_PROC_RESISTOR;
 				break;
 			default:
@@ -631,7 +644,8 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f40");
 	mvwprintw(win_help, r++, c, "Exercises:");
 	mvwprintw(win_help, r++, c, " - Label:		%s",		"e10");
-	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e30");
+	mvwprintw(win_help, r++, c, " - Coins:		%s",		"e30");
+	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e40");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:		%s",	"u1");
 	mvwprintw(win_help, r++, c, "Quit:			%c",	'q');

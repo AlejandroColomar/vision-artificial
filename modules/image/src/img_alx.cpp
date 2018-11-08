@@ -51,27 +51,35 @@ static	void	img_alx_local_max	(class cv::Mat  *imgptr)
 	int	j;
 	int	k;
 	int	l;
-	bool	local_max;
-	int	dist_min;
-	int	step_img;
-	uint8_t	*img_pix;
-	uint8_t	*near_pix;
-	uint8_t	*tmp_pix;	
+	bool		local_max;
+	int		dist_min;
 	class cv::Mat	imgtmp;
 
+		/* pointer to a pixel (in imgptr) */
+	uint8_t	*img_pix;
+		/* pointer to a pixel near img_pix (in imgptr) */
+	uint8_t	*near_pix;
+		/* pointer to a pixel (same position as img_pix, but in imgtmp) */
+	uint8_t	*tmp_pix;
+
+		/* Tmp image copy */
 	imgptr->copyTo(imgtmp);
-	step_img	= imgptr->step;
+		/* Minimum distance between local maxima */
 	dist_min	= 16;
 
 	for (i = 1; i < imgptr->rows - 1; i++) {
 	for (j = 1; j < imgptr->cols - 1; j++) {
-		img_pix		= imgptr->data + i * step_img + j;
-		tmp_pix		= imgtmp.data + i * step_img + j;
+		img_pix		= imgptr->data + i * imgptr->step + j;
+		tmp_pix		= imgtmp.data + i * imgptr->step + j;
 		local_max	= true;
 
-		for (k = i - dist_min; k < i + dist_min+1; k++) {
-		for (l = j - dist_min; l < j + dist_min+1; l++) {
-			near_pix	= imgptr->data + k * step_img + l;
+		if (!(*img_pix)) {
+			local_max	= false;
+		}
+
+		for (k = i - dist_min; (k < i + dist_min+1) && local_max; k++) {
+		for (l = j - dist_min; (l < j + dist_min+1) && local_max; l++) {
+			near_pix	= imgptr->data + k * imgptr->step + l;
 			if (j >= 0  &&  j < imgptr->rows) {
 			if (l >= 0  &&  l < imgptr->cols) {
 				if (*img_pix < *near_pix) {

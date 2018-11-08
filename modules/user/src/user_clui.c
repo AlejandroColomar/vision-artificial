@@ -149,6 +149,16 @@ static	int	usr_input	(void)
 		case '3':
 			switch (ch[2]) {
 			case '0':
+				action	= USER_IFACE_ACT_PROC_COINS;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '4':
+			switch (ch[2]) {
+			case '0':
 				action	= USER_IFACE_ACT_PROC_RESISTOR;
 				break;
 			default:
@@ -495,7 +505,8 @@ static	void	show_help	(void)
 	printf(" - Scan text (OCR):	%s\n",	"f40");
 	printf("Exercises:\n");
 	printf(" - Label:		%s\n",	"e10");
-	printf(" - Resistor:		%s\n",	"e30");
+	printf(" - Coins:		%s\n",	"e30");
+	printf(" - Resistor:		%s\n",	"e40");
 	printf("Other:\n");
 	printf(" - Show OCR text:	%s\n",	"u1");
 	printf("Quit:		%c\n",	'q');
