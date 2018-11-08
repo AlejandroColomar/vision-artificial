@@ -165,6 +165,17 @@ static	int	usr_input	(void)
 	case 'f':
 		/* Use simple funtions */
 		switch (ch[1]) {
+		case '0':
+			/* img_alx */
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_LOCAL_MAX;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
 		case '1':
 			/* img_cv */
 			switch (ch[2]) {
@@ -271,40 +282,16 @@ static	int	usr_input	(void)
 					/* Miscellaneous image transformations */
 					switch (ch[4]) {
 					case '0':
-						/* Threshold */
-						switch (ch[5]) {
-						case '0':
-							action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
-							break;
-						case '1':
-							action	= USER_IFACE_ACT_THRESHOLD;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 						break;
 					case '1':
-						/* Color */
-						switch (ch[5]) {
-						case '0':
-							action	= USER_IFACE_ACT_CVT_COLOR;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_CVT_COLOR;
 						break;
 					case '2':
-						/* Transforms */
-						switch (ch[5]) {
-						case '0':
-							action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_THRESHOLD;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -342,6 +329,17 @@ static	int	usr_input	(void)
 						break;
 					case '4':
 						action	= USER_IFACE_ACT_MIN_AREA_RECT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
+					break;
+				case '5':
+					/* Feature detection */
+					switch (ch[4]) {
+					case '0':
+						action	= USER_IFACE_ACT_HOUGH_CIRCLES;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -463,6 +461,7 @@ static	void	show_help	(void)
 	printf("Save to ref:		%c\n",	'r');
 	printf("Save to file:		%c\n",	's');
 	printf("Functions:\n");
+	printf(" - Local maxima:	%s\n",	"f00");
 	printf(" - Pixel value:		%s\n",	"f1000");
 	printf(" - Set ROI:		%s\n",	"f1010");
 	printf(" - Set ROI 2rect:	%s\n",	"f1011");
@@ -479,10 +478,10 @@ static	void	show_help	(void)
 	printf(" - Rotate ortogonally:	%s\n",	"f1110");
 	printf(" - Rotate:		%s\n",	"f1111");
 	printf(" - Rotate 2rect_rot:	%s\n",	"f1112");
-	printf(" - Adaptive threshold:	%s\n",	"f11200");
-	printf(" - Threshold:		%s\n",	"f11201");
-	printf(" - Cvt color:		%s\n",	"f11210");
-	printf(" - Distance transform:	%s\n",	"f11220");
+	printf(" - Adaptive threshold:	%s\n",	"f1120");
+	printf(" - Cvt color:		%s\n",	"f1121");
+	printf(" - Distance transform:	%s\n",	"f1122");
+	printf(" - Threshold:		%s\n",	"f1123");
 	printf(" - Histogram:		%s\n",	"f1130");
 	printf(" - Histogram (3 chan):	%s\n",	"f1131");
 	printf(" - Contours:		%s\n",	"f1140");
@@ -490,6 +489,7 @@ static	void	show_help	(void)
 	printf(" - Bounding rectangle:	%s\n",	"f1142");
 	printf(" - Fit ellipse:		%s\n",	"f1143");
 	printf(" - Min. area rectangle:	%s\n",	"f1144");
+	printf(" - Hough circles:	%s\n",	"f1150");
 	printf(" - Align 2ref (ORB):	%s\n",	"f20");
 	printf(" - Scan codes (ZBAR):	%s\n",	"f30");
 	printf(" - Scan text (OCR):	%s\n",	"f40");

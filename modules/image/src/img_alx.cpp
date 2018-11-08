@@ -7,39 +7,36 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
-		/* snprintf() & FILENAME_MAX */
+		/* true & false */
+	#include <cstdbool>
+		/* snprintf() */
 	#include <cstdio>
 
 /* Packages ------------------------------------------------------------------*/
-		/* OCR Tesseract */
-	#include <tesseract/baseapi.h>
-	#include <leptonica/allheaders.h>
-
-/* Project -------------------------------------------------------------------*/
-		/* share_path */
-	#include "about.hpp"
+		/* opencv */
+	#include <opencv2/opencv.hpp>
 
 /* Module --------------------------------------------------------------------*/
-		/* data & img_ocr_text & OCR_TEXT_MAX */
+		/* data */
 	#include "img_iface.hpp"
 
-	#include "img_ocr.hpp"
+	#include "img_alx.hpp"
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(void *data);
+static	void	img_alx_local_max	(class cv::Mat  *imgptr);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_ocr_act	(int action, void *data)
+void	img_alx_act	(class cv::Mat  *imgptr, int action, void *data)
 {
 	switch (action) {
-	case IMG_OCR_ACT_READ:
-		img_ocr_read(data);
+	case IMG_ALX_ACT_LOCAL_MAX:
+		img_alx_local_max(imgptr);
 		break;
 	}
 }
@@ -48,63 +45,54 @@ void	img_ocr_act	(int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(void *data)
+static	void	img_alx_local_max	(class cv::Mat  *imgptr)
 {
-	class tesseract::TessBaseAPI	*handle_ocr;
+	int	i;
+	int	j;
+	int	k;
+	int	l;
+	bool	local_max;
+	int	dist_min;
+	int	step_img;
+	uint8_t	*img_pix;
+	uint8_t	*near_pix;
+	uint8_t	*tmp_pix;	
+	class cv::Mat	imgtmp;
 
-	/* Data */
-	struct Img_Iface_Data_Read	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Read *)data;
+	imgptr->copyTo(imgtmp);
+	step_img	= imgptr->step;
+	dist_min	= 16;
 
-	/* Language */
-	int	lang;
-	char	lang_str [3 + 1];
-	lang	= data_cast->lang;
-	switch (lang) {
-	case 0:
-		sprintf(lang_str, "eng");
-		break;
-	case 1:
-		sprintf(lang_str, "spa");
-		break;
-	case 2:
-		sprintf(lang_str, "cat");
-		break;
+	for (i = 1; i < imgptr->rows - 1; i++) {
+	for (j = 1; j < imgptr->cols - 1; j++) {
+		img_pix		= imgptr->data + i * step_img + j;
+		tmp_pix		= imgtmp.data + i * step_img + j;
+		local_max	= true;
+
+		for (k = i - dist_min; k < i + dist_min+1; k++) {
+		for (l = j - dist_min; l < j + dist_min+1; l++) {
+			near_pix	= imgptr->data + k * step_img + l;
+			if (j >= 0  &&  j < imgptr->rows) {
+			if (l >= 0  &&  l < imgptr->cols) {
+				if (*img_pix < *near_pix) {
+					local_max	= false;
+				}
+			}
+			}
+		}
+		}
+
+		if (local_max) {
+			*tmp_pix	= *img_pix;
+		} else {
+			*tmp_pix	= 0;
+		}
+	}
 	}
 
-	/* Config file */
-	int	conf;
-	char	conf_str [FILENAME_MAX];
-	conf	= data_cast->conf;
-	switch (conf) {
-	case 1:
-		sprintf(conf_str, "%s/%s", share_path, "price");
-		break;
-	}
-
-	/* init OCR */
-	handle_ocr	= new tesseract::TessBaseAPI();
-	handle_ocr->Init(NULL, lang_str, tesseract::OEM_TESSERACT_LSTM_COMBINED);
-	if (conf) {
-		/* Configure OCR (whitelist chars) */
-		handle_ocr->ReadConfigFile(conf_str);
-	}
-
-	/* scan image for text */
-	handle_ocr->SetImage((const unsigned char *)data_cast->img.data,
-				data_cast->img.width, data_cast->img.height,
-				data_cast->img.B_per_pix,
-				data_cast->img.B_per_line);
-	char	*txt;
-	txt	= handle_ocr->GetUTF8Text();
-
-	/* Copy text to global variable */
-	snprintf(img_ocr_text, OCR_TEXT_MAX, "%s", txt);
-
-	/* cleanup */
-	delete []	txt;
-	handle_ocr->Clear();
-	handle_ocr->End();
+	/* Cleanup */
+	imgtmp.copyTo(*imgptr);
+	imgtmp.release();
 }
 
 

@@ -17,8 +17,6 @@
 	#include <tesseract/capi.h>
 
 /* Project -------------------------------------------------------------------*/
-		/* user_iface_log */
-	#include "user_iface.h"
 		/* share_path */
 	#include "about.h"
 
