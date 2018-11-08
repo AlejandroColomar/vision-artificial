@@ -53,6 +53,7 @@ static	void	img_alx_local_max	(class cv::Mat  *imgptr)
 	int	l;
 	bool		local_max;
 	int		dist_min;
+	int		val_min;
 	class cv::Mat	imgtmp;
 
 		/* pointer to a pixel (in imgptr) */
@@ -66,6 +67,8 @@ static	void	img_alx_local_max	(class cv::Mat  *imgptr)
 	imgptr->copyTo(imgtmp);
 		/* Minimum distance between local maxima */
 	dist_min	= 16;
+		/* Minimum value of local maxima */
+	val_min		= 16;
 
 	for (i = 1; i < imgptr->rows - 1; i++) {
 	for (j = 1; j < imgptr->cols - 1; j++) {
@@ -73,7 +76,7 @@ static	void	img_alx_local_max	(class cv::Mat  *imgptr)
 		tmp_pix		= imgtmp.data + i * imgptr->step + j;
 		local_max	= true;
 
-		if (!(*img_pix)) {
+		if (*img_pix < val_min) {
 			local_max	= false;
 		}
 
