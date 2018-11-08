@@ -254,6 +254,19 @@ static	int	usr_input	(void)
 		ch = wgetch(win_log);
 
 		switch (ch) {
+		case '0':
+			/* img_alx */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_LOCAL_MAX;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
 		case '1':
 			/* img_cv */
 			ch = wgetch(win_log);
@@ -378,46 +391,16 @@ static	int	usr_input	(void)
 
 					switch (ch) {
 					case '0':
-						/* Threshold */
-						ch = wgetch(win_log);
-
-						switch (ch) {
-						case '0':
-							action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
-							break;
-						case '1':
-							action	= USER_IFACE_ACT_THRESHOLD;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_ADAPTIVE_THRESHOLD;
 						break;
 					case '1':
-						/* Color */
-						ch = wgetch(win_log);
-
-						switch (ch) {
-						case '0':
-							action	= USER_IFACE_ACT_CVT_COLOR;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_CVT_COLOR;
 						break;
 					case '2':
-						/* Transforms */
-						ch = wgetch(win_log);
-
-						switch (ch) {
-						case '0':
-							action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
-							break;
-						default:
-							action	= USER_IFACE_ACT_FOO;
-							break;
-						}
+						action	= USER_IFACE_ACT_DISTANCE_TRANSFORM;
+						break;
+					case '3':
+						action	= USER_IFACE_ACT_THRESHOLD;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -459,6 +442,19 @@ static	int	usr_input	(void)
 						break;
 					case '4':
 						action	= USER_IFACE_ACT_MIN_AREA_RECT;
+						break;
+					default:
+						action	= USER_IFACE_ACT_FOO;
+						break;
+					}
+					break;
+				case '5':
+					/* Feature detection */
+					ch = wgetch(win_log);
+
+					switch (ch) {
+					case '0':
+						action	= USER_IFACE_ACT_HOUGH_CIRCLES;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -601,6 +597,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to ref:		%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:		%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
+	mvwprintw(win_help, r++, c, " - Local maxima:	%s",	"f00");
 	mvwprintw(win_help, r++, c, " - Pixel value:		%s",	"f1000");
 	mvwprintw(win_help, r++, c, " - Set ROI:		%s",	"f1010");
 	mvwprintw(win_help, r++, c, " - Set ROI 2rect:	%s",		"f1011");
@@ -617,10 +614,10 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Rotate ortogonally:	%s",	"f1110");
 	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f1111");
 	mvwprintw(win_help, r++, c, " - Rotate 2rect_rot:	%s",	"f1112");
-	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f11200");
-	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f11201");
-	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f11210");
-	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f11220");
+	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f1120");
+	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f1121");
+	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f1122");
+	mvwprintw(win_help, r++, c, " - Threshold:		%s",	"f1123");
 	mvwprintw(win_help, r++, c, " - Histogram:		%s",	"f1130");
 	mvwprintw(win_help, r++, c, " - Histogram (3 chan):	%s",	"f1131");
 	mvwprintw(win_help, r++, c, " - Contours:		%s",	"f1140");
@@ -628,6 +625,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Bounding rectangle:	%s",	"f1142");
 	mvwprintw(win_help, r++, c, " - Fit ellipse:		%s",	"f1143");
 	mvwprintw(win_help, r++, c, " - Min. area rectangle:	%s",	"f1144");
+	mvwprintw(win_help, r++, c, " - Hough circles:	%s",		"f1150");
 	mvwprintw(win_help, r++, c, " - Align 2ref (ORB):	%s",	"f20");
 	mvwprintw(win_help, r++, c, " - Scan codes (ZBAR):	%s",	"f30");
 	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f40");

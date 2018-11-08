@@ -19,10 +19,7 @@
 	#include <opencv2/opencv.hpp>
 	#include <opencv2/features2d/features2d.hpp>
 
-/* Project -------------------------------------------------------------------*/
-		/* user_iface_log */
-	#include "user_iface.hpp"
-
+/* Module -------------------------------------------------------------------*/
 	#include "img_orb.hpp"
 
 
