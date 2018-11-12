@@ -996,7 +996,10 @@ static	int	proc_resistor		(void)
 		/* Measure time */
 		time_0		= clock();
 
+		/* BGR -> HSV */
 		proc_cvt_color(cv::COLOR_BGR2HSV);
+		proc_save_mem(19);
+
 		proc_cmp(IMG_IFACE_CMP_SATURATION);
 		proc_smooth(IMGI_SMOOTH_MEDIAN, 7);
 		proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
@@ -1033,7 +1036,7 @@ static	int	proc_resistor		(void)
 		time_0		= clock();
 
 		/* Align */
-		proc_load_mem(0);
+		proc_load_mem(19);
 		proc_rotate(&rect_rot);
 		proc_save_mem(2);
 		proc_load_mem(1);
@@ -1051,9 +1054,6 @@ static	int	proc_resistor		(void)
 		x	= rect.x;
 		y	= rect.y;
 		proc_ROI(x, y, w, h);
-
-		/* BGR -> HSV */
-		proc_cvt_color(cv::COLOR_BGR2HSV);
 		proc_save_mem(4);
 
 		/* Measure time */
@@ -1118,21 +1118,19 @@ static	int	proc_resistor		(void)
 
 		/* Dimensions */
 		proc_load_mem(3);
-		proc_erode_dilate(13);
+		proc_erode_dilate(rect.height / 1.9 - 9);
 		proc_contours(&contours, &hierarchy);
 		proc_bounding_rect(&(contours[0]), &rect, true);
 
 		/* Crop */
 		proc_load_mem(2);
-		w	= rect.width * 0.85;
-		h	= rect.height * 0.70;
-		x	= rect.x + w * (1.0 - 0.85) / 2.0;
-		y	= rect.y + h * (1.0 - 0.70) / 2.0;
+		w	= rect.width * 0.9;
+		h	= rect.height * 0.9;
+		x	= rect.x + w * (1.0 - 0.9) / 2.0;
+		y	= rect.y + h * (1.0 - 0.9) / 2.0;
 		proc_ROI(x, y, w, h);
-
-		/* BGR -> HSV */
-		proc_cvt_color(cv::COLOR_BGR2HSV);
 		proc_save_mem(4);
+
 
 		/* Measure time */
 		time_1	= clock();
