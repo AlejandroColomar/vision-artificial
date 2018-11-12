@@ -23,6 +23,7 @@
 
 		PROC_MODE = 0x4000,
 		PROC_MODE_LABEL,
+		PROC_MODE_COINS,
 		PROC_MODE_RESISTOR
 	};
 
@@ -40,6 +41,12 @@
 		LABEL_NOK_BCODE,
 		LABEL_NOK_PRODUCT,
 		LABEL_NOK_PRICE
+	};
+
+	enum	Proc_Coins {
+		COINS_OK,
+		COINS_NOK_COINS,
+		COINS_NOK_OVERLAP
 	};
 
 	enum	Proc_Resistor {

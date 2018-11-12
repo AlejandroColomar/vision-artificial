@@ -6,76 +6,44 @@
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# ifndef		VA_PROC_H
-	# define	VA_PROC_H
+# ifndef		VA_IMG_ALX_H
+	# define	VA_IMG_ALX_H
 
 
 /******************************************************************************
- ******* macros ***************************************************************
+ ******* headers **************************************************************
  ******************************************************************************/
+		/* openCV */
+	#include <opencv2/opencv.hpp>
 
 
 /******************************************************************************
  ******* enums ****************************************************************
  ******************************************************************************/
-	enum	Proc_Mode {
-		PROC_MODE_FOO,
+	enum	Img_Alx_Action {
+		IMG_ALX_ACT_FOO = 0,
 
-		PROC_MODE = 0x4000,
-		PROC_MODE_LABEL,
-		PROC_MODE_COINS,
-		PROC_MODE_RESISTOR
+		IMG_ALX_ACT_ALX = 0x0010,
+		IMG_ALX_ACT_LOCAL_MAX,
+		IMG_ALX_ACT_LINES_HORIZONTAL,
+		IMG_ALX_ACT_LINES_VERTICAL,
+		IMG_ALX_ACT_MEAN_HORIZONTAL,
+		IMG_ALX_ACT_MEAN_VERTICAL,
+		IMG_ALX_ACT_MEDIAN_HORIZONTAL,
+		IMG_ALX_ACT_MEDIAN_VERTICAL
 	};
-
-	enum	Proc_DBG {
-		PROC_DBG_NO,
-		PROC_DBG_STOP_PROD,
-		PROC_DBG_DELAY_STEP,
-		PROC_DBG_STOP_STEP
-	};
-
-	enum	Proc_Label {
-		LABEL_OK,
-		LABEL_NOK_LABEL,
-		LABEL_NOK_CERDO,
-		LABEL_NOK_BCODE,
-		LABEL_NOK_PRODUCT,
-		LABEL_NOK_PRICE
-	};
-
-	enum	Proc_Coins {
-		COINS_OK,
-		COINS_NOK_COINS,
-		COINS_NOK_OVERLAP
-	};
-
-	enum	Proc_Resistor {
-		RESISTOR_OK,
-		RESISTOR_NOK_RESISTOR,
-		RESISTOR_NOK_BANDS,
-		RESISTOR_NOK_STD_VALUE,
-		RESISTOR_NOK_TOLERANCE
-	};
-
-
-/******************************************************************************
- ******* variables ************************************************************
- ******************************************************************************/
-	extern	int	proc_debug;
-	extern	int	proc_mode;
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	int	proc_iface_single	(int action);
-	void	proc_iface_series	(void);
+void	img_alx_act	(class cv::Mat  *imgptr, int action, void *data);
 
 
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# endif			/* proc.h */
+# endif			/* img_alx.h */
 
 
 /******************************************************************************

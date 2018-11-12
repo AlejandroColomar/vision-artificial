@@ -45,6 +45,10 @@
 	int	proc_debug;
 	int	proc_mode;
 
+/* Static --------------------------------------------------------------------*/
+static	char	proc_path [FILENAME_MAX];
+static	char	proc_fail_path [FILENAME_MAX];
+
 
 /******************************************************************************
  ******* static functions *****************************************************
@@ -52,43 +56,58 @@
 static	int	proc_label		(void);
 static	void	result_label		(int status);
 
+static	int	proc_coins		(void);
+static	void	result_coins		(int status);
+
 static	int	proc_resistor		(void);
 static	void	result_resistor		(int status);
 
+static	void	proc_apply		(void);
 static	void	proc_save_mem		(int n);
 static	void	proc_load_mem		(int n);
 static	void	proc_save_ref		(void);
+static	void	proc_save_file		(void);
 
-static	void	proc_cvt_color		(int method);
-static	void	proc_cmp		(int cmp);
-static	void	proc_smooth		(int method, int ksize);
-static	void	proc_adaptive_threshold	(int method, int type, int ksize);
-static	void	proc_threshold		(int type, int ksize);
+static	void	proc_local_max		(void);
+static	void	proc_lines_vertical	(void);
+static	void	proc_median_horizontal	(void);
+static	void	proc_median_vertical	(void);
+
+static	void	proc_pixel_value	(int x, int y, unsigned char *val);
+static	void	proc_ROI		(int x, int y, int w, int h);
+static	void	proc_and_2ref		(void);
 static	void	proc_not		(void);
 static	void	proc_or_2ref		(void);
-static	void	proc_and_2ref		(void);
+static	void	proc_cmp		(int cmp);
 static	void	proc_dilate		(int size);
 static	void	proc_erode		(int size);
 static	void	proc_dilate_erode	(int size);
 static	void	proc_erode_dilate	(int size);
+static	void	proc_smooth		(int method, int ksize);
+static	void	proc_rotate		(class cv::RotatedRect  *rect);
+static	void	proc_adaptive_threshold	(int method, int type, int ksize);
+static	void	proc_cvt_color		(int method);
+static	void	proc_distance_transform	(void);
+static	void	proc_threshold		(int type, int ksize);
 static	void	proc_contours		(
 			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
 			class cv::Mat  *hierarchy);
-static	void	proc_contours_size		(
+static	void	proc_contours_size	(
 			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
 			double  *area,
 			double  *perimeter);
-static	void	proc_min_area_rect	(
+static	void	proc_bounding_rect	(
 			std::vector <class cv::Point_ <int>>  *contour,
-			class cv::RotatedRect  *rect,
-			bool show);
+			class cv::Rect_ <int>  *rect,
+			bool  show);
 static	void	proc_fit_ellipse	(
 			std::vector <class cv::Point_ <int>>  *contour,
 			class cv::RotatedRect  *rect,
 			bool show);
-static	void	proc_rotate		(class cv::RotatedRect  *rect);
-static	void	proc_ROI		(int x, int y, int w, int h);
-static	void	proc_pixel_value	(int x, int y, unsigned char *val);
+static	void	proc_min_area_rect	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::RotatedRect  *rect,
+			bool show);
 
 static	void	proc_OCR		(int lang, int conf);
 static	void	proc_zbar		(int type);
@@ -113,6 +132,9 @@ int	proc_iface_single	(int action)
 	switch (action) {
 	case PROC_MODE_LABEL:
 		error	= proc_label();
+		break;
+	case PROC_MODE_COINS:
+		error	= proc_coins();
 		break;
 	case PROC_MODE_RESISTOR:
 		error	= proc_resistor();
@@ -146,14 +168,25 @@ void	proc_iface_series	(void)
 
 	switch (proc_mode) {
 	case PROC_MODE_LABEL:
+		snprintf(proc_path, FILENAME_MAX, "%s", labels_path);
+		snprintf(proc_fail_path, FILENAME_MAX, "%s", labels_fail_path);
 		snprintf(file_basename, 80, "b");
 		num_len	= 4;
 		snprintf(file_ext, 80, ".BMP");
 		break;
-	case PROC_MODE_RESISTOR:
-		snprintf(file_basename, 80, "res");
+	case PROC_MODE_COINS:
+		snprintf(proc_path, FILENAME_MAX, "%s", coins_path);
+		snprintf(proc_fail_path, FILENAME_MAX, "%s", coins_fail_path);
+		snprintf(file_basename, 80, "c");
 		num_len	= 4;
-		snprintf(file_ext, 80, ".BMP");
+		snprintf(file_ext, 80, ".png");
+		break;
+	case PROC_MODE_RESISTOR:
+		snprintf(proc_path, FILENAME_MAX, "%s", resistors_path);
+		snprintf(proc_fail_path, FILENAME_MAX, "%s", resistors_fail_path);
+		snprintf(file_basename, 80, "r");
+		num_len	= 4;
+		snprintf(file_ext, 80, ".png");
 		break;
 	}
 
@@ -164,14 +197,14 @@ void	proc_iface_series	(void)
 		snprintf(file_name, FILENAME_MAX, "%s%04i%s",
 						file_basename, i, file_ext);
 
-		file_error	= alx_sscan_fname(labels_path, file_name,
+		file_error	= alx_sscan_fname(proc_path, file_name,
 						true, file_name);
 
 		if (file_error) {
 			wh	= false;
 		} else {
 			errno	= 0;
-			img_iface_load(labels_path, file_name);
+			img_iface_load(proc_path, file_name);
 
 			if (!errno) {
 				/* Process */
@@ -184,7 +217,7 @@ void	proc_iface_series	(void)
 							"%s%04i_err%s",
 							file_basename, i,
 							file_ext);
-					save_image_file(labels_fail_path,
+					save_image_file(proc_fail_path,
 							save_error_as);
 				}
 
@@ -252,7 +285,7 @@ static	int	proc_label		(void)
 		/* If angle is < -45º, it is taking into acount the incorrect side */
 		if (rect.angle < -45.0) {
 			int	tmp;
-			rect.angle		= rect.angle + 90.0;
+			rect.angle		+= 90.0;
 			tmp			= rect.size.width;
 			rect.size.width		= rect.size.height;
 			rect.size.height	= tmp;
@@ -495,7 +528,7 @@ static	void	result_label		(int status)
 	(user_iface_log.len)++;
 }
 
-static	int	proc_resistor		(void)
+static	int	proc_coins		(void)
 {
 	int	status;
 
@@ -545,49 +578,28 @@ static	int	proc_resistor		(void)
 	int	j;
 
 	proc_save_mem(0);
-	/* Find resistor (position and angle) */
+	/* Find coins */
 	{
 		/* Measure time */
 		time_0		= clock();
 
-		proc_cvt_color(cv::COLOR_BGR2HSV);
-		proc_cmp(IMG_IFACE_CMP_SATURATION);
-		proc_smooth(IMGI_SMOOTH_MEDIAN, 7);
-		proc_smooth(IMGI_SMOOTH_MEAN, 7);
-		proc_threshold(cv::THRESH_BINARY, 75);
-		proc_dilate_erode(5);
+		proc_cmp(IMG_IFACE_CMP_BLUE);
+//		proc_smooth(IMGI_SMOOTH_MEDIAN, 11);
+		proc_threshold(cv::THRESH_BINARY_INV, IMG_IFACE_THR_OTSU);
+//		proc_threshold(cv::THRESH_BINARY_INV, 100);
+		proc_distance_transform();
+		proc_local_max();
+		proc_dilate(8);
+		proc_save_mem(1);
+
 		proc_contours(&contours, &hierarchy);
 
-		/* If no contour is found, error:  NOK_RESISTOR */
+		/* If no contour is found, error:  NOK_COINS */
 		if (!contours.size()) {
-			status	= RESISTOR_NOK_RESISTOR;
-			result_resistor(status);
+			status	= COINS_NOK_COINS;
+			result_coins(status);
 			return	status;
 		}
-
-#if 1
-		proc_min_area_rect(&(contours[0]), &rect, true);
-
-		/* If angle is < -45º, it is taking into acount the incorrect side */
-		if (rect.angle < -45.0) {
-			int	tmp;
-			rect.angle		= rect.angle + 90.0;
-			tmp			= rect.size.width;
-			rect.size.width		= rect.size.height;
-			rect.size.height	= tmp;
-		}
-#else
-		proc_fit_ellipse(&(contours[0]), &rect, true);
-
-		/* If height > width, it is taking into acount the incorrect side */
-		if (rect.size.height > rect.size.width) {
-			int	tmp;
-			rect.angle		= rect.angle - 90.0;
-			tmp			= rect.size.width;
-			rect.size.width		= rect.size.height;
-			rect.size.height	= tmp;
-		}
-#endif
 
 		/* Measure time */
 		time_1	= clock();
@@ -598,7 +610,7 @@ static	int	proc_resistor		(void)
 		user_iface_log.lvl[user_iface_log.len]	= 0;
 		(user_iface_log.len)++;
 	}
-	/* Align resistor and crop */
+#if 0	/* Align resistor and crop */
 	{
 		/* Measure time */
 		time_0		= clock();
@@ -906,6 +918,653 @@ static	int	proc_resistor		(void)
 		user_iface_log.lvl[user_iface_log.len]	= 0;
 		(user_iface_log.len)++;
 	}
+#endif
+	status	= COINS_OK;
+	result_coins(status);
+	return	status;
+}
+
+static	void	result_coins		(int status)
+{
+	/* Cleanup */
+
+	/* Write result into log */
+	char	result [LOG_LINE_LEN];
+	switch (status) {
+	case COINS_OK:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Coin:  OK");
+		break;
+	case COINS_NOK_COINS:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Coin:  NOK_COINS");
+		break;
+	case COINS_NOK_OVERLAP:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Coin:  NOK_OVERLAP");
+		break;
+	default:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Coin:  NOK");
+		break;
+	}
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+}
+
+static	int	proc_resistor		(void)
+{
+	int	status;
+
+	double	times;
+	clock_t	time_0;
+	clock_t	time_1;
+
+	std::vector <std::vector <cv::Point_ <int>>>	contours;
+	class cv::Mat					hierarchy;
+	class cv::RotatedRect				rect_rot;
+	class cv::Rect_ <int>				rect;
+	int	x;
+	int	y;
+	int	w;
+	int	h;
+
+	int	bkgd;
+
+	struct	{
+		/* position */
+		int		x;
+		int		y;
+
+		/* value */
+		unsigned char	h;
+		unsigned char	s;
+		unsigned char	v;
+	} bands [5];
+
+	char	code [6]	= {'\0', '\0', '\0', '\0', '\0', '\0'};
+	int	base;
+	float	resistance;
+	int	tolerance;
+
+	int	i;
+	int	j;
+
+	proc_save_mem(0);
+	/* Find resistor (position and angle) */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		proc_cvt_color(cv::COLOR_BGR2HSV);
+		proc_cmp(IMG_IFACE_CMP_SATURATION);
+		proc_smooth(IMGI_SMOOTH_MEDIAN, 7);
+		proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
+		proc_dilate_erode(10);
+		proc_save_mem(1);
+		proc_contours(&contours, &hierarchy);
+
+		/* If no contour is found, error:  NOK_RESISTOR */
+		if (!contours.size()) {
+			status	= RESISTOR_NOK_RESISTOR;
+			result_resistor(status);
+			return	status;
+		}
+
+		proc_min_area_rect(&(contours[0]), &rect_rot, true);
+
+		/* If angle is < -45º, it is taking into acount the incorrect side */
+		if (rect_rot.angle < -45.0) {
+			rect_rot.angle	+= 90.0;
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time0:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Align resistor, find its dimensions, and crop */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Align */
+		proc_load_mem(0);
+		proc_rotate(&rect_rot);
+		proc_save_mem(2);
+		proc_load_mem(1);
+		proc_rotate(&rect_rot);
+		proc_save_mem(3);
+
+		/* Dimensions */
+		proc_contours(&contours, &hierarchy);
+		proc_bounding_rect(&(contours[0]), &rect, true);
+
+		/* Crop */
+		proc_load_mem(2);
+		w	= rect.width;
+		h	= rect.height;
+		x	= rect.x;
+		y	= rect.y;
+		proc_ROI(x, y, w, h);
+
+		/* BGR -> HSV */
+		proc_cvt_color(cv::COLOR_BGR2HSV);
+		proc_save_mem(4);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time1:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Find backgroung color */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* hue */
+		uint8_t	bkgd_hue;
+		proc_cmp(IMG_IFACE_CMP_HUE);
+		proc_median_vertical();
+		proc_median_horizontal();
+		proc_pixel_value(0, 0, &bkgd_hue);
+
+		/* saturation */
+		uint8_t	bkgd_sat;
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_SATURATION);
+		proc_median_vertical();
+		proc_median_horizontal();
+		proc_pixel_value(0, 0, &bkgd_sat);
+
+		if (bkgd_hue < 50) {
+			/* Beige */
+			bkgd	= 0;
+		} else {
+			/* Blue */
+			if ((bkgd_hue <= 90)  ||  (bkgd_sat <= 140)) {
+				/* Teal blue */
+				bkgd	= 1;
+			} else if (bkgd_hue >= 105) {
+				/* Dark blue */
+				bkgd	= 2;
+			} else {
+				/* Normal blue */
+				bkgd	= 3;
+			}
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time2:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Crop more */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Dimensions */
+		proc_load_mem(3);
+		proc_erode_dilate(13);
+		proc_contours(&contours, &hierarchy);
+		proc_bounding_rect(&(contours[0]), &rect, true);
+
+		/* Crop */
+		proc_load_mem(2);
+		w	= rect.width * 0.85;
+		h	= rect.height * 0.70;
+		x	= rect.x + w * (1.0 - 0.85) / 2.0;
+		y	= rect.y + h * (1.0 - 0.70) / 2.0;
+		proc_ROI(x, y, w, h);
+
+		/* BGR -> HSV */
+		proc_cvt_color(cv::COLOR_BGR2HSV);
+		proc_save_mem(4);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time1:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Separate background (BK) and lines (WH) */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* hue */
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_HUE);
+		proc_median_vertical();
+		proc_save_mem(9);
+		switch (bkgd) {
+		case 0:
+			proc_threshold(cv::THRESH_TOZERO_INV, 20);
+			proc_threshold(cv::THRESH_TOZERO, 5);
+			break;
+		case 1:
+			proc_threshold(cv::THRESH_TOZERO_INV, 95);
+			proc_threshold(cv::THRESH_TOZERO, 80);
+			break;
+		case 2:
+			proc_threshold(cv::THRESH_TOZERO_INV, 110);
+			proc_threshold(cv::THRESH_TOZERO, 100);
+			break;
+		case 3:
+			proc_threshold(cv::THRESH_TOZERO_INV, 105);
+			proc_threshold(cv::THRESH_TOZERO, 90);
+			break;
+		}
+		proc_threshold(cv::THRESH_BINARY_INV, 1);
+		proc_save_mem(5);
+
+		/* saturation */
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_SATURATION);
+		proc_median_vertical();
+		proc_save_mem(10);
+		switch (bkgd) {
+		case 0:
+			proc_threshold(cv::THRESH_TOZERO, 100);
+			break;
+		case 1:
+			proc_threshold(cv::THRESH_TOZERO, 95);
+			break;
+		case 2:
+			proc_threshold(cv::THRESH_TOZERO, 200);
+			break;
+		case 3:
+			proc_threshold(cv::THRESH_TOZERO, 130);
+			break;
+		}
+		proc_threshold(cv::THRESH_BINARY_INV, 1);
+		proc_save_mem(6);
+
+		/* value */
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_VALUE);
+		proc_median_vertical();
+		proc_save_mem(11);
+		switch (bkgd) {
+		case 0:
+			proc_threshold(cv::THRESH_TOZERO_INV, 130);
+			proc_threshold(cv::THRESH_TOZERO, 65);
+			break;
+		case 1:
+			proc_threshold(cv::THRESH_TOZERO_INV, 155);
+			proc_threshold(cv::THRESH_TOZERO, 60);
+			break;
+		case 2:
+			proc_threshold(cv::THRESH_TOZERO_INV, 140);
+			proc_threshold(cv::THRESH_TOZERO, 60);
+			break;
+		case 3:
+			proc_threshold(cv::THRESH_TOZERO_INV, 165);
+			proc_threshold(cv::THRESH_TOZERO, 45);
+			break;
+		}
+		proc_threshold(cv::THRESH_BINARY_INV, 1);
+		proc_save_mem(7);
+
+		/* Merge the components:  H | S | V */
+		proc_save_ref();
+		proc_load_mem(5);
+		proc_or_2ref();
+		proc_save_ref();
+		proc_load_mem(6);
+		proc_or_2ref();
+		proc_dilate_erode(1);
+		proc_save_mem(8);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time3:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Find bands:  contours -> rectangles -> ROIs */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Contours */
+		proc_contours(&contours, &hierarchy);
+
+		bool	bands_nok;
+		bands_nok	= (contours.size() < 3)  ||
+							(contours.size() > 5);
+		if (bands_nok) {
+			status	= RESISTOR_NOK_BANDS;
+			result_resistor(status);
+			return	status;
+		}
+
+		/* Band 0 */
+		if (contours.size() == 5) {
+			proc_bounding_rect(&(contours[4]), &rect, true);
+			bands[0].x	= rect.x + rect.width / 2.0;
+			bands[0].y	= rect.y + rect.height / 2.0;
+		}
+		/* Band 1 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[3]), &rect, true);
+		} else {
+			proc_bounding_rect(&(contours[2]), &rect, true);
+		}
+		bands[1].x	= rect.x + rect.width / 2.0;
+		bands[1].y	= rect.y + rect.height / 2.0;
+		/* Band 2 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[2]), &rect, true);
+		} else {
+			proc_bounding_rect(&(contours[1]), &rect, true);
+		}
+		bands[2].x	= rect.x + rect.width / 2.0;
+		bands[2].y	= rect.y + rect.height / 2.0;
+		/* Band 3 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[1]), &rect, true);
+		} else {
+			proc_bounding_rect(&(contours[0]), &rect, true);
+		}
+		bands[3].x	= rect.x + rect.width / 2.0;
+		bands[3].y	= rect.y + rect.height / 2.0;
+		/* Band 4 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[0]), &rect, true);
+			bands[4].x	= rect.x + rect.width / 2.0;
+			bands[4].y	= rect.y + rect.height / 2.0;
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time4:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Read values on the center of each band */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Hue */
+		proc_load_mem(9);
+		if (contours.size() == 5) {
+			proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].h));
+		}
+		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].h));
+		proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].h));
+		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].h));
+		if (contours.size() > 3) {
+			proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].h));
+		}
+
+		/* Saturation */
+		proc_load_mem(10);
+		if (contours.size() == 5) {
+			proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].s));
+		}
+		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].s));
+		proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].s));
+		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].s));
+		if (contours.size() > 3) {
+			proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].s));
+		}
+
+		/* Value */
+		proc_load_mem(11);
+		if (contours.size() == 5) {
+			proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].v));
+		}
+		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].v));
+		proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].v));
+		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].v));
+		if (contours.size() > 3) {
+			proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].v));
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time5:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+	}
+	/* Interpret colors */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		if (contours.size() == 5) {
+			i = 0;
+		} else {
+			code[0]	= '0';
+			i = 1;
+		}
+		int	loop_lim;
+		if (contours.size() > 3) {
+			loop_lim	= 5;
+		} else {
+			code[4]	= 'n';
+			loop_lim	= 4;
+		}
+		for (; i < loop_lim; i++) {
+			if (bands[i].v < 24) {
+				code[i]	= '0';
+			} else if (bands[i].v < 28) {
+				if ((bands[i].h < 90)  ||  (bands[i].h > 135)) {
+					code[i]	= '1';
+				} else if (bands[i].s < 78) {
+					code[i]	= '1';
+				} else {
+					code[i]	= '0';
+				}
+			} else if (bands[i].v < 50) {
+				if ((bands[i].h > 120)  ||  (bands[i].h < 10)) {
+					code[i]	= '1';
+				} else if (bands[i].h < 85) {
+					code[i]	= '5';
+				} else {
+					code[i]	= '8';
+				}
+			} else if (bands[i].v < 70) {
+				if (bands[i].h < 90) {
+					code[i]	= '3';
+				} else {
+					code[i]	= '2';
+				}
+			} else if (bands[i].v < 100) {
+				if (bands[i].h < 10) {
+					code[i]	= '3';
+				} else if (bands[i].h < 40) {
+					code[i]	= 'g';
+				} else if (bands[i].h < 85) {
+					code[i]	= '4';
+				} else if (bands[i].h < 140) {
+					code[i]	= '6';
+				} else {
+					code[i]	= '2';
+				}
+			} else {
+				if (bands[i].h < 45) {
+					code[i]	= '3';
+				} else if (bands[i].h < 105) {
+					code[i]	= '9';
+				} else if (bands[i].h < 140) {
+					code[i]	= '7';
+				} else {
+					code[i]	= '2';
+				}
+			}
+		}
+
+		/* Write bands' code into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Code:		\"%s\"",
+							code);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time6:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Calculate resistor value */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Base value */
+		base	=	(code[0] - '0') * 100  +
+				(code[1] - '0') * 10  +
+				(code[2] - '0');
+
+		/* Calculate resistance */
+		int	power;
+		if ((code[3] > '0')  &&  (code[3] < '9')) {
+			power	= code[3] - '0';
+		} else if (code[3] == 'g') {
+			power	= -1;
+		} else if (code[3] == 's') {
+			power	= -2;
+		}
+		resistance	= base * pow(10, power);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time7:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Calculate resistor tolerance */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		switch (code[4]) {
+		case '1':
+			tolerance	= 1;
+			break;
+		case '2':
+			tolerance	= 2;
+			break;
+		case '4':
+		case 'g':
+		case 'n':
+			tolerance	= 5;
+			break;
+		case '8':
+			tolerance	= 10;
+			break;
+		default:
+			status	= RESISTOR_NOK_TOLERANCE;
+			result_resistor(status);
+			return	status;
+		}
+
+		/* Write resistance value into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistance:	%.2E ± %i% Ohm",
+						resistance, tolerance);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time8:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Check STD value */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Check that base value is a standard value */
+		int	std_values_10 [12]	= {10,12,15,18,22,27,33,39,47,56,68,82};
+		int	std_values_5 [12]	= {11,13,16,20,24,30,36,43,51,62,75,91};
+		bool	std_value_nok;
+		std_value_nok	= true;
+		for (i = 0; i < 12; i++) {
+			if (base == std_values_10[i]) {
+				std_value_nok	= false;
+			}
+			if (base == (std_values_10[i] * 10)) {
+				std_value_nok	= false;
+			}
+		}
+		if (tolerance <= 5) {
+			for (i = 0; i < 12; i++) {
+				if (base == std_values_5[i]) {
+					std_value_nok	= false;
+				}
+				if (base == (std_values_5[i] * 10)) {
+					std_value_nok	= false;
+				}
+			}
+		}
+		if (std_value_nok) {
+			status	= RESISTOR_NOK_STD_VALUE;
+			result_resistor(status);
+			return	status;
+		}
+
+		/* Calculate resistance */
+		int	power;
+		if ((code[3] > '0')  &&  (code[3] < '9')) {
+			power	= code[3] - '0';
+		} else if (code[3] == 'g') {
+			power	= -1;
+		} else if (code[3] == 's') {
+			power	= -2;
+		}
+		resistance	= base * pow(10, power);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time7:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
 
 	status	= RESISTOR_OK;
 	result_resistor(status);
@@ -948,6 +1607,11 @@ static	void	result_resistor		(int status)
 	(user_iface_log.len)++;
 }
 
+static	void	proc_apply		(void)
+{
+	img_iface_act(IMG_IFACE_ACT_APPLY, NULL);
+}
+
 static	void	proc_save_mem		(int n)
 {
 	img_iface_act(IMG_IFACE_ACT_SAVE_MEM, (void *)&n);
@@ -965,51 +1629,63 @@ static	void	proc_save_ref		(void)
 	img_iface_act(IMG_IFACE_ACT_SAVE_REF, NULL);
 }
 
-static	void	proc_cvt_color		(int method)
+static	void	proc_save_file		(void)
 {
-	struct Img_Iface_Data_Cvt_Color	data;
-	data.method	= method;
-	img_iface_act(IMG_IFACE_ACT_CVT_COLOR, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_SAVE_FILE, NULL);
+}
+
+static	void	proc_local_max		(void)
+{
+	img_iface_act(IMG_IFACE_ACT_LOCAL_MAX, NULL);
 
 	proc_show_img();
 }
 
-static	void	proc_cmp		(int cmp)
+static	void	proc_lines_vertical	(void)
 {
-	struct Img_Iface_Data_Component		data;
-	data.cmp	= cmp;
-	img_iface_act(IMG_IFACE_ACT_COMPONENT, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_LINES_VERTICAL, NULL);
 
 	proc_show_img();
 }
 
-static	void	proc_smooth		(int method, int ksize)
+static	void	proc_median_horizontal	(void)
 {
-	struct Img_Iface_Data_Smooth		data;
-	data.method	= method;
-	data.ksize	= ksize;
-	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_MEDIAN_HORIZONTAL, NULL);
 
 	proc_show_img();
 }
 
-static	void	proc_adaptive_threshold	(int method, int type, int ksize)
+static	void	proc_median_vertical	(void)
 {
-	struct Img_Iface_Data_Adaptive_Thr	data;
-	data.method	= method;
-	data.thr_typ	= type;
-	data.ksize	= ksize;
-	img_iface_act(USER_IFACE_ACT_ADAPTIVE_THRESHOLD, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_MEDIAN_VERTICAL, NULL);
 
 	proc_show_img();
 }
 
-static	void	proc_threshold		(int type, int size)
+static	void	proc_pixel_value	(int x, int y, unsigned char *val)
 {
-	struct Img_Iface_Data_Threshold		data;
-	data.thr_typ	= type;
-	data.thr_val	= size;
-	img_iface_act(IMG_IFACE_ACT_THRESHOLD, (void *)&data);
+	struct Img_Iface_Data_Pixel_Value	data;
+	data.x		= x;
+	data.y		= y;
+	data.val	= val;
+	img_iface_act(IMG_IFACE_ACT_PIXEL_VALUE, (void *)&data);
+}
+
+static	void	proc_ROI		(int x, int y, int w, int h)
+{
+	struct Img_Iface_Data_SetROI		data;
+	data.rect.x		= x;
+	data.rect.y		= y;
+	data.rect.width		= w;
+	data.rect.height	= h;
+	img_iface_act(IMG_IFACE_ACT_SET_ROI, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_and_2ref		(void)
+{
+	img_iface_act(USER_IFACE_ACT_AND_2REF, NULL);
 
 	proc_show_img();
 }
@@ -1028,9 +1704,11 @@ static	void	proc_or_2ref		(void)
 	proc_show_img();
 }
 
-static	void	proc_and_2ref		(void)
+static	void	proc_cmp		(int cmp)
 {
-	img_iface_act(USER_IFACE_ACT_AND_2REF, NULL);
+	struct Img_Iface_Data_Component		data;
+	data.cmp	= cmp;
+	img_iface_act(IMG_IFACE_ACT_COMPONENT, (void *)&data);
 
 	proc_show_img();
 }
@@ -1071,6 +1749,64 @@ static	void	proc_erode_dilate	(int size)
 	proc_show_img();
 }
 
+static	void	proc_smooth		(int method, int ksize)
+{
+	struct Img_Iface_Data_Smooth		data;
+	data.method	= method;
+	data.ksize	= ksize;
+	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_rotate		(class cv::RotatedRect  *rect)
+{
+	struct Img_Iface_Data_Rotate		data;
+	data.center.x	= rect->center.x;
+	data.center.y	= rect->center.y;
+	data.angle	= rect->angle;
+	img_iface_act(IMG_IFACE_ACT_ROTATE, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_adaptive_threshold	(int method, int type, int ksize)
+{
+	struct Img_Iface_Data_Adaptive_Thr	data;
+	data.method	= method;
+	data.thr_typ	= type;
+	data.ksize	= ksize;
+	img_iface_act(USER_IFACE_ACT_ADAPTIVE_THRESHOLD, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_cvt_color		(int method)
+{
+	struct Img_Iface_Data_Cvt_Color	data;
+	data.method	= method;
+	img_iface_act(IMG_IFACE_ACT_CVT_COLOR, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_threshold		(int type, int size)
+{
+	struct Img_Iface_Data_Threshold		data;
+	data.thr_typ	= type;
+	data.thr_val	= size;
+	img_iface_act(IMG_IFACE_ACT_THRESHOLD, (void *)&data);
+
+	proc_show_img();
+}
+
+static	void	proc_distance_transform	(void)
+{
+	img_iface_act(IMG_IFACE_ACT_DISTANCE_TRANSFORM, NULL);
+
+	proc_show_img();
+}
+
 static	void	proc_contours		(
 			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
 			class cv::Mat  *hierarchy)
@@ -1095,16 +1831,16 @@ static	void	proc_contours_size		(
 	img_iface_act(IMG_IFACE_ACT_CONTOURS_SIZE, (void *)&data);
 }
 
-static	void	proc_min_area_rect	(
+static	void	proc_bounding_rect	(
 			std::vector <class cv::Point_ <int>>  *contour,
-			class cv::RotatedRect  *rect,
+			class cv::Rect_ <int>  *rect,
 			bool  show)
 {
-	struct Img_Iface_Data_MinARect		data;
+	struct Img_Iface_Data_Bounding_Rect		data;
 	data.contour	= contour;
 	data.rect	= rect;
 	data.show	= show;
-	img_iface_act(IMG_IFACE_ACT_MIN_AREA_RECT, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_BOUNDING_RECT, (void *)&data);
 
 	if (show) {
 		proc_show_img();
@@ -1128,36 +1864,20 @@ static	void	proc_fit_ellipse	(
 	}
 }
 
-static	void	proc_rotate		(class cv::RotatedRect  *rect)
+static	void	proc_min_area_rect	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::RotatedRect  *rect,
+			bool  show)
 {
-	struct Img_Iface_Data_Rotate		data;
-	data.center.x	= rect->center.x;
-	data.center.y	= rect->center.y;
-	data.angle	= rect->angle;
-	img_iface_act(IMG_IFACE_ACT_ROTATE, (void *)&data);
+	struct Img_Iface_Data_MinARect		data;
+	data.contour	= contour;
+	data.rect	= rect;
+	data.show	= show;
+	img_iface_act(IMG_IFACE_ACT_MIN_AREA_RECT, (void *)&data);
 
-	proc_show_img();
-}
-
-static	void	proc_ROI		(int x, int y, int w, int h)
-{
-	struct Img_Iface_Data_SetROI		data;
-	data.rect.x		= x;
-	data.rect.y		= y;
-	data.rect.width		= w;
-	data.rect.height	= h;
-	img_iface_act(IMG_IFACE_ACT_SET_ROI, (void *)&data);
-
-	proc_show_img();
-}
-
-static	void	proc_pixel_value	(int x, int y, unsigned char *val)
-{
-	struct Img_Iface_Data_Pixel_Value	data;
-	data.x		= x;
-	data.y		= y;
-	data.val	= val;
-	img_iface_act(IMG_IFACE_ACT_PIXEL_VALUE, (void *)&data);
+	if (show) {
+		proc_show_img();
+	}
 }
 
 static	void	proc_OCR		(int lang, int conf)

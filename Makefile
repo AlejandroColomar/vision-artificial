@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 VERSION		= 2
-PATCHLEVEL	= ~a3
+PATCHLEVEL	= ~b5
 SUBLEVEL	= 
 EXTRAVERSION	=
 NAME		=
@@ -139,7 +139,7 @@ CFLAGS_D       += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
 CFLAGS_D       += -D 'VAR_DIR="$(VAR_DIR)"'
 
 CFLAGS		= $(CFLAGS_STD)
-#CFLAGS         += $(CFLAGS_OPT)
+CFLAGS         += $(CFLAGS_OPT)
 CFLAGS         += $(CFLAGS_W)
 CFLAGS         += $(CFLAGS_PKG)
 CFLAGS         += $(CFLAGS_D)
@@ -169,7 +169,7 @@ CXXFLAGS_D     += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
 CXXFLAGS_D     += -D 'VAR_DIR="$(VAR_DIR)"'
 
 CXXFLAGS	= $(CXXFLAGS_STD)
-#CXXFLAGS       += $(CXXFLAGS_OPT)
+CXXFLAGS       += $(CXXFLAGS_OPT)
 CXXFLAGS       += $(CXXFLAGS_W)
 CXXFLAGS       += $(CXXFLAGS_PKG)
 CXXFLAGS       += $(CXXFLAGS_D)

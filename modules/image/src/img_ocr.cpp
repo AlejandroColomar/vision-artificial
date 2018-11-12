@@ -16,8 +16,6 @@
 	#include <leptonica/allheaders.h>
 
 /* Project -------------------------------------------------------------------*/
-		/* user_iface_log */
-	#include "user_iface.hpp"
 		/* share_path */
 	#include "about.hpp"
 

@@ -37,33 +37,44 @@
 	enum	Img_Iface_Action {
 		IMG_IFACE_ACT_FOO = 0,
 
+		IMG_IFACE_ACT_ALX = 0x0010,
+		IMG_IFACE_ACT_LOCAL_MAX,
+		IMG_IFACE_ACT_LINES_HORIZONTAL,
+		IMG_IFACE_ACT_LINES_VERTICAL,
+		IMG_IFACE_ACT_MEAN_HORIZONTAL,
+		IMG_IFACE_ACT_MEAN_VERTICAL,
+		IMG_IFACE_ACT_MEDIAN_HORIZONTAL,
+		IMG_IFACE_ACT_MEDIAN_VERTICAL,
+
 		IMG_IFACE_ACT_CV = 0x0100,
+		IMG_IFACE_ACT_PIXEL_VALUE,
+		IMG_IFACE_ACT_SET_ROI,
+		IMG_IFACE_ACT_SET_ROI_2RECT,
+		IMG_IFACE_ACT_AND_2REF,
 		IMG_IFACE_ACT_NOT,
 		IMG_IFACE_ACT_OR_2REF,
-		IMG_IFACE_ACT_AND_2REF,
-		IMG_IFACE_ACT_CVT_COLOR,
 		IMG_IFACE_ACT_COMPONENT,
-		IMG_IFACE_ACT_HISTOGRAM,
-		IMG_IFACE_ACT_HISTOGRAM_C3,
-		IMG_IFACE_ACT_SMOOTH,
-		IMG_IFACE_ACT_SOBEL,
-		IMG_IFACE_ACT_THRESHOLD,
-		IMG_IFACE_ACT_ADAPTIVE_THRESHOLD,
 		IMG_IFACE_ACT_DILATE,
 		IMG_IFACE_ACT_ERODE,
-		IMG_IFACE_ACT_CONTOURS,
-		IMG_IFACE_ACT_CONTOURS_SIZE,
-		IMG_IFACE_ACT_MIN_AREA_RECT,
-		IMG_IFACE_ACT_FIT_ELLIPSE,
-		IMG_IFACE_ACT_ROTATE_ORTO,
-		IMG_IFACE_ACT_ROTATE,
-		IMG_IFACE_ACT_SET_ROI,
-		IMG_IFACE_ACT_PIXEL_VALUE,
-		IMG_IFACE_ACT_DISTANCE_TRANSFORM,
-
 		IMG_IFACE_ACT_DILATE_ERODE,
 		IMG_IFACE_ACT_ERODE_DILATE,
+		IMG_IFACE_ACT_SMOOTH,
+		IMG_IFACE_ACT_SOBEL,
+		IMG_IFACE_ACT_ROTATE_ORTO,
+		IMG_IFACE_ACT_ROTATE,
 		IMG_IFACE_ACT_ROTATE_2RECT,
+		IMG_IFACE_ACT_ADAPTIVE_THRESHOLD,
+		IMG_IFACE_ACT_CVT_COLOR,
+		IMG_IFACE_ACT_DISTANCE_TRANSFORM,
+		IMG_IFACE_ACT_THRESHOLD,
+		IMG_IFACE_ACT_HISTOGRAM,
+		IMG_IFACE_ACT_HISTOGRAM_C3,
+		IMG_IFACE_ACT_CONTOURS,
+		IMG_IFACE_ACT_CONTOURS_SIZE,
+		IMG_IFACE_ACT_BOUNDING_RECT,
+		IMG_IFACE_ACT_FIT_ELLIPSE,
+		IMG_IFACE_ACT_MIN_AREA_RECT,
+		IMG_IFACE_ACT_HOUGH_CIRCLES,
 
 		IMG_IFACE_ACT_ZB = 0x0200,
 		IMG_IFACE_ACT_DECODE,
@@ -121,19 +132,22 @@
  ******* structs **************************************************************
  ******************************************************************************/
 /* img_cv --------------------------------------------------------------------*/
-	struct	Img_Iface_Data_Cvt_Color {
-		int	method;
+	struct	Img_Iface_Data_Pixel_Value {
+		unsigned char	*val;
+		int		x;
+		int		y;
+	};
+
+	struct	Img_Iface_Data_SetROI {
+		class cv::Rect_ <int>	rect;
 	};
 
 	struct	Img_Iface_Data_Component {
 		int	cmp;
 	};
 
-	struct	Img_Iface_Data_Histogram {
-		class cv::Mat	*hist_c0;
-		class cv::Mat	*hist_c1;
-		class cv::Mat	*hist_c2;
-		class cv::Mat	*hist_img;
+	struct	Img_Iface_Data_Dilate_Erode {
+		int	i;
 	};
 
 	struct	Img_Iface_Data_Smooth {
@@ -147,9 +161,13 @@
 		int	ksize;
 	};
 
-	struct	Img_Iface_Data_Threshold {
-		int	thr_typ;
-		int	thr_val;
+	struct	Img_Iface_Data_Rotate_Orto {
+		int	n;
+	};
+
+	struct	Img_Iface_Data_Rotate {
+		class cv::Point_ <float>	center;
+		double				angle;
 	};
 
 	struct	Img_Iface_Data_Adaptive_Thr {
@@ -158,8 +176,20 @@
 		int	ksize;
 	};
 
-	struct	Img_Iface_Data_Dilate_Erode {
-		int	i;
+	struct	Img_Iface_Data_Cvt_Color {
+		int	method;
+	};
+
+	struct	Img_Iface_Data_Threshold {
+		int	thr_typ;
+		int	thr_val;
+	};
+
+	struct	Img_Iface_Data_Histogram {
+		class cv::Mat	*hist_c0;
+		class cv::Mat	*hist_c1;
+		class cv::Mat	*hist_c2;
+		class cv::Mat	*hist_img;
 	};
 
 	struct	Img_Iface_Data_Contours {
@@ -173,29 +203,25 @@
 		double							*perimeter;
 	};
 
+	struct	Img_Iface_Data_Bounding_Rect {
+		std::vector <class cv::Point_ <int>>	*contour;
+		class cv::Rect_ <int>			*rect;
+		bool					show;
+	};
+
 	struct	Img_Iface_Data_MinARect {
 		std::vector <class cv::Point_ <int>>	*contour;
 		class cv::RotatedRect			*rect;
 		bool					show;
 	};
 
-	struct	Img_Iface_Data_Rotate_Orto {
-		int	n;
-	};
-
-	struct	Img_Iface_Data_Rotate {
-		class cv::Point_ <float>	center;
-		double				angle;
-	};
-
-	struct	Img_Iface_Data_SetROI {
-		class cv::Rect_ <int>	rect;
-	};
-
-	struct	Img_Iface_Data_Pixel_Value {
-		unsigned char	*val;
-		int		x;
-		int		y;
+	struct	Img_Iface_Data_Hough_Circles {
+		std::vector <class cv::Vec <float, 3>>	*circles;
+		double					dist_min;
+		double					param_1;
+		double					param_2;
+		int					radius_min;
+		int					radius_max;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/
