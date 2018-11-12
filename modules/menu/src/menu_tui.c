@@ -145,7 +145,6 @@ static	void	menu_tui_continue	(void)
 		/* Selection */
 		switch (sw) {
 		case 0:
-			alx_win_del(win);
 			wh	= false;
 			break;
 
@@ -179,6 +178,9 @@ static	void	menu_tui_continue	(void)
 			break;
 		}
 	}
+
+	/* Cleanup */
+	alx_win_del(win);
 }
 
 static	void	menu_tui_select	(void)

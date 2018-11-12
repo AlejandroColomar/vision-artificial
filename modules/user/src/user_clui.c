@@ -14,6 +14,10 @@
 		/*img_ocr_text */
 	#include "img_iface.h"
 
+/* libalx --------------------------------------------------------------------*/
+		/* alx_sscan_fname() */
+	#include "alx_input.h"
+
 /* Module --------------------------------------------------------------------*/
 		/* user_iface_log */
 	#include "user_iface.h"
@@ -69,6 +73,7 @@ void	user_clui_fname		(const char *filepath, char *filename)
 	puts("File name:");
 	puts("Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff");
 	fgets(filename, FILENAME_MAX, stdin);
+	alx_sscan_fname(filepath, filename, false, filename);
 }
 
 void	user_clui_show_log	(const char *title, const char *subtitle)
@@ -180,6 +185,40 @@ static	int	usr_input	(void)
 			switch (ch[2]) {
 			case '0':
 				action	= USER_IFACE_ACT_LOCAL_MAX;
+				break;
+			case '1':
+				/* Lines */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_LINES_HORIZONTAL;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_LINES_VERTICAL;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '2':
+				/* Smooth */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_MEAN_HORIZONTAL;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_MEAN_VERTICAL;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_MEDIAN_HORIZONTAL;
+					break;
+				case '3':
+					action	= USER_IFACE_ACT_MEDIAN_VERTICAL;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -472,6 +511,12 @@ static	void	show_help	(void)
 	printf("Save to file:		%c\n",	's');
 	printf("Functions:\n");
 	printf(" - Local maxima:	%s\n",	"f00");
+	printf(" - Horizontal lines:	%s\n",	"f010");
+	printf(" - Vertical lines:	%s\n",	"f011");
+	printf(" - Horizontal mean:	%s\n",	"f020");
+	printf(" - Vertical mean:	%s\n",	"f021");
+	printf(" - Horizontal median:	%s\n",	"f022");
+	printf(" - Vertical median:	%s\n",	"f023");
 	printf(" - Pixel value:		%s\n",	"f1000");
 	printf(" - Set ROI:		%s\n",	"f1010");
 	printf(" - Set ROI 2rect:	%s\n",	"f1011");
