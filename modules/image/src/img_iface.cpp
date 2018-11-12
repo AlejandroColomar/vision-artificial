@@ -636,12 +636,14 @@ static	void	img_iface_set_ROI		(void *data)
 					title, NULL);
 
 		snprintf(title, 80, "Width:");
-		data_tmp.rect.width	= user_iface_getint(1, 1,
+		data_tmp.rect.width	= user_iface_getint(1, 
+					image_copy_tmp.cols - data_tmp.rect.x,
 					image_copy_tmp.cols - data_tmp.rect.x,
 					title, NULL);
 
 		snprintf(title, 80, "Height:");
-		data_tmp.rect.height	= user_iface_getint(1, 1,
+		data_tmp.rect.height	= user_iface_getint(1,
+					image_copy_tmp.rows - data_tmp.rect.y,
 					image_copy_tmp.rows - data_tmp.rect.y,
 					title, NULL);
 
