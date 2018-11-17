@@ -225,6 +225,10 @@ void	proc_iface_series	(void)
 				char	txt_tmp [80];
 				snprintf(txt_tmp, 80, "%04i", i);
 				user_iface_show_log(txt_tmp, "Item");
+
+				if (proc_debug >= PROC_DBG_STOP_ITEM) {
+					getchar();
+				}
 			} else {
 				printf("errno:%i\n", errno);
 			}
@@ -952,7 +956,7 @@ static	void	result_coins		(int status)
 	(user_iface_log.len)++;
 }
 
-static	int	proc_resistor		(void)
+static	int	proc_resistor_		(void)
 {
 	int	status;
 
@@ -1157,15 +1161,15 @@ static	int	proc_resistor		(void)
 			proc_threshold(cv::THRESH_TOZERO, 5);
 			break;
 		case 1:
-			proc_threshold(cv::THRESH_TOZERO_INV, 95);
-			proc_threshold(cv::THRESH_TOZERO, 80);
+			proc_threshold(cv::THRESH_TOZERO_INV, 100);
+			proc_threshold(cv::THRESH_TOZERO, 70);
 			break;
 		case 2:
-			proc_threshold(cv::THRESH_TOZERO_INV, 110);
-			proc_threshold(cv::THRESH_TOZERO, 100);
+			proc_threshold(cv::THRESH_TOZERO_INV, 115);
+			proc_threshold(cv::THRESH_TOZERO, 105);
 			break;
 		case 3:
-			proc_threshold(cv::THRESH_TOZERO_INV, 105);
+			proc_threshold(cv::THRESH_TOZERO_INV, 110);
 			proc_threshold(cv::THRESH_TOZERO, 90);
 			break;
 		}
@@ -1902,6 +1906,630 @@ static	void	proc_show_img		(void)
 			getchar();
 		}
 	}
+}
+
+
+
+static	int	proc_resistor		(void)
+{
+	int	status;
+
+	double	times;
+	clock_t	time_0;
+	clock_t	time_1;
+
+	std::vector <std::vector <cv::Point_ <int>>>	contours;
+	class cv::Mat					hierarchy;
+	class cv::RotatedRect				rect_rot;
+	class cv::Rect_ <int>				rect;
+	int	x;
+	int	y;
+	int	w;
+	int	h;
+
+	int	bkgd;
+
+	struct	{
+		/* position */
+		int		x;
+		int		y;
+
+		/* value */
+		unsigned char	h;
+		unsigned char	s;
+		unsigned char	v;
+	} bands [5];
+
+	char	code [6]	= {'\0', '\0', '\0', '\0', '\0', '\0'};
+	int	base;
+	float	resistance;
+	int	tolerance;
+
+	int	i;
+	int	j;
+
+	proc_save_mem(0);
+	/* Find resistor (position and angle) */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* BGR -> HSV */
+		proc_cvt_color(cv::COLOR_BGR2HSV);
+		proc_save_mem(19);
+
+		proc_cmp(IMG_IFACE_CMP_SATURATION);
+		proc_smooth(IMGI_SMOOTH_MEDIAN, 7);
+		proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
+		proc_save_mem(1);
+		proc_dilate_erode(10);
+		proc_contours(&contours, &hierarchy);
+
+		/* If no contour is found, error:  NOK_RESISTOR */
+		if (!contours.size()) {
+			status	= RESISTOR_NOK_RESISTOR;
+			result_resistor(status);
+			return	status;
+		}
+
+		proc_min_area_rect(&(contours[0]), &rect_rot, true);
+
+		/* If angle is < -45º, it is taking into acount the incorrect side */
+		if (rect_rot.angle < -45.0) {
+			rect_rot.angle	+= 90.0;
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time0:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Align resistor, find its dimensions, and crop */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Align */
+		proc_load_mem(19);
+		proc_rotate(&rect_rot);
+		proc_save_mem(2);
+		proc_load_mem(1);
+		proc_rotate(&rect_rot);
+		proc_save_mem(3);
+
+		/* Dimensions */
+		proc_contours(&contours, &hierarchy);
+		proc_bounding_rect(&(contours[0]), &rect, true);
+
+		/* Crop */
+		proc_load_mem(2);
+		w	= rect.width;
+		h	= rect.height;
+		x	= rect.x;
+		y	= rect.y;
+		proc_ROI(x, y, w, h);
+		proc_save_mem(4);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time1:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Find backgroung color */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* hue */
+		uint8_t	bkgd_hue;
+		proc_cmp(IMG_IFACE_CMP_HUE);
+		proc_median_vertical();
+		proc_median_horizontal();
+		proc_pixel_value(0, 0, &bkgd_hue);
+
+		/* saturation */
+		uint8_t	bkgd_sat;
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_SATURATION);
+		proc_median_vertical();
+		proc_median_horizontal();
+		proc_pixel_value(0, 0, &bkgd_sat);
+
+		if (bkgd_hue < 50) {
+			/* Beige */
+			bkgd	= 0;
+		} else {
+			/* Blue */
+			if ((bkgd_hue <= 90)  ||  (bkgd_sat <= 140)) {
+				/* Teal blue */
+				bkgd	= 1;
+			} else if (bkgd_hue >= 105) {
+				/* Dark blue */
+				bkgd	= 2;
+			} else {
+				/* Normal blue */
+				bkgd	= 3;
+			}
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time2:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Crop more */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Dimensions */
+		proc_load_mem(3);
+		proc_dilate_erode(10);
+		proc_erode_dilate(rect.height / 1.9 - 9);
+		proc_contours(&contours, &hierarchy);
+		proc_bounding_rect(&(contours[0]), &rect, true);
+
+		/* Crop */
+		proc_load_mem(2);
+		w	= rect.width * 0.9;
+		h	= rect.height * 0.9;
+		x	= rect.x + w * (1.0 - 0.9) / 2.0;
+		y	= rect.y + h * (1.0 - 0.9) / 2.0;
+		proc_ROI(x, y, w, h);
+		proc_save_mem(4);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time1:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Separate background (BK) and lines (WH) */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* hue */
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_HUE);
+		proc_median_vertical();
+		proc_save_mem(9);
+		switch (bkgd) {
+		case 0:
+			proc_threshold(cv::THRESH_TOZERO_INV, 20);
+			proc_threshold(cv::THRESH_TOZERO, 5);
+			break;
+		case 1:
+			proc_threshold(cv::THRESH_TOZERO_INV, 100);
+			proc_threshold(cv::THRESH_TOZERO, 70);
+			break;
+		case 2:
+			proc_threshold(cv::THRESH_TOZERO_INV, 115);
+			proc_threshold(cv::THRESH_TOZERO, 100);
+			break;
+		case 3:
+			proc_threshold(cv::THRESH_TOZERO_INV, 110);
+			proc_threshold(cv::THRESH_TOZERO, 90);
+			break;
+		}
+		proc_threshold(cv::THRESH_BINARY_INV, 1);
+		proc_save_mem(5);
+
+#if 0
+		/* saturation */
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_SATURATION);
+		proc_median_vertical();
+		proc_save_mem(10);
+		switch (bkgd) {
+		case 0:
+			proc_threshold(cv::THRESH_TOZERO, 100);
+			break;
+		case 1:
+			proc_threshold(cv::THRESH_TOZERO, 95);
+			break;
+		case 2:
+			proc_threshold(cv::THRESH_TOZERO, 200);
+			break;
+		case 3:
+			proc_threshold(cv::THRESH_TOZERO, 130);
+			break;
+		}
+		proc_threshold(cv::THRESH_BINARY_INV, 1);
+		proc_save_mem(6);
+
+		/* value */
+		proc_load_mem(4);
+		proc_cmp(IMG_IFACE_CMP_VALUE);
+		proc_median_vertical();
+		proc_save_mem(11);
+		switch (bkgd) {
+		case 0:
+			proc_threshold(cv::THRESH_TOZERO_INV, 130);
+			proc_threshold(cv::THRESH_TOZERO, 65);
+			break;
+		case 1:
+			proc_threshold(cv::THRESH_TOZERO_INV, 155);
+			proc_threshold(cv::THRESH_TOZERO, 60);
+			break;
+		case 2:
+			proc_threshold(cv::THRESH_TOZERO_INV, 140);
+			proc_threshold(cv::THRESH_TOZERO, 60);
+			break;
+		case 3:
+			proc_threshold(cv::THRESH_TOZERO_INV, 165);
+			proc_threshold(cv::THRESH_TOZERO, 45);
+			break;
+		}
+		proc_threshold(cv::THRESH_BINARY_INV, 1);
+		proc_save_mem(7);
+
+		/* Merge the components:  H | S | V */
+		proc_save_ref();
+		proc_load_mem(5);
+		proc_or_2ref();
+		proc_save_ref();
+		proc_load_mem(6);
+		proc_or_2ref();
+		proc_dilate_erode(1);
+		proc_save_mem(8);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time3:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Find bands:  contours -> rectangles -> ROIs */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Contours */
+		proc_contours(&contours, &hierarchy);
+
+		bool	bands_nok;
+		bands_nok	= (contours.size() < 3)  ||
+							(contours.size() > 5);
+		if (bands_nok) {
+			status	= RESISTOR_NOK_BANDS;
+			result_resistor(status);
+			return	status;
+		}
+
+		/* Band 0 */
+		if (contours.size() == 5) {
+			proc_bounding_rect(&(contours[4]), &rect, true);
+			bands[0].x	= rect.x + rect.width / 2.0;
+			bands[0].y	= rect.y + rect.height / 2.0;
+		}
+		/* Band 1 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[3]), &rect, true);
+		} else {
+			proc_bounding_rect(&(contours[2]), &rect, true);
+		}
+		bands[1].x	= rect.x + rect.width / 2.0;
+		bands[1].y	= rect.y + rect.height / 2.0;
+		/* Band 2 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[2]), &rect, true);
+		} else {
+			proc_bounding_rect(&(contours[1]), &rect, true);
+		}
+		bands[2].x	= rect.x + rect.width / 2.0;
+		bands[2].y	= rect.y + rect.height / 2.0;
+		/* Band 3 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[1]), &rect, true);
+		} else {
+			proc_bounding_rect(&(contours[0]), &rect, true);
+		}
+		bands[3].x	= rect.x + rect.width / 2.0;
+		bands[3].y	= rect.y + rect.height / 2.0;
+		/* Band 4 */
+		if (contours.size() > 3) {
+			proc_bounding_rect(&(contours[0]), &rect, true);
+			bands[4].x	= rect.x + rect.width / 2.0;
+			bands[4].y	= rect.y + rect.height / 2.0;
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time4:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Read values on the center of each band */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Hue */
+		proc_load_mem(9);
+		if (contours.size() == 5) {
+			proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].h));
+		}
+		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].h));
+		proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].h));
+		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].h));
+		if (contours.size() > 3) {
+			proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].h));
+		}
+
+		/* Saturation */
+		proc_load_mem(10);
+		if (contours.size() == 5) {
+			proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].s));
+		}
+		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].s));
+		proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].s));
+		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].s));
+		if (contours.size() > 3) {
+			proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].s));
+		}
+
+		/* Value */
+		proc_load_mem(11);
+		if (contours.size() == 5) {
+			proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].v));
+		}
+		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].v));
+		proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].v));
+		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].v));
+		if (contours.size() > 3) {
+			proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].v));
+		}
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time5:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+	}
+	/* Interpret colors */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		if (contours.size() == 5) {
+			i = 0;
+		} else {
+			code[0]	= '0';
+			i = 1;
+		}
+		int	loop_lim;
+		if (contours.size() > 3) {
+			loop_lim	= 5;
+		} else {
+			code[4]	= 'n';
+			loop_lim	= 4;
+		}
+		for (; i < loop_lim; i++) {
+			if (bands[i].v < 24) {
+				code[i]	= '0';
+			} else if (bands[i].v < 28) {
+				if ((bands[i].h < 90)  ||  (bands[i].h > 135)) {
+					code[i]	= '1';
+				} else if (bands[i].s < 78) {
+					code[i]	= '1';
+				} else {
+					code[i]	= '0';
+				}
+			} else if (bands[i].v < 50) {
+				if ((bands[i].h > 120)  ||  (bands[i].h < 10)) {
+					code[i]	= '1';
+				} else if (bands[i].h < 85) {
+					code[i]	= '5';
+				} else {
+					code[i]	= '8';
+				}
+			} else if (bands[i].v < 70) {
+				if (bands[i].h < 90) {
+					code[i]	= '3';
+				} else {
+					code[i]	= '2';
+				}
+			} else if (bands[i].v < 100) {
+				if (bands[i].h < 10) {
+					code[i]	= '3';
+				} else if (bands[i].h < 40) {
+					code[i]	= 'g';
+				} else if (bands[i].h < 85) {
+					code[i]	= '4';
+				} else if (bands[i].h < 140) {
+					code[i]	= '6';
+				} else {
+					code[i]	= '2';
+				}
+			} else {
+				if (bands[i].h < 45) {
+					code[i]	= '3';
+				} else if (bands[i].h < 105) {
+					code[i]	= '9';
+				} else if (bands[i].h < 140) {
+					code[i]	= '7';
+				} else {
+					code[i]	= '2';
+				}
+			}
+		}
+
+		/* Write bands' code into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Code:		\"%s\"",
+							code);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time6:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Calculate resistor value */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Base value */
+		base	=	(code[0] - '0') * 100  +
+				(code[1] - '0') * 10  +
+				(code[2] - '0');
+
+		/* Calculate resistance */
+		int	power;
+		if ((code[3] > '0')  &&  (code[3] < '9')) {
+			power	= code[3] - '0';
+		} else if (code[3] == 'g') {
+			power	= -1;
+		} else if (code[3] == 's') {
+			power	= -2;
+		}
+		resistance	= base * pow(10, power);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time7:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Calculate resistor tolerance */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		switch (code[4]) {
+		case '1':
+			tolerance	= 1;
+			break;
+		case '2':
+			tolerance	= 2;
+			break;
+		case '4':
+		case 'g':
+		case 'n':
+			tolerance	= 5;
+			break;
+		case '8':
+			tolerance	= 10;
+			break;
+		default:
+			status	= RESISTOR_NOK_TOLERANCE;
+			result_resistor(status);
+			return	status;
+		}
+
+		/* Write resistance value into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistance:	%.2E ± %i% Ohm",
+						resistance, tolerance);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time8:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
+	/* Check STD value */
+	{
+		/* Measure time */
+		time_0		= clock();
+
+		/* Check that base value is a standard value */
+		int	std_values_10 [12]	= {10,12,15,18,22,27,33,39,47,56,68,82};
+		int	std_values_5 [12]	= {11,13,16,20,24,30,36,43,51,62,75,91};
+		bool	std_value_nok;
+		std_value_nok	= true;
+		for (i = 0; i < 12; i++) {
+			if (base == std_values_10[i]) {
+				std_value_nok	= false;
+			}
+			if (base == (std_values_10[i] * 10)) {
+				std_value_nok	= false;
+			}
+		}
+		if (tolerance <= 5) {
+			for (i = 0; i < 12; i++) {
+				if (base == std_values_5[i]) {
+					std_value_nok	= false;
+				}
+				if (base == (std_values_5[i] * 10)) {
+					std_value_nok	= false;
+				}
+			}
+		}
+		if (std_value_nok) {
+			status	= RESISTOR_NOK_STD_VALUE;
+			result_resistor(status);
+			return	status;
+		}
+
+		/* Calculate resistance */
+		int	power;
+		if ((code[3] > '0')  &&  (code[3] < '9')) {
+			power	= code[3] - '0';
+		} else if (code[3] == 'g') {
+			power	= -1;
+		} else if (code[3] == 's') {
+			power	= -2;
+		}
+		resistance	= base * pow(10, power);
+
+		/* Measure time */
+		time_1	= clock();
+		times	= ((double) time_1 - time_0) / CLOCKS_PER_SEC;
+		/* Write time into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Time7:  %.3lf", times);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+#endif
+	}
+
+	proc_apply();
+	proc_save_file();
+
+	status	= -1;
+	result_resistor(status);
+	return	status;
 }
 
 
