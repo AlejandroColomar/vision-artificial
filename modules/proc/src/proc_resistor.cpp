@@ -90,7 +90,7 @@ static	int	chk_std_value		(void);
 /******************************************************************************
  ******* global functions *****************************************************
  ******************************************************************************/
-static	int	proc_resistor_		(void)
+int	proc_resistor_		(void)
 {
 	int	status;
 
@@ -336,7 +336,6 @@ int	proc_resistor		(void)
 
 		separate_bkgd_bands_h();
 		separate_bkgd_bands_s();
-#if 0
 		separate_bkgd_bands_v();
 		bkgd_find();
 
@@ -417,11 +416,8 @@ int	proc_resistor		(void)
 
 		/* Measure time */
 		clock_stop("Chk STD values");
-#endif
 	}
 
-	proc_apply();
-	proc_save_file();
 
 	status	= -1;
 	result_resistor(status);
@@ -476,6 +472,7 @@ static	void	resistor_dimensions_0	(void)
 {
 	proc_load_mem(3);
 
+	proc_dilate_erode(10);
 	proc_contours(&contours, &hierarchy);
 	proc_bounding_rect(&(contours[0]), &rect, true);
 }
@@ -519,7 +516,7 @@ static	void	resistor_bkgd		(void)
 		bkgd	= 0;
 	} else {
 		/* Blue */
-		if ((bkgd_hue <= 90)  ||  (bkgd_sat <= 140)) {
+		if ((bkgd_hue < 90)  ||  (bkgd_sat < 100)) {
 			/* Teal blue */
 			bkgd	= 1;
 		} else if (bkgd_hue >= 105) {
@@ -537,7 +534,7 @@ static	void	resistor_dimensions_1	(void)
 	proc_load_mem(3);
 
 	proc_dilate_erode(10);
-	proc_erode_dilate(rect.height / 1.9 - 9);
+	proc_erode_dilate((rect.height * 0.67) / 2);
 	proc_contours(&contours, &hierarchy);
 	proc_bounding_rect(&(contours[0]), &rect, true);
 }
@@ -550,10 +547,10 @@ static	void	resistor_crop_1		(void)
 	int	y;
 	int	w;
 	int	h;
-	w	= rect.width * 0.9;
-	h	= rect.height * 0.9;
-	x	= rect.x + w * (1.0 - 0.9) / 2.0;
-	y	= rect.y + h * (1.0 - 0.9) / 2.0;
+	w	= rect.width * 0.95;
+	h	= rect.height * 0.8;
+	x	= rect.x + w * (1.0 - 0.95) / 2.0;
+	y	= rect.y + h * (1.0 - 0.8) / 2.0;
 	proc_ROI(x, y, w, h);
 	proc_save_mem(4);
 }
@@ -599,16 +596,20 @@ static	void	separate_bkgd_bands_s	(void)
 	switch (bkgd) {
 
 	case 0:
-		proc_threshold(cv::THRESH_TOZERO, 100);
+		proc_threshold(cv::THRESH_TOZERO_INV, 160);
+		proc_threshold(cv::THRESH_TOZERO, 110);
 		break;
 	case 1:
-		proc_threshold(cv::THRESH_TOZERO, 95);
+		proc_threshold(cv::THRESH_TOZERO_INV, 180);
+		proc_threshold(cv::THRESH_TOZERO, 30);
 		break;
 	case 2:
-		proc_threshold(cv::THRESH_TOZERO, 200);
+		proc_threshold(cv::THRESH_TOZERO_INV, 190);
+		proc_threshold(cv::THRESH_TOZERO, 170);
 		break;
 	case 3:
-		proc_threshold(cv::THRESH_TOZERO, 130);
+		proc_threshold(cv::THRESH_TOZERO_INV, 210);
+		proc_threshold(cv::THRESH_TOZERO, 120);
 		break;
 	}
 	proc_threshold(cv::THRESH_BINARY_INV, 1);
@@ -625,22 +626,21 @@ static	void	separate_bkgd_bands_v	(void)
 
 	switch (bkgd) {
 	case 0:
-		proc_threshold(cv::THRESH_TOZERO_INV, 130);
-		proc_threshold(cv::THRESH_TOZERO, 65);
+		proc_threshold(cv::THRESH_TOZERO_INV, 170);
+		proc_threshold(cv::THRESH_TOZERO, 100);
 		break;
 
 	case 1:
-		proc_threshold(cv::THRESH_TOZERO_INV, 155);
-		proc_threshold(cv::THRESH_TOZERO, 60);
+		proc_threshold(cv::THRESH_TOZERO_INV, 180);
+		proc_threshold(cv::THRESH_TOZERO, 100);
 		break;
 	case 2:
-
-		proc_threshold(cv::THRESH_TOZERO_INV, 140);
-		proc_threshold(cv::THRESH_TOZERO, 60);
+		proc_threshold(cv::THRESH_TOZERO_INV, 180);
+		proc_threshold(cv::THRESH_TOZERO, 150);
 		break;
 	case 3:
-		proc_threshold(cv::THRESH_TOZERO_INV, 165);
-		proc_threshold(cv::THRESH_TOZERO, 45);
+		proc_threshold(cv::THRESH_TOZERO_INV, 190);
+		proc_threshold(cv::THRESH_TOZERO, 90);
 		break;
 	}
 	proc_threshold(cv::THRESH_BINARY_INV, 1);
@@ -657,7 +657,9 @@ static	void	bkgd_find		(void)
 	proc_save_ref();
 	proc_load_mem(5);
 	proc_or_2ref();
-	proc_dilate_erode(1);
+	if (rect.width * 0.95 > 80) {
+		proc_dilate_erode(1);
+	}
 	proc_save_mem(8);
 }
 
@@ -669,6 +671,11 @@ static	int	bands_find		(void)
 
 	/* Contours */
 	proc_contours(&contours, &hierarchy);
+	if (contours.size() > 5) {
+		proc_load_mem(8);
+		proc_dilate_erode(1);
+		proc_contours(&contours, &hierarchy);
+	}
 
 	bands_n	= contours.size();
 	if ((bands_n == 0)  ||  (bands_n == 2)  ||  (bands_n > 5)) {
@@ -722,6 +729,9 @@ static	int	bands_find		(void)
 		bands[4].x	= rect.x + rect.width / 2.0;
 		bands[4].y	= rect.y + rect.height / 2.0;
 	}
+
+	status	= RESISTOR_OK;
+	return	status;
 }
 
 static	void	bands_colors		(void)

@@ -76,6 +76,11 @@ void	proc_save_file		(void)
 	img_iface_act(IMG_IFACE_ACT_SAVE_FILE, NULL);
 }
 
+void	proc_save_update	(void)
+{
+	img_iface_act(IMG_IFACE_ACT_SAVE_UPDT, NULL);
+}
+
 void	proc_local_max		(void)
 {
 	img_iface_act(IMG_IFACE_ACT_LOCAL_MAX, NULL);

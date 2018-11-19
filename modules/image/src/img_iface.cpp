@@ -142,6 +142,7 @@ static	void	img_iface_load_mem		(void *data);
 static	void	img_iface_save_ref		(void);
 	/* save */
 static	void	img_iface_save_file		(void);
+static	void	img_iface_save_update		(void);
 
 
 /******************************************************************************
@@ -373,6 +374,9 @@ void	img_iface_act		(int action, void *data)
 	/* save */
 	case IMG_IFACE_ACT_SAVE_FILE:
 		img_iface_save_file();
+		break;
+	case IMG_IFACE_ACT_SAVE_UPDT:
+		img_iface_save_update();
 		break;
 
 	default:
@@ -1751,6 +1755,19 @@ static	void	img_iface_save_file		(void)
 
 	/* Save into file */
 	save_image_file(NULL, NULL);
+}
+
+static	void	img_iface_save_update		(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Save: update img");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Write into image struct (save.c) */
+	image.release();
+	image_copy_tmp.copyTo(image);
 }
 
 

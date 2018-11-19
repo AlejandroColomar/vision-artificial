@@ -39,6 +39,7 @@ extern	"C" {
 	void	proc_load_mem		(int n);
 	void	proc_save_ref		(void);
 	void	proc_save_file		(void);
+	void	proc_save_update	(void);
 
 	void	proc_local_max		(void);
 	void	proc_lines_vertical	(void);
