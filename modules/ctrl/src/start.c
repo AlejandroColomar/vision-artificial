@@ -16,7 +16,7 @@
 		/* img_iface_load() */
 	#include "img_iface.h"
 		/* proc_iface_series() */
-	#include "proc.h"
+	#include "proc_iface.h"
 		/* saved_name*/
 	#include "save.h"
 		/* user_iface() */

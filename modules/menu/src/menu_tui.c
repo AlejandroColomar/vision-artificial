@@ -17,7 +17,7 @@
 		/* printf_share_file() */
 	#include "about.h"
 		/* proc_debug */
-	#include "proc.h"
+	#include "proc_iface.h"
 		/* saved_name */
 	#include "save.h"
 		/* start_switch() */

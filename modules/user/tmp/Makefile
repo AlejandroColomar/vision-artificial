@@ -20,7 +20,7 @@ _ALL	= user_iface.o user_clui.o user_tui.o
 ALL	= $(_ALL) user_mod.o
 
 UI_INC_IMG		= img_iface.h
-UI_INC_PROC		= proc.h
+UI_INC_PROC		= proc_iface.h
 UI_INC			= user_iface.h	user_clui.h user_tui.h
 UI_DEPS			= $(SRC_DIR)/user_iface.c \
 				$(patsubst %,$(INC_DIR)/%,$(UI_INC)) \
