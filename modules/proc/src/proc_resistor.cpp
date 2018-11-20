@@ -82,6 +82,8 @@ static	int	bands_find		(void);
 static	void	bands_colors		(void);
 static	void	bands_code		(void);
 static	char	band_hsv2code		(struct Resistor_Bands  *band);
+static	void	bands_code_deduce_0	(void);
+static	void	bands_code_deduce_1	(void);
 static	void	resistor_value		(void);
 static	int	resistor_tolerance	(void);
 static	int	chk_std_value		(void);
@@ -260,6 +262,10 @@ static	void	result_resistor		(int status)
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Resistor:  NOK_BANDS");
 		break;
+	case RESISTOR_NOK_COLOR:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  NOK_COLOR");
+		break;
 	case RESISTOR_NOK_STD_VALUE:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Resistor:  NOK_STD_VALUE");
@@ -372,6 +378,23 @@ int	proc_resistor		(void)
 		clock_start();
 
 		bands_code();
+		bands_code_deduce_0();
+		bands_code_deduce_1();
+		int	i;
+		for (i = 0; i < 5; i++) {
+			switch (code[i]) {
+			case 'q':
+			case 'w':
+			case 'e':
+			case 'r':
+			case 't':
+			case 'y':
+			case 'u':
+				status	= RESISTOR_NOK_COLOR;
+				result_resistor(status);
+				return	status;
+			}
+		}
 
 		/* Measure time */
 		clock_stop("Interpret colors");
@@ -837,55 +860,603 @@ static	char	band_hsv2code		(struct Resistor_Bands  *band)
 {
 	char	ch;
 
-	if (band->v < 24) {
-		ch	= '0';
-	} else if (band->v < 28) {
-		if ((band->h < 90)  ||  (band->h > 135)) {
+	/*
+	 * Not able to segmentate:
+	 * q = 1 2
+	 * w = 2 3
+	 * e = 3 g
+	 * r = 3 4
+	 * t = 1 8
+	 * y = 0 1
+	 * u = 0 1 8
+	 */
+
+	if (band->h < 10) {
+		// 1 2 3
+		if (band->s < 90) {
+			// 1 3
+			if (band->v < 85) {
+				ch	= '1';
+			} else {
+				ch	= '3';
+			}
+		} else if (band->s < 140) {
+			// 1 2 3
+			if (band->v < 60) {
+				ch	= '1';
+			} else if (band->v < 85) {
+				// 1 2
+				ch	= 'q';
+			} else if (band->v < 90) {
+				ch	= '2';
+			} else if (band->v < 150) {
+				// 2 3
+				ch	= 'w';
+			} else {
+				ch	= '3';
+			}
+		} else if (band->s < 210) {
+			// 2 3
+			if (band->v < 90) {
+				ch	= '2';
+			} else if (band->v < 150) {
+				// 2 3
+				ch	= 'w';
+			} else {
+				ch	= '3';
+			}
+		} else {
+			ch	= '3';
+		}
+	} else if (band->h < 35) {
+		// 1 3 g
+		if (band->s < 130) {
+			// 1 3
+			if (band->v < 85) {
+				ch	= '1';
+			} else {
+				ch	= '3';
+			}
+		} else if (band->s < 140) {
+			// 1 3 g
+			if (band->v < 85) {
+				ch	= '1';
+			} else if (band->v < 120) {
+				ch	= '3';
+			} else {
+				// 3 g
+				ch	= 'e';
+			}
+		} else if (band->s < 180) {
+			// 3 g
+			if (band->v < 120) {
+				ch	= '3';
+			} else {
+				// 3 g
+				ch	= 'e';
+			}
+		} else {
+			ch	= '3';
+		}
+	} else if (band->h < 50) {
+		// 1 3
+		if (band->s < 140) {
+			// 1 3
+			if (band->v < 85) {
+				ch	= '1';
+			} else {
+				ch	= '3';
+			}
+		} else {
+			ch	= '3';
+		}
+	} else if (band->h < 60) {
+		// 1 3 4
+		if (band->s < 140) {
+			// 1 3
+			if (band->v < 85) {
+				ch	= '1';
+			} else {
+				ch	= '3';
+			}
+		} else if (band->s < 160) {
+			ch	= '3';
+		} else if (band->s < 180) {
+			// 3 4
+			if (band->v < 110) {
+				// 3 4
+				ch	= 'r';
+			} else {
+				ch	= '3';
+			}
+		} else {
+			ch	= '3';
+		}
+	} else if (band->h < 80) {
+		// 1 5
+		if (band->s < 165) {
 			ch	= '1';
-		} else if (band->s < 78) {
-			ch	= '1';
+		} else {
+			ch	= '5';
+		}
+	} else if (band->h < 90) {
+		ch	= '1';
+	} else if (band->h < 100) {
+		// 0 1 8 9
+		if (band->s < 40) {
+			// 1 8 9
+			if (band->v < 55) {
+				ch	= '1';
+			} else if (band->v < 80) {
+				// 1 8
+				ch	= 't';
+			} else if (band->v < 125) {
+				ch	= '1';
+			} else {
+				ch	= '9';
+			}
+		} else if (band->s < 70) {
+			// 0 1 8 9
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 55) {
+				// 0 1
+				ch	= 'y';
+			} else if (band->v < 75) {
+				// 0 1 8
+				ch	= 'u';
+			} else if (band->v < 80) {
+				// 1 8
+				ch	= 't';
+			} else if (band->v < 125) {
+				ch	= '1';
+			} else {
+				ch	= '9';
+			}
+		} else if (band->s < 100) {
+			// 0 1 8
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 55) {
+				// 0 1
+				ch	= 'y';
+			} else if (band->v < 75) {
+				// 0 1 8
+				ch	= 'u';
+			} else if (band->v < 80) {
+				// 1 8
+				ch	= 't';
+			} else {
+				ch	= '1';
+			}
+		} else if (band->s < 140) {
+			// 0 1
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else {
+				ch	= '1';
+			}
 		} else {
 			ch	= '0';
 		}
-	} else if (band->v < 50) {
-		if ((band->h > 120)  ||  (band->h < 10)) {
-			ch	= '1';
-		} else if (band->h < 85) {
-			ch	= '5';
+	} else if (band->h < 110) {
+		// 0 1 6 8
+		if (band->s < 40) {
+			// 1 8
+			if (band->v < 55) {
+				ch	= '1';
+			} else if (band->v < 80) {
+				// 1 8
+				ch	= 't';
+			} else {
+				ch	= '1';
+			}
+		} else if (band->s < 100) {
+			// 0 1 8
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 55) {
+				// 0 1
+				ch	= 'y';
+			} else if (band->v < 75) {
+				// 0 1 8
+				ch	= 'u';
+			} else if (band->v < 80) {
+				// 1 8
+				ch	= 't';
+			} else {
+				ch	= '1';
+			}
+		} else if (band->s < 140) {
+			// 0 1
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else {
+				ch	= '1';
+			}
+		} else if (band->s < 200) {
+			ch	= '0';
 		} else {
-			ch	= '8';
-		}
-	} else if (band->v < 70) {
-		if (band->h < 90) {
-			ch	= '3';
-		} else {
-			ch	= '2';
-		}
-	} else if (band->v < 100) {
-		if (band->h < 10) {
-			ch	= '3';
-		} else if (band->h < 40) {
-			ch	= 'g';
-		} else if (band->h < 85) {
-			ch	= '4';
-		} else if (band->h < 140) {
 			ch	= '6';
-		} else {
-			ch	= '2';
 		}
+	} else if (band->h < 120) {
+		// 0 1 6 7
+		if (band->s < 40) {
+			ch	= '1';
+		} else if (band->s < 90) {
+			// 0 1
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else {
+				ch	= '1';
+			}
+		} else if (band->s < 110) {
+			// 0 1 7
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else if (band->v < 120) {
+				ch	= '1';
+			} else {
+				ch	= '7';
+			}
+		} else if (band->s < 140) {
+			// 0 1
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else {
+				ch	= '1';
+			}
+		} else if (band->s < 200) {
+			ch	= '0';
+		} else {
+			ch	= '6';
+		}
+	} else if (band->h < 130) {
+		// 0 1 7
+		if (band->s < 40) {
+			ch	= '1';
+		} else if (band->s < 90) {
+			// 0 1
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else {
+				ch	= '1';
+			}
+		} else if (band->s < 110) {
+			// 0 1 7
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else if (band->v < 120) {
+				ch	= '1';
+			} else {
+				ch	= '7';
+			}
+		} else if (band->s < 140) {
+			// 0 1
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else {
+				ch	= '1';
+			}
+		} else {
+			ch	= '0';
+		}
+	} else if (band->h < 140) {
+		// 0 1
+		if (band->s < 40) {
+			ch	= '1';
+		} else if (band->s < 140) {
+			// 0 1
+			if (band->v < 45) {
+				ch	= '0';
+			} else if (band->v < 75) {
+				// 0 1
+				ch	= 'y';
+			} else {
+				ch	= '1';
+			}
+		} else {
+			ch	= '0';
+		}
+	} else if (band->h < 150) {
+		ch	= '0';
 	} else {
-		if (band->h < 45) {
-			ch	= '3';
-		} else if (band->h < 105) {
-			ch	= '9';
-		} else if (band->h < 140) {
-			ch	= '7';
-		} else {
-			ch	= '2';
-		}
+		ch	= '2';
 	}
 
 	return	ch;
+}
+
+static	void	bands_code_deduce_0	(void)
+{
+	/*
+	 * Not able to segmentate:
+	 * q = 1 2
+	 * w = 2 3
+	 * e = 3 g
+	 * r = 3 4
+	 * t = 1 8
+	 * y = 0 1
+	 * u = 0 1 8
+	 */
+
+	/* Band 0 (hundreds) */
+	switch (code[0]) {
+	case 'e':
+		code[0]	= '3';
+		break;
+	case 'y':
+		code[0]	= '1';
+		break;
+	case 'u':
+		code[0]	= 't';
+		break;
+	}
+
+	/* Band 2 (units) */
+	switch (code[2]) {
+	case 'e':
+		code[2]	= '3';
+		break;
+	}
+
+	/* Band 3 (multiplier) */
+	switch (code[3]) {
+	case 't':
+		code[3]	= '1';
+		break;
+	case 'u':
+		code[3]	= 'y';
+		break;
+	}
+
+	/* Band 4 (tolerance) */
+	switch (code[4]) {
+	case 'w':
+		code[4]	= '2';
+		break;
+	case 'e':
+		code[4]	= 'g';
+		break;
+	case 't':
+		code[4]	= '1';
+		break;
+	case 'y':
+		code[4]	= '1';
+		break;
+	case 'u':
+		code[4]	= '1';
+		break;
+	}
+
+	/* Write bands' code into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Code:		\"%s\"",
+						code);
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+}
+
+static	void	bands_code_deduce_1	(void)
+{
+	/*
+	 * Not able to segmentate:
+	 * q = 1 2
+	 * w = 2 3
+	 * e = 3 g
+	 * r = 3 4
+	 * t = 1 8
+	 * y = 0 1
+	 * u = 0 1 8
+	 */
+
+	/* Band 0 (hundreds) */
+	switch (code[0]) {
+	case 'q':
+		switch (code[1]) {
+		case '1':
+		case '3':
+		case '5':
+		case '6':
+		case '8':
+			code[0]	= '1';
+			break;
+		case '2':
+		case '4':
+		case '7':
+			code[0]	= '2';
+			break;
+		case '0':
+			// q
+			break;
+		}
+		break;
+	case 'w':
+		switch (code[1]) {
+		case '2':
+		case '4':
+		case '7':
+			code[0]	= '2';
+			break;
+		case '3':
+		case '6':
+		case '9':
+			code[0]	= '3';
+			break;
+		case '0':
+			// w
+			break;
+		}
+		break;
+	case 'r':
+		switch (code[1]) {
+		case '0':
+		case '6':
+		case '9':
+			code[0]	= '3';
+			break;
+		case '7':
+			code[0]	= '4';
+			break;
+		case '3':
+			// r
+			break;
+		}
+		break;
+	case 't':
+		switch (code[1]) {
+		case '0':
+		case '1':
+		case '3':
+		case '5':
+		case '6':
+		case '8':
+			code[0]	= '1';
+			break;
+		case '2':
+			// t
+			break;
+		}
+		break;
+	}
+
+	/* Band 1 (tens) */
+	switch (code[1]) {
+	case 'q':
+		switch (code[0]) {
+		case '5':
+		case '9':
+			code[1]	= '1';
+			break;
+		case '2':
+		case '6':
+		case '8':
+			code[1]	= '2';
+			break;
+		case '1':
+			// q
+			break;
+		}
+		break;
+	case 'w':
+		switch (code[0]) {
+		case '2':
+		case '6':
+		case '8':
+			code[1]	= '2';
+			break;
+		case '3':
+		case '4':
+			code[1]	= '3';
+			break;
+		case '1':
+			// w
+			break;
+		}
+		break;
+	case 't':
+		switch (code[0]) {
+		case '5':
+		case '9':
+			code[1]	= '1';
+			break;
+		case '6':
+			code[1]	= '8';
+			break;
+		case '1':
+			// t
+			break;
+		}
+		break;
+	case 'y':
+		switch (code[0]) {
+		case '2':
+		case '3':
+			code[1]	= '0';
+			break;
+		case '5':
+		case '9':
+			code[1]	= '1';
+			break;
+		case '1':
+			// y
+			break;
+		}
+		break;
+	case 'u':
+		switch (code[0]) {
+		case '2':
+		case '3':
+			code[1]	= '0';
+			break;
+		case '5':
+		case '9':
+			code[1]	= '1';
+			break;
+		case '6':
+			code[1]	= '8';
+			break;
+		case '1':
+			// u
+			break;
+		}
+		break;
+	}
+
+	/* Band 2 (units) */
+	switch (code[2]) {
+	case 'y':
+		code[2]	= '0';
+		break;
+	case 'u':
+		code[2]	= '0';
+		break;
+	}
+
+	/* Band 3 (multiplier) */
+	switch (code[3]) {
+	case 'y':
+		code[3]	= '0';
+		break;
+	}
+
+	/* Band 4 (tolerance) */
+	switch (code[4]) {
+	case 'q':
+		code[4]	= '2';
+		break;
+	}
+
+	/* Write bands' code into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Code:		\"%s\"",
+						code);
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
 }
 
 static	void	resistor_value		(void)
