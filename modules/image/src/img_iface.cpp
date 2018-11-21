@@ -42,7 +42,7 @@
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-	# define	IMG_MEM_SIZE	(10)
+	# define	IMG_MEM_SIZE	(20)
 
 	# define	WIN_NAME_IMG	"Image"
 	# define	WIN_NAME_HIST	"Hist"
@@ -80,6 +80,12 @@ static	std::vector <class cv::Vec <float, 3>>		circles;
  ******************************************************************************/
 	/* img_alx */
 static	void	img_iface_local_max		(void);
+static	void	img_iface_lines_horizontal	(void);
+static	void	img_iface_lines_vertical	(void);
+static	void	img_iface_mean_horizontal	(void);
+static	void	img_iface_mean_vertical		(void);
+static	void	img_iface_median_horizontal	(void);
+static	void	img_iface_median_vertical	(void);
 
 	/* img_cv */
 		/* Core: The core functionality */
@@ -136,10 +142,11 @@ static	void	img_iface_load_mem		(void *data);
 static	void	img_iface_save_ref		(void);
 	/* save */
 static	void	img_iface_save_file		(void);
+static	void	img_iface_save_update		(void);
 
 
 /******************************************************************************
- ******* main *****************************************************************
+ ******* global functions *****************************************************
  ******************************************************************************/
 void	img_iface_init		(void)
 {
@@ -215,6 +222,24 @@ void	img_iface_act		(int action, void *data)
 	/* img_alx */
 	case IMG_IFACE_ACT_LOCAL_MAX:
 		img_iface_local_max();
+		break;
+	case IMG_IFACE_ACT_LINES_HORIZONTAL:
+		img_iface_lines_horizontal();
+		break;
+	case IMG_IFACE_ACT_LINES_VERTICAL:
+		img_iface_lines_vertical();
+		break;
+	case IMG_IFACE_ACT_MEAN_HORIZONTAL:
+		img_iface_mean_horizontal();
+		break;
+	case IMG_IFACE_ACT_MEAN_VERTICAL:
+		img_iface_mean_vertical();
+		break;
+	case IMG_IFACE_ACT_MEDIAN_HORIZONTAL:
+		img_iface_median_horizontal();
+		break;
+	case IMG_IFACE_ACT_MEDIAN_VERTICAL:
+		img_iface_median_vertical();
 		break;
 
 	/* img_cv */
@@ -350,6 +375,9 @@ void	img_iface_act		(int action, void *data)
 	case IMG_IFACE_ACT_SAVE_FILE:
 		img_iface_save_file();
 		break;
+	case IMG_IFACE_ACT_SAVE_UPDT:
+		img_iface_save_update();
+		break;
 
 	default:
 		/* Invalid action */
@@ -399,6 +427,144 @@ static	void	img_iface_local_max		(void)
 	/* Write into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Local maxima");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_lines_horizontal	(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Horizontal lines */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_LINES_HORIZONTAL, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Horizontal lines");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_lines_vertical	(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Vertical lines */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_LINES_VERTICAL, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Vertical lines");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_mean_horizontal	(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Horizontal lines */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_MEAN_HORIZONTAL, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Horizontal mean");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_mean_vertical		(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Horizontal lines */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_MEAN_VERTICAL, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Vertical mean");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_median_horizontal	(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Horizontal lines */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_MEDIAN_HORIZONTAL, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Horizontal median");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_median_vertical	(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Horizontal lines */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_MEDIAN_VERTICAL, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Vertical median");
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 }
@@ -474,12 +640,14 @@ static	void	img_iface_set_ROI		(void *data)
 					title, NULL);
 
 		snprintf(title, 80, "Width:");
-		data_tmp.rect.width	= user_iface_getint(1, 1,
+		data_tmp.rect.width	= user_iface_getint(1, 
+					image_copy_tmp.cols - data_tmp.rect.x,
 					image_copy_tmp.cols - data_tmp.rect.x,
 					title, NULL);
 
 		snprintf(title, 80, "Height:");
-		data_tmp.rect.height	= user_iface_getint(1, 1,
+		data_tmp.rect.height	= user_iface_getint(1,
+					image_copy_tmp.rows - data_tmp.rect.y,
 					image_copy_tmp.rows - data_tmp.rect.y,
 					title, NULL);
 
@@ -882,6 +1050,11 @@ static	void	img_iface_rotate_2rect		(void *data)
 		data_tmp.center.x	= rectangle_rot.center.x;
 		data_tmp.center.y	= rectangle_rot.center.y;
 		data_tmp.angle		= rectangle_rot.angle;
+
+		/* If angle is < -45º, it is taking into acount the incorrect side */
+		if (data_tmp.angle < -45.0) {
+			data_tmp.angle	+= 90.0;
+		}
 
 		data	= (void *)&data_tmp;
 	}
@@ -1582,6 +1755,19 @@ static	void	img_iface_save_file		(void)
 
 	/* Save into file */
 	save_image_file(NULL, NULL);
+}
+
+static	void	img_iface_save_update		(void)
+{
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"Save: update img");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Write into image struct (save.c) */
+	image.release();
+	image_copy_tmp.copyTo(image);
 }
 
 

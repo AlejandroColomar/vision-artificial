@@ -92,8 +92,11 @@ static	void	img_ocr_read	(void *data)
 	/* init OCR */
 	handle_ocr	= TessBaseAPICreate();
 	TessBaseAPIInit2(handle_ocr, NULL, lang_str,
-//						OEM_DEFAULT);
+#ifdef	OEM_LSTM_ONLY
 						OEM_LSTM_ONLY);
+#else
+						OEM_DEFAULT);
+#endif
 //						OEM_TESSERACT_LSTM_COMBINED);
 	if (conf) {
 		/* Configure OCR (whitelist chars) */

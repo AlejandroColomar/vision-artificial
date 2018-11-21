@@ -14,7 +14,7 @@
  ******* macros ***************************************************************
  ******************************************************************************/
 	# define	LOG_LEN		(1048576)
-	# define	LOG_LINE_LEN	(35)
+	# define	LOG_LINE_LEN	(80)
 
 
 /******************************************************************************
@@ -39,6 +39,12 @@
 
 		USER_IFACE_ACT_ALX = 0x0010,
 		USER_IFACE_ACT_LOCAL_MAX,
+		USER_IFACE_ACT_LINES_HORIZONTAL,
+		USER_IFACE_ACT_LINES_VERTICAL,
+		USER_IFACE_ACT_MEAN_HORIZONTAL,
+		USER_IFACE_ACT_MEAN_VERTICAL,
+		USER_IFACE_ACT_MEDIAN_HORIZONTAL,
+		USER_IFACE_ACT_MEDIAN_VERTICAL,
 
 		USER_IFACE_ACT_CV = 0x0100,
 		USER_IFACE_ACT_PIXEL_VALUE,
@@ -88,9 +94,11 @@
 
 		USER_IFACE_ACT_SAVE = 0x2000,
 		USER_IFACE_ACT_SAVE_FILE,
+		USER_IFACE_ACT_SAVE_UPDT,
 
 		USER_IFACE_ACT_PROC = 0x4000,
 		USER_IFACE_ACT_PROC_LABEL,
+		USER_IFACE_ACT_PROC_COINS,
 		USER_IFACE_ACT_PROC_RESISTOR,
 
 		USER_IFACE_ACT_USRI = 0x8000,
