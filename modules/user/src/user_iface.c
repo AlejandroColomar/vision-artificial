@@ -16,7 +16,7 @@
 		/* img_iface_act_nodata() */
 	#include "img_iface.h"
 		/* proc_iface() */
-	#include "proc.h"
+	#include "proc_iface.h"
 
 /* Module --------------------------------------------------------------------*/
 		/* user_clui() & ...save_name() */

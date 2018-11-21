@@ -18,7 +18,7 @@ _ALL	= start.o
 ALL	= $(_ALL) ctrl_mod.o
 
 STRT_INC_IMG	= img_iface.h
-STRT_INC_PROC	= proc.h
+STRT_INC_PROC	= proc_iface.h
 STRT_INC_SAVE	= save.h
 STRT_INC_USR	= user_iface.h
 STRT_INC	= start.h

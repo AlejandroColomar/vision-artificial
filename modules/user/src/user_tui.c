@@ -187,6 +187,8 @@ static	void	log_loop	(void)
 		if (user_iface_log.lvl[i] <= user_iface_log.visible) {
 			mvwprintw(win_log, (1 + l),
 						(1 + 4 * user_iface_log.lvl[i]),
+						"%.*s",
+						40 - 2 - 4 * user_iface_log.lvl[i],
 						user_iface_log.line[i]);
 			l++;
 		}
@@ -236,6 +238,19 @@ static	int	usr_input	(void)
 
 			switch (ch) {
 			case '0':
+				action	= USER_IFACE_ACT_PROC_COINS;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '4':
+			/* Resistor */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
 				action	= USER_IFACE_ACT_PROC_RESISTOR;
 				break;
 			default:
@@ -261,6 +276,44 @@ static	int	usr_input	(void)
 			switch (ch) {
 			case '0':
 				action	= USER_IFACE_ACT_LOCAL_MAX;
+				break;
+			case '1':
+				/* Lines */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_LINES_HORIZONTAL;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_LINES_VERTICAL;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
+				break;
+			case '2':
+				/* Smooth */
+				ch = wgetch(win_log);
+
+				switch (ch) {
+				case '0':
+					action	= USER_IFACE_ACT_MEAN_HORIZONTAL;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_MEAN_VERTICAL;
+					break;
+				case '2':
+					action	= USER_IFACE_ACT_MEDIAN_HORIZONTAL;
+					break;
+				case '3':
+					action	= USER_IFACE_ACT_MEDIAN_VERTICAL;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -597,7 +650,13 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Save to ref:		%c",	'r');
 	mvwprintw(win_help, r++, c, "Save to file:		%c",	's');
 	mvwprintw(win_help, r++, c, "Functions:");
-	mvwprintw(win_help, r++, c, " - Local maxima:	%s",	"f00");
+	mvwprintw(win_help, r++, c, " - Local maxima:	%s",		"f00");
+	mvwprintw(win_help, r++, c, " - Horizontal lines:	%s",	"f010");
+	mvwprintw(win_help, r++, c, " - Vertical lines:		%s",	"f011");
+	mvwprintw(win_help, r++, c, " - Horizontal mean:	%s",	"f020");
+	mvwprintw(win_help, r++, c, " - Vertical mean:		%s",	"f021");
+	mvwprintw(win_help, r++, c, " - Horizontal median:	%s",	"f022");
+	mvwprintw(win_help, r++, c, " - Vertical median:	%s",	"f023");
 	mvwprintw(win_help, r++, c, " - Pixel value:		%s",	"f1000");
 	mvwprintw(win_help, r++, c, " - Set ROI:		%s",	"f1010");
 	mvwprintw(win_help, r++, c, " - Set ROI 2rect:	%s",		"f1011");
@@ -631,7 +690,8 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f40");
 	mvwprintw(win_help, r++, c, "Exercises:");
 	mvwprintw(win_help, r++, c, " - Label:		%s",		"e10");
-	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e30");
+	mvwprintw(win_help, r++, c, " - Coins:		%s",		"e30");
+	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e40");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:		%s",	"u1");
 	mvwprintw(win_help, r++, c, "Quit:			%c",	'q');

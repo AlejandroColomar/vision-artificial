@@ -1,3 +1,4 @@
 *.o
 *.s
+*.a
 bin/vision-artificial2

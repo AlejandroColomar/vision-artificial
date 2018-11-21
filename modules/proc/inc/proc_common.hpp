@@ -6,20 +6,18 @@
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# ifndef		VA_SAVE_HPP
-	# define	VA_SAVE_HPP
+# ifndef		VA_PROC_COMMON_HPP
+	# define	VA_PROC_COMMON_HPP
 
 
 /******************************************************************************
- ******* headers **************************************************************
+ ******* macros ***************************************************************
  ******************************************************************************/
-/* Standard C ----------------------------------------------------------------*/
-		/* FILENAME_MAX */
-	#include <cstdio>
 
-/* Project -------------------------------------------------------------------*/
-		/* opencv */
-	#include <opencv2/opencv.hpp>
+
+/******************************************************************************
+ ******* enums ****************************************************************
+ ******************************************************************************/
 
 
 /******************************************************************************
@@ -29,45 +27,68 @@ extern	"C" {
 
 
 /******************************************************************************
- ******* macros ***************************************************************
- ******************************************************************************/
-	# define	ENV_HOME		"HOME"
-
-	# define	USER_PROG_DIR		"vision-artificial/"
-	# define	USER_SAVED_DIR		"vision-artificial/saved/"
-	# define	USER_LABELS_DIR		"vision-artificial/labels/"
-	# define	USER_LABELS_FAIL_DIR	"vision-artificial/labels/fail"
-	# define	USER_COINS_DIR		"vision-artificial/coins/"
-	# define	USER_COINS_FAIL_DIR	"vision-artificial/coins/fail"
-	# define	USER_RESISTORS_DIR	"vision-artificial/resistors/"
-	# define	USER_RESISTORS_FAIL_DIR	"vision-artificial/resistors/fail"
-	# define	SAVED_NAME_DEFAULT	"saved"
-
-
-/******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	class cv::Mat	image;
-	extern	char		home_path [FILENAME_MAX];
-	extern	char		user_prog_path [FILENAME_MAX];
-	extern	char		saved_path [FILENAME_MAX];
-	extern	char		labels_path [FILENAME_MAX];
-	extern	char		labels_fail_path [FILENAME_MAX];
-	extern	char		coins_path [FILENAME_MAX];
-	extern	char		coins_fail_path [FILENAME_MAX];
-	extern	char		resistors_path [FILENAME_MAX];
-	extern	char		resistors_fail_path [FILENAME_MAX];
-	extern	char		saved_name [FILENAME_MAX];
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	save_init	(void);
-	void	save_cleanup	(void);
-	void	save_clr	(void);
-	void	load_image_file	(const char *fpath, const char *fname);
-	void	save_image_file	(const char *fpath, const char *save_as);
+	void	proc_apply		(void);
+	void	proc_save_mem		(int n);
+	void	proc_load_mem		(int n);
+	void	proc_save_ref		(void);
+	void	proc_save_file		(void);
+	void	proc_save_update	(void);
+
+	void	proc_local_max		(void);
+	void	proc_lines_vertical	(void);
+	void	proc_median_horizontal	(void);
+	void	proc_median_vertical	(void);
+
+	void	proc_pixel_value	(int x, int y, unsigned char *val);
+	void	proc_ROI		(int x, int y, int w, int h);
+	void	proc_and_2ref		(void);
+	void	proc_not		(void);
+	void	proc_or_2ref		(void);
+	void	proc_cmp		(int cmp);
+	void	proc_dilate		(int size);
+	void	proc_erode		(int size);
+	void	proc_dilate_erode	(int size);
+	void	proc_erode_dilate	(int size);
+	void	proc_smooth		(int method, int ksize);
+	void	proc_rotate		(class cv::RotatedRect  *rect);
+	void	proc_adaptive_threshold	(int method, int type, int ksize);
+	void	proc_cvt_color		(int method);
+	void	proc_distance_transform	(void);
+	void	proc_threshold		(int type, int ksize);
+	void	proc_contours		(
+			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
+			class cv::Mat  *hierarchy);
+	void	proc_contours_size	(
+			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
+			double  *area,
+			double  *perimeter);
+	void	proc_bounding_rect	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::Rect_ <int>  *rect,
+			bool  show);
+	void	proc_fit_ellipse	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::RotatedRect  *rect,
+			bool show);
+	void	proc_min_area_rect	(
+			std::vector <class cv::Point_ <int>>  *contour,
+			class cv::RotatedRect  *rect,
+			bool show);
+
+	void	proc_OCR		(int lang, int conf);
+	void	proc_zbar		(int type);
+
+	void	proc_show_img		(void);
+
+	void	clock_start		(void);
+	void	clock_stop		(const char  *txt);
 
 
 /******************************************************************************
@@ -79,7 +100,7 @@ extern	"C" {
 /******************************************************************************
  ******* include guard ********************************************************
  ******************************************************************************/
-# endif				/* save.hpp */
+# endif			/* proc_common.hpp */
 
 
 /******************************************************************************
