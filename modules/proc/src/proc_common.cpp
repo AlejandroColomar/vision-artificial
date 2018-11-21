@@ -369,7 +369,7 @@ void	clock_stop		(const char  *txt)
 
 	/* Write time_diff into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"%s: Time:  %.3lf",
+							"Time:  %.3lf  (%s)",
 							txt, time_diff);
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;

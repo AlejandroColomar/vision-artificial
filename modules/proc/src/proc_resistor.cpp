@@ -92,7 +92,7 @@ static	int	chk_std_value		(void);
 /******************************************************************************
  ******* global functions *****************************************************
  ******************************************************************************/
-int	proc_resistor_		(void)
+int	proc_resistor		(void)
 {
 	int	status;
 
@@ -146,196 +146,6 @@ int	proc_resistor_		(void)
 		clock_stop("Crop more");
 	}
 	/* Separate background (BK) and lines (WH) */
-	{
-		/* Measure time */
-		clock_start();
-
-		separate_bkgd_bands_h();
-		separate_bkgd_bands_s();
-		separate_bkgd_bands_v();
-		bkgd_find();
-
-		/* Measure time */
-		clock_stop("Separate bkgd from bands");
-	}
-	/* Find bands:  contours -> rectangles */
-	{
-		/* Measure time */
-		clock_start();
-
-		status	= bands_find();
-		if (status) {
-			result_resistor(status);
-			return	status;
-		}
-
-		/* Measure time */
-		clock_stop("Find bands");
-	}
-	/* Read values on the center of each band */
-	{
-		/* Measure time */
-		clock_start();
-
-		bands_colors();
-
-		/* Measure time */
-		clock_stop("Bands' colors");
-	}
-	/* Interpret colors */
-	{
-		/* Measure time */
-		clock_start();
-
-		bands_code();
-
-		/* Measure time */
-		clock_stop("Interpret colors");
-	}
-	/* Calculate resistor value & tolerance */
-	{
-		/* Measure time */
-		clock_start();
-
-		resistor_value();
-		status	= resistor_tolerance();
-		if (status) {
-			result_resistor(status);
-			return	status;
-		}
-
-		/* Write resistor value into log */
-		if (bands_n != 1) {
-			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistance:	%.2E ± %i% Ohm",
-						resistance, tolerance);
-		} else {
-			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistance:	0 Ohm");
-		}
-		user_iface_log.lvl[user_iface_log.len]	= 0;
-		(user_iface_log.len)++;
-
-		/* Measure time */
-		clock_stop("Calculate resistance & tolerance");
-	}
-	/* Check STD value */
-	{
-		/* Measure time */
-		clock_start();
-
-		status	= chk_std_value();
-		if (status) {
-			result_resistor(status);
-			return	status;
-		}
-
-		/* Measure time */
-		clock_stop("Chk STD values");
-	}
-
-	status	= RESISTOR_OK;
-	result_resistor(status);
-	return	status;
-}
-
-
-/******************************************************************************
- ******* static functions *****************************************************
- ******************************************************************************/
-static	void	result_resistor		(int status)
-{
-	/* Cleanup */
-
-	/* Write result into log */
-	char	result [LOG_LINE_LEN];
-	switch (status) {
-	case RESISTOR_OK:
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistor:  OK");
-		break;
-	case RESISTOR_NOK_RESISTOR:
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistor:  NOK_RESISTOR");
-		break;
-	case RESISTOR_NOK_BANDS:
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistor:  NOK_BANDS");
-		break;
-	case RESISTOR_NOK_COLOR:
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistor:  NOK_COLOR");
-		break;
-	case RESISTOR_NOK_STD_VALUE:
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistor:  NOK_STD_VALUE");
-		break;
-	case RESISTOR_NOK_TOLERANCE:
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistor:  NOK_TOLERANCE");
-		break;
-	default:
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistor:  NOK");
-		break;
-	}
-	user_iface_log.lvl[user_iface_log.len]	= 0;
-	(user_iface_log.len)++;
-}
-
-int	proc_resistor		(void)
-{
-	int	status;
-
-	proc_save_mem(0);
-	/* Find resistor (position and angle) */
-	{
-		/* Measure time */
-		clock_start();
-
-		status	= resistor_find();
-		if (status) {
-			result_resistor(status);
-			return	status;
-		}
-
-		/* Measure time */
-		clock_stop("Find resistor");
-	}
-	/* Align resistor, find its dimensions, and crop */
-	{
-		/* Measure time */
-		clock_start();
-
-		resistor_align();
-		resistor_dimensions_0();
-		resistor_crop_0();
-
-		/* Measure time */
-		clock_stop("Align, dimensions, & crop");
-	}
-	/* Find backgroung color */
-	{
-		/* Measure time */
-		clock_start();
-
-		resistor_bkgd();
-
-		/* Measure time */
-		clock_stop("Background color");
-	}
-	/* Crop more */
-	{
-		/* Measure time */
-		clock_start();
-
-		resistor_dimensions_1();
-		resistor_crop_1();
-
-		/* Measure time */
-		clock_stop("Crop more");
-	}
-	/* Separate background (BK) and bands (WH) */
 	{
 		/* Measure time */
 		clock_start();
@@ -441,10 +251,53 @@ int	proc_resistor		(void)
 		clock_stop("Chk STD values");
 	}
 
-
-	status	= -1;
+	status	= RESISTOR_OK;
 	result_resistor(status);
 	return	status;
+}
+
+
+/******************************************************************************
+ ******* static functions *****************************************************
+ ******************************************************************************/
+static	void	result_resistor		(int status)
+{
+	/* Cleanup */
+
+	/* Write result into log */
+	char	result [LOG_LINE_LEN];
+	switch (status) {
+	case RESISTOR_OK:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  OK");
+		break;
+	case RESISTOR_NOK_RESISTOR:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  NOK_RESISTOR");
+		break;
+	case RESISTOR_NOK_BANDS:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  NOK_BANDS");
+		break;
+	case RESISTOR_NOK_COLOR:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  NOK_COLOR");
+		break;
+	case RESISTOR_NOK_STD_VALUE:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  NOK_STD_VALUE");
+		break;
+	case RESISTOR_NOK_TOLERANCE:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  NOK_TOLERANCE");
+		break;
+	default:
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Resistor:  NOK");
+		break;
+	}
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
 }
 
 static	int	resistor_find		(void)

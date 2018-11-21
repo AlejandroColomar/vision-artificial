@@ -187,6 +187,8 @@ static	void	log_loop	(void)
 		if (user_iface_log.lvl[i] <= user_iface_log.visible) {
 			mvwprintw(win_log, (1 + l),
 						(1 + 4 * user_iface_log.lvl[i]),
+						"%.*s",
+						40 - 2 - 4 * user_iface_log.lvl[i],
 						user_iface_log.line[i]);
 			l++;
 		}
