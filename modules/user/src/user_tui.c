@@ -82,7 +82,7 @@ void	user_tui_cleanup	(void)
 int	user_tui		(const char *title, const char *subtitle)
 {
 	int	action;
-	action	= USER_IFACE_ACT_FOO;
+//	action	= USER_IFACE_ACT_FOO;
 
 	show_help();
 	user_tui_show_log(title, subtitle);
