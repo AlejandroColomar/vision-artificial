@@ -605,6 +605,8 @@ static	int	usr_input	(void)
 		break;
 
 	case 'x':
+		action	= USER_IFACE_ACT_FOO;
+
 		/* Special sequence "xyzzy" */
 		ch = wgetch(win_log);
 		if (ch == 'y') {

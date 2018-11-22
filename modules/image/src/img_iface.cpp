@@ -1060,8 +1060,6 @@ static	void	img_iface_rotate_2rect		(void *data)
 	}
 
 	/* Write into log */
-	struct Img_Iface_Data_Rotate	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Rotate *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Rotate to rectangle");
 	user_iface_log.lvl[user_iface_log.len]	= 1;
@@ -1346,7 +1344,7 @@ static	void	img_iface_contours_size		(void *data)
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 	int	i;
-	for (i = 0; i < data_cast->contours->size(); i++) {
+	for (i = 0; i < (int)data_cast->contours->size(); i++) {
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 							"cnt[%i]: A=%lf; P=%lf;",
 							i,

@@ -81,7 +81,6 @@ static	void	result_coins		(int status)
 	/* Cleanup */
 
 	/* Write result into log */
-	char	result [LOG_LINE_LEN];
 	switch (status) {
 	case COINS_OK:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,

@@ -543,7 +543,6 @@ static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr, void *data)
 
 	/* Draw hist into hist_img */
 	int	i;
-	int	j;
 	for(i = 0; i < 256; i++ ) {
 		cv::line(*hist_img, cv::Point(3*i, hist_img->rows - 0),
 				cv::Point(3*i,
@@ -609,7 +608,7 @@ static	void	img_cv_contours_size	(void *data)
 
 	/* Get area and perimeter */
 	int	i;
-	for (i = 0; i < contours->size(); i++) {
+	for (i = 0; i < (int)contours->size(); i++) {
 		data_cast->area[i]	= cv::contourArea(
 							(*contours)[i], false);
 		data_cast->perimeter[i]	= cv::arcLength(
@@ -771,7 +770,7 @@ static	void	img_cv_hough_circles	(class cv::Mat  *imgptr, void *data)
 	class cv::Point_ <int>	center;
 	int			radius;
 	int	i;
-	for (i = 0; i < circles->size(); i++) {
+	for (i = 0; i < (int)circles->size(); i++) {
 		center.x	= cvRound((*circles)[i][0]);
 		center.y	= cvRound((*circles)[i][1]);
 		radius		= cvRound((*circles)[i][2]);

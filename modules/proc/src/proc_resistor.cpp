@@ -224,7 +224,7 @@ int	proc_resistor		(void)
 		/* Write resistor value into log */
 		if (bands_n != 1) {
 			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Resistance:	%.2E ± %i% Ohm",
+						"Resistance:	%.2E ± %i%% Ohm",
 						resistance, tolerance);
 		} else {
 			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
@@ -265,7 +265,6 @@ static	void	result_resistor		(int status)
 	/* Cleanup */
 
 	/* Write result into log */
-	char	result [LOG_LINE_LEN];
 	switch (status) {
 	case RESISTOR_OK:
 		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
@@ -1331,6 +1330,9 @@ static	void	resistor_value		(void)
 		power	= -1;
 	} else if (code[3] == 's') {
 		power	= -2;
+	} else {
+		// error
+		return;
 	}
 	resistance	= base * pow(10, power);
 }

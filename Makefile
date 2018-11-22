@@ -127,6 +127,7 @@ CFLAGS_W	= -Wall
 CFLAGS_W       += -Werror
 CFLAGS_W       += -Wno-format-truncation
 CFLAGS_W       += -Wno-format-zero-length
+#CFLAGS_W       += -Wno-unused-function
 
 CFLAGS_PKG	= `pkg-config --cflags ncurses`
 CFLAGS_PKG     += `pkg-config --cflags opencv`
@@ -155,12 +156,11 @@ CXXFLAGS_STD	= -std=c++17
 CXXFLAGS_OPT	= -O3
 CXXFLAGS_OPT   += -march=native
 
-CFLAGS_W	= -Wall
-CFLAGS_W       += -Werror
-CFLAGS_W       += -Wno-format-truncation
-CFLAGS_W       += -Wno-format-zero-length
-#CFLAGS_W       += -Wno-unused-function
-CFLAGS_W       += -Wno-uninitialized
+CXXFLAGS_W	= -Wall
+CXXFLAGS_W     += -Werror
+CXXFLAGS_W     += -Wno-format-truncation
+CXXFLAGS_W     += -Wno-format-zero-length
+#CXXFLAGS_W     += -Wno-unused-function
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv`

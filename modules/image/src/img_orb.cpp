@@ -102,7 +102,7 @@ static	void	img_orb_align	(class cv::Mat  *img_0,
 	std::vector <class cv::Point_ <float>>	points_0;
 	std::vector <class cv::Point_ <float>>	points_1;
 	int	i;
-	for (i = 0; i < matches.size(); i++) {
+	for (i = 0; i < (int)matches.size(); i++) {
 		points_1.push_back(keypoints_1[matches[i].queryIdx].pt);
 		points_0.push_back(keypoints_0[matches[i].trainIdx].pt);
 	}
