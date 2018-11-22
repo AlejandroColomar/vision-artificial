@@ -25,8 +25,8 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	menu_clui_rand		(void);
-static	void	menu_clui_custom	(void);
+//static	void	menu_clui_rand		(void);
+//static	void	menu_clui_custom	(void);
 static	void	menu_clui_load		(void);
 static	void	menu_clui_start		(void);
 

@@ -123,7 +123,9 @@ CFLAGS_STD	= -std=c11
 CFLAGS_OPT	= -O3
 CFLAGS_OPT     += -march=native
 
-CFLAGS_W	= -Wno-format-truncation
+CFLAGS_W	= -Wall
+CFLAGS_W       += -Werror
+CFLAGS_W       += -Wno-format-truncation
 CFLAGS_W       += -Wno-format-zero-length
 
 CFLAGS_PKG	= `pkg-config --cflags ncurses`
@@ -132,11 +134,11 @@ CFLAGS_PKG     += `pkg-config --cflags zbar`
 CFLAGS_PKG     += `pkg-config --cflags tesseract`
 CFLAGS_PKG     += `pkg-config --cflags lept`
 
-CFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
-CFLAGS_D       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
-CFLAGS_D       += -D 'SHARE_DIR="$(SHARE_DIR)"'
-CFLAGS_D       += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
-CFLAGS_D       += -D 'VAR_DIR="$(VAR_DIR)"'
+CFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
+CFLAGS_D       += -D SHARE_DIR=\"$(SHARE_DIR)\"
+CFLAGS_D       += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
+CFLAGS_D       += -D VAR_DIR=\"$(VAR_DIR)\"
 
 CFLAGS		= $(CFLAGS_STD)
 CFLAGS         += $(CFLAGS_OPT)
@@ -153,8 +155,12 @@ CXXFLAGS_STD	= -std=c++17
 CXXFLAGS_OPT	= -O3
 CXXFLAGS_OPT   += -march=native
 
-CXXFLAGS_W	= -Wno-format-truncation
-CXXFLAGS_W     += -Wno-format-zero-length
+CFLAGS_W	= -Wall
+CFLAGS_W       += -Werror
+CFLAGS_W       += -Wno-format-truncation
+CFLAGS_W       += -Wno-format-zero-length
+#CFLAGS_W       += -Wno-unused-function
+CFLAGS_W       += -Wno-uninitialized
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv`
@@ -162,11 +168,11 @@ CXXFLAGS_PKG   += `pkg-config --cflags zbar`
 CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
 CXXFLAGS_PKG   += `pkg-config --cflags lept`
 
-CXXFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
-CXXFLAGS_D     += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
-CXXFLAGS_D     += -D 'SHARE_DIR="$(SHARE_DIR)"'
-CXXFLAGS_D     += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
-CXXFLAGS_D     += -D 'VAR_DIR="$(VAR_DIR)"'
+CXXFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CXXFLAGS_D     += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
+CXXFLAGS_D     += -D SHARE_DIR=\"$(SHARE_DIR)\"
+CXXFLAGS_D     += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
+CXXFLAGS_D     += -D VAR_DIR=\"$(VAR_DIR)\"
 
 CXXFLAGS	= $(CXXFLAGS_STD)
 CXXFLAGS       += $(CXXFLAGS_OPT)

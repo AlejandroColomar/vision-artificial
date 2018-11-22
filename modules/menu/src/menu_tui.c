@@ -186,15 +186,10 @@ static	void	menu_tui_continue	(void)
 static	void	menu_tui_select	(void)
 {
 	/* Menu dimensions & options */
-	WINDOW	*win;
 	int	h;
 	int	w;
-	int	r;
-	int	c;
 	h	= 23;
 	w	= 80;
-	r	= 1;
-	c	= (80 - w) / 2;
 	int	N;
 	N	= 3;
 	struct Alx_Menu	mnu[3]	= {
@@ -223,7 +218,6 @@ static	void	menu_tui_select	(void)
 static	void	menu_tui_series	(void)
 {
 	/* Menu dimensions & options */
-	WINDOW	*win;
 	int	h;
 	int	w;
 	h	= 23;

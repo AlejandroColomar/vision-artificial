@@ -101,6 +101,10 @@ void	user_iface		(void)
 		case USER_IFACE_TUI:
 			user_action	= user_tui(title, subtitle);
 			break;
+
+		default:
+			user_action	= USER_IFACE_ACT_FOO;
+			break;
 		}
 
 		/* Do action */
@@ -155,6 +159,10 @@ int64_t	user_iface_getint	(double m, int64_t def, double M,
 	case USER_IFACE_TUI:
 		i	= user_tui_getint(m, def, M, title, help);
 		break;
+
+	default:
+		i	= 1;
+		break;
 	}
 
 	return	i;
@@ -173,6 +181,10 @@ double	user_iface_getdbl	(double m, double def, double M,
 
 	case USER_IFACE_TUI:
 		i	= user_tui_getdbl(m, def, M, title, help);
+		break;
+
+	default:
+		i	= 1;
 		break;
 	}
 

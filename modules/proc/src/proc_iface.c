@@ -76,6 +76,8 @@ int	proc_iface_single	(int action)
 	case PROC_MODE_RESISTOR:
 		error	= proc_resistor();
 		break;
+	default:
+		error	= -1;
 	}
 
 	/* End timer */
@@ -152,8 +154,9 @@ void	proc_iface_series	(void)
 					/* Save failed image into file */
 					proc_show_img();
 					snprintf(save_error_as, FILENAME_MAX,
-							"%s%04i_err%s",
-							file_basename, i,
+							"%s%0*i_err%s",
+							file_basename,
+							num_len, i,
 							file_ext);
 					save_image_file(proc_fail_path,
 							save_error_as);

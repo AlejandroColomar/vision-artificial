@@ -85,7 +85,7 @@ static	void	img_ocr_read	(void *data)
 	conf	= data_cast->conf;
 	switch (conf) {
 	case IMG_IFACE_OCR_CONF_PRICE:
-		sprintf(conf_str, "%s/%s", share_path, "price");
+		snprintf(conf_str, 6, "%s/%s", share_path, "price");
 		break;
 	}
 
