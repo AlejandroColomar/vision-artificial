@@ -15,10 +15,14 @@ MAIN_OBJ_MODULES	= modules.o
 MAIN_OBJS		= $(TMP_DIR)/main.o \
 				$(patsubst %,$(MODULES_TMP_DIR)/%,$(MAIN_OBJ_MODULES))
 
-# static libs
-MAIN_LIB_LIBALX	= -L $(LIBALX_LIB_DIR) -l alx
+MAIN_LIB_LIBALX		= libalx.a
+MAIN_LIBS		= \
+				$(patsubst %,$(LIBALX_LIB_DIR)/%,$(MAIN_LIB_LIBALX))
 
-STATIC_LIBS	= $(MAIN_LIB_LIBALX)
+# static libs
+STATIC_LIB_LIBALX	= -L $(LIBALX_LIB_DIR) -l alx
+
+STATIC_LIBS	= $(STATIC_LIB_LIBALX)
 
 
 # target: dependencies
@@ -27,8 +31,8 @@ STATIC_LIBS	= $(MAIN_LIB_LIBALX)
 all: $(ALL)
 
 
-$(BIN_NAME): $(MAIN_OBJS)
-	$(Q)$(CXX) $^ -o $@ $(STATIC_LIBS) $(LIBS)
+$(BIN_NAME): $(MAIN_OBJS) $(MAIN_LIBS)
+	$(Q)$(CXX) $(MAIN_OBJS) -o $@ $(STATIC_LIBS) $(LIBS)
 	@echo  "	CXX	$@"
 	@echo  ""
 

@@ -21,7 +21,8 @@
 	enum	Proc_Coins {
 		COINS_OK,
 		COINS_NOK_COINS,
-		COINS_NOK_OVERLAP
+		COINS_NOK_OVERLAP,
+		COINS_NOK_SIZE
 	};
 
 
