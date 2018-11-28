@@ -84,6 +84,7 @@ static	void	bands_code		(void);
 static	char	band_hsv2code		(struct Resistor_Bands  *band);
 static	void	bands_code_deduce_0	(void);
 static	void	bands_code_deduce_1	(void);
+static	void	bands_code_deduce_no	(void);
 static	void	resistor_value		(void);
 static	int	resistor_tolerance	(void);
 static	int	chk_std_value		(void);
@@ -190,6 +191,7 @@ int	proc_resistor		(void)
 		bands_code();
 		bands_code_deduce_0();
 		bands_code_deduce_1();
+		bands_code_deduce_no();
 		int	i;
 		for (i = 0; i < 5; i++) {
 			switch (code[i]) {
@@ -1117,12 +1119,14 @@ static	void	bands_code_deduce_1	(void)
 {
 	/*
 	 * Not able to segmentate:
+
 	 * q = 1 2
 	 * w = 2 3
 	 * e = 3 g
 	 * r = 3 4
 	 * t = 1 8
 	 * y = 0 1
+
 	 * u = 0 1 8
 	 */
 
@@ -1301,6 +1305,42 @@ static	void	bands_code_deduce_1	(void)
 	case 'q':
 		code[4]	= '2';
 		break;
+	}
+
+	/* Write bands' code into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Code:		\"%s\"",
+						code);
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+}
+
+static	void	bands_code_deduce_no	(void)
+{
+	/*
+	 * Not able to segmentate:
+	 * q = 1 2
+	 * w = 2 3
+	 * e = 3 g
+	 * r = 3 4
+	 * t = 1 8
+	 * y = 0 1
+	 * u = 0 1 8
+	 */
+
+	/* Band 0 (hundreds) */
+	for (i = 0; i < 5; i++9 {
+		switch (code[i]) {
+		case 'q':
+		case 'w':
+		case 'e':
+		case 'r':
+		case 't':
+		case 'y':
+		case 'u':
+			code[i]	= '?';
+			break;
+		}
 	}
 
 	/* Write bands' code into log */
