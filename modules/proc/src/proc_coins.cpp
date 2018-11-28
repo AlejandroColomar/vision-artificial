@@ -66,6 +66,20 @@ int	proc_coins			(void)
 		/* Measure time */
 		clock_stop("Find coins");
 	}
+	/* Calibrate with the biggest coin; every img should have a 2 € coin */
+	{
+		/* Measure time */
+		clock_start();
+
+		status	= coins_find();
+		if (status) {
+			result_coins(status);
+			return	status;
+		}
+
+		/* Measure time */
+		clock_stop("Find coins");
+	}
 
 	status	= COINS_OK;
 	result_coins(status);
