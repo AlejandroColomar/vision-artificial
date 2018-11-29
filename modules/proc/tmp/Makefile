@@ -29,16 +29,19 @@ PROC_LAB_INC_DIRS	= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
 				-I $(USR_INC_DIR)
 
+PROC_COIN_INC_LIBALX	= alx_math.hpp
 PROC_COIN_INC_IMG	= img_iface.hpp
 PROC_COIN_INC_USR	= user_iface.hpp
 PROC_COIN_INC		= proc_coins.hpp	proc_common.hpp
 PROC_COIN_DEPS		= $(SRC_DIR)/proc_coins.cpp \
 				$(patsubst %,$(INC_DIR)/%,$(PROC_COIN_INC)) \
 				$(patsubst %,$(IMG_INC_DIR)/%,$(PROC_COIN_INC_IMG)) \
-				$(patsubst %,$(USR_INC_DIR)/%,$(PROC_COIN_INC_USR))
+				$(patsubst %,$(USR_INC_DIR)/%,$(PROC_COIN_INC_USR)) \
+				$(patsubst %,$(LIBALX_INC_DIR)/%,$(PROC_COIN_INC_LIBALX))
 PROC_COIN_INC_DIRS	= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
-				-I $(USR_INC_DIR)
+				-I $(USR_INC_DIR) \
+				-I $(LIBALX_INC_DIR)
 
 PROC_RES_INC_IMG	= img_iface.hpp
 PROC_RES_INC_USR	= user_iface.hpp
@@ -62,8 +65,8 @@ PROC_CMN_INC_DIRS	= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
 				-I $(USR_INC_DIR)
 
-PROC_IFACE_INC_IMG	= img_iface.h
 PROC_IFACE_INC_LIBALX	= alx_input.h
+PROC_IFACE_INC_IMG	= img_iface.h
 PROC_IFACE_INC_SAVE	= save.h
 PROC_IFACE_INC_USR	= user_iface.h
 PROC_IFACE_INC		= proc_iface.h	proc_label.h proc_coins.h proc_resistor.h

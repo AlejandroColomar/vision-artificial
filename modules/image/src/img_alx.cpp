@@ -17,7 +17,7 @@
 	#include <opencv2/opencv.hpp>
 
 /* libalx --------------------------------------------------------------------*/
-		/* alx_median_uint8() */
+		/* alx_median_u8() */
 	#include "alx_math.hpp"
 
 /* Module --------------------------------------------------------------------*/
@@ -259,7 +259,7 @@ static	void	img_alx_median_horizontal	(class cv::Mat  *imgptr)
 			img_pix	= imgptr->data + i * imgptr->step + j;
 			row[j]	= *img_pix;
 		}
-		median	= alx_median_uint8(imgptr->cols, row);
+		median	= alx_median_u8(imgptr->cols, row);
 
 		for (j = 0; j < imgptr->cols; j++) {
 			img_pix		= imgptr->data + i * imgptr->step + j;
@@ -283,7 +283,7 @@ static	void	img_alx_median_vertical		(class cv::Mat  *imgptr)
 			img_pix	= imgptr->data + j * imgptr->step + i;
 			col[j]	= *img_pix;
 		}
-		median	= alx_median_uint8(imgptr->rows, col);
+		median	= alx_median_u8(imgptr->rows, col);
 
 		for (j = 0; j < imgptr->rows; j++) {
 			img_pix		= imgptr->data + j * imgptr->step + i;

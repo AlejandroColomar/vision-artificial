@@ -194,14 +194,7 @@ int	proc_resistor		(void)
 		bands_code_deduce_no();
 		int	i;
 		for (i = 0; i < 5; i++) {
-			switch (code[i]) {
-			case 'q':
-			case 'w':
-			case 'e':
-			case 'r':
-			case 't':
-			case 'y':
-			case 'u':
+			if (code[i] == '?') {
 				status	= RESISTOR_NOK_COLOR;
 				result_resistor(status);
 				return	status;
