@@ -1329,7 +1329,8 @@ static	void	bands_code_deduce_no	(void)
 	 */
 
 	/* Band 0 (hundreds) */
-	for (i = 0; i < 5; i++9 {
+	int	i;
+	for (i = 0; i < 5; i++) {
 		switch (code[i]) {
 		case 'q':
 		case 'w':
