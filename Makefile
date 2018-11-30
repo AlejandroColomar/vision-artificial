@@ -70,6 +70,103 @@ PROGRAMVERSION	= $(VERSION)$(if $(PATCHLEVEL),$(PATCHLEVEL)$(if $(SUBLEVEL),$(SU
 export	PROGRAMVERSION
 
 ################################################################################
+# Make variables (CC, etc...)
+  CC		= gcc
+  CXX		= g++
+  AS		= as
+  AR		= ar
+  LD		= ld
+
+export	CC
+export	CXX
+export	AS
+export	AR
+export	LD
+
+################################################################################
+# cflags
+CFLAGS_STD	= -std=c11
+
+CFLAGS_OPT	= -O3
+CFLAGS_OPT     += -march=native
+
+CFLAGS_W	= -Wall
+CFLAGS_W       += -Wextra
+CFLAGS_W       += -Wstrict-prototypes
+CFLAGS_W       += -Werror
+CFLAGS_W       += -Wno-format-truncation
+CFLAGS_W       += -Wno-format-zero-length
+#CFLAGS_W       += -Wno-unused-function
+CFLAGS_W       += -Wno-unused-parameter
+
+CFLAGS_PKG	= `pkg-config --cflags ncurses`
+CFLAGS_PKG     += `pkg-config --cflags opencv`
+CFLAGS_PKG     += `pkg-config --cflags zbar`
+CFLAGS_PKG     += `pkg-config --cflags tesseract`
+CFLAGS_PKG     += `pkg-config --cflags lept`
+
+CFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
+CFLAGS_D       += -D SHARE_DIR=\"$(SHARE_DIR)\"
+CFLAGS_D       += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
+CFLAGS_D       += -D VAR_DIR=\"$(VAR_DIR)\"
+
+CFLAGS		= $(CFLAGS_STD)
+CFLAGS         += $(CFLAGS_OPT)
+CFLAGS         += $(CFLAGS_W)
+CFLAGS         += $(CFLAGS_PKG)
+CFLAGS         += $(CFLAGS_D)
+
+export	CFLAGS
+
+################################################################################
+# c++flags
+CXXFLAGS_STD	= -std=c++17
+
+CXXFLAGS_OPT	= -O3
+CXXFLAGS_OPT   += -march=native
+
+CXXFLAGS_W	= -Wall
+CXXFLAGS_W     += -Wextra
+CXXFLAGS_W     += -Werror
+CXXFLAGS_W     += -Wno-format-truncation
+CXXFLAGS_W     += -Wno-format-zero-length
+#CXXFLAGS_W     += -Wno-unused-function
+CXXFLAGS_W     += -Wno-unused-parameter
+
+CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
+CXXFLAGS_PKG   += `pkg-config --cflags opencv`
+CXXFLAGS_PKG   += `pkg-config --cflags zbar`
+CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
+CXXFLAGS_PKG   += `pkg-config --cflags lept`
+
+CXXFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CXXFLAGS_D     += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
+CXXFLAGS_D     += -D SHARE_DIR=\"$(SHARE_DIR)\"
+CXXFLAGS_D     += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
+CXXFLAGS_D     += -D VAR_DIR=\"$(VAR_DIR)\"
+
+CXXFLAGS	= $(CXXFLAGS_STD)
+CXXFLAGS       += $(CXXFLAGS_OPT)
+CXXFLAGS       += $(CXXFLAGS_W)
+CXXFLAGS       += $(CXXFLAGS_PKG)
+CXXFLAGS       += $(CXXFLAGS_D)
+
+export	CXXFLAGS
+
+################################################################################
+# libs
+LIBS_PKG	= `pkg-config --libs ncurses`
+LIBS_PKG       += `pkg-config --libs opencv`
+LIBS_PKG       += `pkg-config --libs zbar`
+LIBS_PKG       += `pkg-config --libs tesseract`
+LIBS_PKG       += `pkg-config --libs lept`
+
+LIBS		= $(LIBS_PKG)
+
+export	LIBS
+
+################################################################################
 # directories
 
 MAIN_DIR	= $(CURDIR)
@@ -103,96 +200,6 @@ export	SHARE_DIR
 BIN_NAME	= vision-artificial2
 
 export	BIN_NAME
-
-################################################################################
-# Make variables (CC, etc...)
-  CC		= gcc
-  CXX		= g++
-  AS		= as
-  LD		= ld
-
-export	CC
-export	CXX
-export	AS
-export	LD
-
-################################################################################
-# cflags
-CFLAGS_STD	= -std=c11
-
-CFLAGS_OPT	= -O3
-CFLAGS_OPT     += -march=native
-
-CFLAGS_W	= -Wall
-CFLAGS_W       += -Werror
-CFLAGS_W       += -Wno-format-truncation
-CFLAGS_W       += -Wno-format-zero-length
-#CFLAGS_W       += -Wno-unused-function
-
-CFLAGS_PKG	= `pkg-config --cflags ncurses`
-CFLAGS_PKG     += `pkg-config --cflags opencv`
-CFLAGS_PKG     += `pkg-config --cflags zbar`
-CFLAGS_PKG     += `pkg-config --cflags tesseract`
-CFLAGS_PKG     += `pkg-config --cflags lept`
-
-CFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
-CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
-CFLAGS_D       += -D SHARE_DIR=\"$(SHARE_DIR)\"
-CFLAGS_D       += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
-CFLAGS_D       += -D VAR_DIR=\"$(VAR_DIR)\"
-
-CFLAGS		= $(CFLAGS_STD)
-CFLAGS         += $(CFLAGS_OPT)
-CFLAGS         += $(CFLAGS_W)
-CFLAGS         += $(CFLAGS_PKG)
-CFLAGS         += $(CFLAGS_D)
-
-export	CFLAGS
-
-################################################################################
-# c++flags
-CXXFLAGS_STD	= -std=c++17
-
-CXXFLAGS_OPT	= -O3
-CXXFLAGS_OPT   += -march=native
-
-CXXFLAGS_W	= -Wall
-CXXFLAGS_W     += -Werror
-CXXFLAGS_W     += -Wno-format-truncation
-CXXFLAGS_W     += -Wno-format-zero-length
-#CXXFLAGS_W     += -Wno-unused-function
-
-CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
-CXXFLAGS_PKG   += `pkg-config --cflags opencv`
-CXXFLAGS_PKG   += `pkg-config --cflags zbar`
-CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
-CXXFLAGS_PKG   += `pkg-config --cflags lept`
-
-CXXFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
-CXXFLAGS_D     += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
-CXXFLAGS_D     += -D SHARE_DIR=\"$(SHARE_DIR)\"
-CXXFLAGS_D     += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
-CXXFLAGS_D     += -D VAR_DIR=\"$(VAR_DIR)\"
-
-CXXFLAGS	= $(CXXFLAGS_STD)
-CXXFLAGS       += $(CXXFLAGS_OPT)
-CXXFLAGS       += $(CXXFLAGS_W)
-CXXFLAGS       += $(CXXFLAGS_PKG)
-CXXFLAGS       += $(CXXFLAGS_D)
-
-export	CXXFLAGS
-
-################################################################################
-# libs
-LIBS_PKG	= `pkg-config --libs ncurses`
-LIBS_PKG       += `pkg-config --libs opencv`
-LIBS_PKG       += `pkg-config --libs zbar`
-LIBS_PKG       += `pkg-config --libs tesseract`
-LIBS_PKG       += `pkg-config --libs lept`
-
-LIBS		= $(LIBS_PKG)
-
-export	LIBS
 
 ################################################################################
 # target: dependencies
