@@ -84,7 +84,7 @@ static	void	bands_code		(void);
 static	char	band_hsv2code		(struct Resistor_Bands  *band);
 static	void	bands_code_deduce_0	(void);
 static	void	bands_code_deduce_1	(void);
-static	void	bands_code_deduce_no	(void);
+static	int	bands_code_deduce_no	(void);
 static	void	resistor_value		(void);
 static	int	resistor_tolerance	(void);
 static	int	chk_std_value		(void);
@@ -191,14 +191,10 @@ int	proc_resistor		(void)
 		bands_code();
 		bands_code_deduce_0();
 		bands_code_deduce_1();
-		bands_code_deduce_no();
-		int	i;
-		for (i = 0; i < 5; i++) {
-			if (code[i] == '?') {
-				status	= RESISTOR_NOK_COLOR;
-				result_resistor(status);
-				return	status;
-			}
+		status	= bands_code_deduce_no();
+		if (status) {
+			result_resistor(status);
+			return	status;
 		}
 
 		/* Measure time */
@@ -1308,8 +1304,9 @@ static	void	bands_code_deduce_1	(void)
 	(user_iface_log.len)++;
 }
 
-static	void	bands_code_deduce_no	(void)
+static	int	bands_code_deduce_no	(void)
 {
+	int	status;
 	/*
 	 * Not able to segmentate:
 	 * q = 1 2
@@ -1336,12 +1333,22 @@ static	void	bands_code_deduce_no	(void)
 		}
 	}
 
+	for (i = 0; i < 5; i++) {
+		if (code[i] == '?') {
+			status	= RESISTOR_NOK_COLOR;
+			return	status;
+		}
+	}
+
 	/* Write bands' code into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Code:		\"%s\"",
 						code);
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
+
+	status	= RESISTOR_OK;
+	return	status;
 }
 
 static	void	resistor_value		(void)
