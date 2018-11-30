@@ -331,7 +331,7 @@ static	double	coin_value		(double diameter_mm)
 	double	value;
 
 	/* Get coin value by its diameter in mm */
-	if (diameter_mm > 30.00) {
+	if (diameter_mm > 27.00) {
 		value	= -1;
 	} else if (diameter_mm > 25.00) {
 		value	= 2.00;
@@ -347,7 +347,7 @@ static	double	coin_value		(double diameter_mm)
 		value	= 0.10;
 	} else if (diameter_mm > 17.50) {
 		value	= 0.02;
-	} else if (diameter_mm > 10.00) {
+	} else if (diameter_mm > 15.00) {
 		value	= 0.01;
 	} else {
 		value	= -1;
@@ -368,7 +368,7 @@ static	void	coins_total_value	(void)
 
 	/* Write total value into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-					"Total value:	%.2lf €",
+					"Total value:	%.2lf EUR",
 					value_total);
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;

@@ -1321,7 +1321,6 @@ static	void	bands_code_deduce_no	(void)
 	 * u = 0 1 8
 	 */
 
-	/* Band 0 (hundreds) */
 	int	i;
 	for (i = 0; i < 5; i++) {
 		switch (code[i]) {
