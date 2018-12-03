@@ -31,7 +31,6 @@ all: $(ALL)
 about_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	@echo  ""
 
 
 about.s: $(ABOU_DEPS)

@@ -70,7 +70,6 @@ all: $(ALL)
 img_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	@echo  ""
 
 
 img_alx.s: $(IMGALX_DEPS)

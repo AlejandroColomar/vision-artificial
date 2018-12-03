@@ -29,20 +29,29 @@ export	USR_DIR
 #	action
 
 all:
-	$(Q)cd $(ABOUT_DIR) && $(MAKE) && cd ..
-	$(Q)cd $(CTRL_DIR) && $(MAKE) && cd ..
-	$(Q)cd $(IMG_DIR) && $(MAKE) && cd ..
-	$(Q)cd $(MENU_DIR) && $(MAKE) && cd ..
-	$(Q)cd $(PROC_DIR) && $(MAKE) && cd ..
-	$(Q)cd $(SAVE_DIR) && $(MAKE) && cd ..
-	$(Q)cd $(USR_DIR) && $(MAKE) && cd ..
-	$(Q)cd $(TMP_DIR) && $(MAKE) && cd ..
+	@echo	'	MAKE	modules: about'
+	$(Q)make -C $(ABOUT_DIR)
+	@echo	'	MAKE	modules: ctrl'
+	$(Q)make -C $(CTRL_DIR)
+	@echo	'	MAKE	modules: image'
+	$(Q)make -C $(IMG_DIR)
+	@echo	'	MAKE	modules: menu'
+	$(Q)make -C $(MENU_DIR)
+	@echo	'	MAKE	modules: proc'
+	$(Q)make -C $(PROC_DIR)
+	@echo	'	MAKE	modules: save'
+	$(Q)make -C $(SAVE_DIR)
+	@echo	'	MAKE	modules: usr'
+	$(Q)make -C $(USR_DIR)
+	@echo	'	MAKE	modules.o'
+	$(Q)make -C $(TMP_DIR)
+	@echo  ""
 
 
 clean:
+	@echo  "	RM	*.o *.s"
 	$(Q)find . -type f -name '*.o' -exec rm '{}' '+'
 	$(Q)find . -type f -name '*.s' -exec rm '{}' '+'
-	@echo  "Clean modules"
 
 ################################################################################
 ######## End of file ###########################################################

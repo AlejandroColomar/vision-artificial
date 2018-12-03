@@ -31,7 +31,6 @@ all: $(ALL)
 save_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	@echo  ""
 	
 
 save.s: $(SAVE_DEPS)

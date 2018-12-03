@@ -61,7 +61,6 @@ all: $(ALL)
 user_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	@echo  ""
 
 
 user_iface.s: $(UI_DEPS)

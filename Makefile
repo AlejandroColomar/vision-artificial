@@ -212,31 +212,37 @@ all: binary
 
 PHONY += libalx
 libalx:
-	$(Q)cd $(LIBALX_DIR) && $(MAKE) && cd ..
+	@echo	'	MAKE	libalx-base'
+	$(Q)make base	-C $(LIBALX_DIR)
+	@echo	'	MAKE	libalx-curses'
+	$(Q)make curses	-C $(LIBALX_DIR)
 
 PHONY += modules
 modules: libalx
-	$(Q)cd $(MODULES_DIR) && $(MAKE) && cd ..
+	@echo	'	MAKE	modules'
+	$(Q)make -C $(MODULES_DIR)
 
 PHONY += object
 object: modules libalx
-	$(Q)cd $(TMP_DIR) && $(MAKE) && cd ..
+	@echo	'	MAKE	objects'
+	$(Q)make -C $(TMP_DIR)
 
 PHONY += binary
 binary: object
-	$(Q)cd $(BIN_DIR) && $(MAKE) && cd ..
+	@echo	'	MAKE	binary'
+	$(Q)make -C $(BIN_DIR)
 
 PHONY += install
 install: uninstall
-	@echo  "Create $(INSTALL_BIN_DIR)/"
+	@echo  "	MKDIR -p	$(INSTALL_BIN_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_BIN_DIR)/
 	@echo "Copy $(BIN_NAME)"
 	$(Q)cp			$(BIN_DIR)/$(BIN_NAME)	$(DESTDIR)/$(INSTALL_BIN_DIR)/
 	@echo  ""
 	
-	@echo  "Create $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
+	@echo  "	MKDIR -p	$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo "Copy share/*"
+	@echo	"	CP -r		share/*"
 	$(Q)cp -r		./share/*		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
 	@echo  ""
 	
@@ -245,17 +251,21 @@ install: uninstall
 
 PHONY += uninstall
 uninstall:
+	@echo  "Clean old installations"
 	$(Q)rm -f	$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
 	$(Q)rm -f -r	$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo  "Clean old installations"
 	@echo  ""
 
 PHONY += clean
 clean:
-	$(Q)cd $(LIBALX_DIR) && $(MAKE) clean && cd ..
-	$(Q)cd $(MODULES_DIR) && $(MAKE) clean && cd ..
-	$(Q)cd $(TMP_DIR) && $(MAKE) clean && cd ..
-	$(Q)cd $(BIN_DIR) && $(MAKE) clean && cd ..
+	@echo	'	CLEAN	libalx'
+	$(Q)make clean	-C $(LIBALX_DIR)
+	@echo	'	CLEAN	modules'
+	$(Q)make clean	-C $(MODULES_DIR)
+	@echo	'	CLEAN	tmp'
+	$(Q)make clean	-C $(TMP_DIR)
+	@echo	'	CLEAN	bin'
+	$(Q)make clean	-C $(BIN_DIR)
 
 PHONY += help
 help:

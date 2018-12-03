@@ -91,7 +91,6 @@ all: $(ALL)
 proc_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	@echo  ""
 
 
 proc_label.s: $(PROC_LAB_DEPS)

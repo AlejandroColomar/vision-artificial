@@ -43,7 +43,6 @@ all: $(ALL)
 ctrl_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	@echo  ""
 
 
 start.s: $(STRT_DEPS)

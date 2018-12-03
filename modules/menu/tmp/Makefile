@@ -88,7 +88,6 @@ all: $(ALL)
 menu_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	@echo  ""
 
 
 parser.s: $(PARS_DEPS)
