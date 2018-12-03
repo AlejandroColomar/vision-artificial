@@ -234,26 +234,26 @@ binary: object
 
 PHONY += install
 install: uninstall
-	@echo  "	MKDIR -p	$(INSTALL_BIN_DIR)/"
+	@echo  "	Install:"
+	@echo  "	MKDIR	$(INSTALL_BIN_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_BIN_DIR)/
-	@echo "Copy $(BIN_NAME)"
+	@echo	"	CP	$(BIN_NAME)"
 	$(Q)cp			$(BIN_DIR)/$(BIN_NAME)	$(DESTDIR)/$(INSTALL_BIN_DIR)/
-	@echo  ""
-	
-	@echo  "	MKDIR -p	$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
+	@echo  "	MKDIR	$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo	"	CP -r		share/*"
+	@echo	"	CP -r	share/*"
 	$(Q)cp -r		./share/*		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo  ""
-	
-	@echo  "Done"
+	@echo  "	Done"
 	@echo  ""
 
 PHONY += uninstall
 uninstall:
-	@echo  "Clean old installations"
-	$(Q)rm -f	$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
-	$(Q)rm -f -r	$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	@echo  "	Clean old installations:"
+	@echo	'	RM	binary'
+	$(Q)rm -f		$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
+	@echo	'	RM	share/*'
+	$(Q)rm -f -r		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
+	@echo  "	Done"
 	@echo  ""
 
 PHONY += clean
