@@ -11,6 +11,11 @@
 
 
 /******************************************************************************
+ ******* headers **************************************************************
+ ******************************************************************************/
+
+
+/******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
 
@@ -21,10 +26,15 @@
 	enum	Proc_Mode {
 		PROC_MODE_FOO,
 
-		PROC_MODE = 0x4000,
-		PROC_MODE_LABEL,
-		PROC_MODE_COINS,
-		PROC_MODE_RESISTOR
+		PROC_MODE = 0x008000u,
+		PROC_MODE_LABEL_SERIES,
+		PROC_MODE_LABEL_CALIB,
+		PROC_MODE_OBJECTS_SERIES,
+		PROC_MODE_OBJECTS_CALIB,
+		PROC_MODE_COINS_SERIES,
+		PROC_MODE_COINS_CALIB,
+		PROC_MODE_RESISTOR_SERIES,
+		PROC_MODE_RESISTOR_CALIB
 	};
 
 	enum	Proc_DBG {

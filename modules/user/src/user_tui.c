@@ -225,8 +225,24 @@ static	int	usr_input	(void)
 			ch = wgetch(win_log);
 
 			switch (ch) {
+			case '1':
+				action	= USER_IFACE_ACT_PROC_LABEL_SERIES;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '2':
+			/* Objects */
+			ch = wgetch(win_log);
+
+			switch (ch) {
 			case '0':
-				action	= USER_IFACE_ACT_PROC_LABEL;
+				action	= USER_IFACE_ACT_PROC_OBJECTS_CALIB;
+				break;
+			case '1':
+				action	= USER_IFACE_ACT_PROC_OBJECTS_SERIES;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -234,12 +250,12 @@ static	int	usr_input	(void)
 			}
 			break;
 		case '3':
-			/* Resistor */
+			/* Coins */
 			ch = wgetch(win_log);
 
 			switch (ch) {
-			case '0':
-				action	= USER_IFACE_ACT_PROC_COINS;
+			case '1':
+				action	= USER_IFACE_ACT_PROC_COINS_SERIES;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -251,8 +267,8 @@ static	int	usr_input	(void)
 			ch = wgetch(win_log);
 
 			switch (ch) {
-			case '0':
-				action	= USER_IFACE_ACT_PROC_RESISTOR;
+			case '1':
+				action	= USER_IFACE_ACT_PROC_RESISTOR_SERIES;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -539,6 +555,22 @@ static	int	usr_input	(void)
 			}
 			break;
 		case '3':
+			/* img_calib3d */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '0':
+				action	= USER_IFACE_ACT_CALIBRATE;
+				break;
+			case '1':
+				action	= USER_IFACE_ACT_UNDISTORT;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '4':
 			/* img_zbar */
 			ch = wgetch(win_log);
 
@@ -551,7 +583,7 @@ static	int	usr_input	(void)
 				break;
 			}
 			break;
-		case '4':
+		case '5':
 			/* img_ocr */
 			ch = wgetch(win_log);
 
@@ -655,9 +687,9 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, "Functions:");
 	mvwprintw(win_help, r++, c, " - Local maxima:	%s",		"f00");
 	mvwprintw(win_help, r++, c, " - Horizontal lines:	%s",	"f010");
-	mvwprintw(win_help, r++, c, " - Vertical lines:		%s",	"f011");
+	mvwprintw(win_help, r++, c, " - Vertical lines:	%s",		"f011");
 	mvwprintw(win_help, r++, c, " - Horizontal mean:	%s",	"f020");
-	mvwprintw(win_help, r++, c, " - Vertical mean:		%s",	"f021");
+	mvwprintw(win_help, r++, c, " - Vertical mean:	%s",		"f021");
 	mvwprintw(win_help, r++, c, " - Horizontal median:	%s",	"f022");
 	mvwprintw(win_help, r++, c, " - Vertical median:	%s",	"f023");
 	mvwprintw(win_help, r++, c, " - Pixel value:		%s",	"f1000");
@@ -689,12 +721,16 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Min. area rectangle:	%s",	"f1144");
 	mvwprintw(win_help, r++, c, " - Hough circles:	%s",		"f1150");
 	mvwprintw(win_help, r++, c, " - Align 2ref (ORB):	%s",	"f20");
-	mvwprintw(win_help, r++, c, " - Scan codes (ZBAR):	%s",	"f30");
-	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f40");
+	mvwprintw(win_help, r++, c, " - Calibrate (Calib3d):	%s",	"f30");
+	mvwprintw(win_help, r++, c, " - Undistort (Calib3d):	%s",	"f31");
+	mvwprintw(win_help, r++, c, " - Scan codes (ZBAR):	%s",	"f40");
+	mvwprintw(win_help, r++, c, " - Scan text (OCR):	%s",	"f50");
 	mvwprintw(win_help, r++, c, "Exercises:");
-	mvwprintw(win_help, r++, c, " - Label:		%s",		"e10");
-	mvwprintw(win_help, r++, c, " - Coins:		%s",		"e30");
-	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e40");
+	mvwprintw(win_help, r++, c, " - Label:		%s",		"e11");
+	mvwprintw(win_help, r++, c, " - Objects (calib):	%s",	"e20");
+	mvwprintw(win_help, r++, c, " - Objects:		%s",	"e21");
+	mvwprintw(win_help, r++, c, " - Coins:		%s",		"e31");
+	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e41");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:		%s",	"u1");
 	mvwprintw(win_help, r++, c, "Quit:			%c",	'q');

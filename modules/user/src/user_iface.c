@@ -108,14 +108,7 @@ void	user_iface		(void)
 		}
 
 		/* Do action */
-		switch (user_action & 0xF000) {
-		case USER_IFACE_ACT_PROC:
-			proc_iface_single(user_action);
-			break;
-		default:
-			user_iface_act(user_action);
-			break;
-		}
+		user_iface_act(user_action);
 	} while (user_action != USER_IFACE_ACT_QUIT);
 }
 
@@ -206,6 +199,10 @@ void	user_iface_act		(int action)
 			/* do nothing */
 			break;
 		}
+
+	} else if (action & USER_IFACE_ACT_PROC) {
+		proc_iface_single(action);
+
 	} else {
 		img_iface_act_nodata(action);
 	}

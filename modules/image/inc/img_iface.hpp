@@ -13,6 +13,10 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
+/* Standard C++ --------------------------------------------------------------*/
+		/* class std::vector */
+	#include <vector>
+
 /* Packages ------------------------------------------------------------------*/
 		/* opencv */
 	#include <opencv2/opencv.hpp>
@@ -35,9 +39,9 @@
  ******* enums ****************************************************************
  ******************************************************************************/
 	enum	Img_Iface_Action {
-		IMG_IFACE_ACT_FOO = 0,
+		IMG_IFACE_ACT_FOO = 0x000000u,
 
-		IMG_IFACE_ACT_ALX = 0x0010,
+		IMG_IFACE_ACT_ALX = 0x000010u,
 		IMG_IFACE_ACT_LOCAL_MAX,
 		IMG_IFACE_ACT_LINES_HORIZONTAL,
 		IMG_IFACE_ACT_LINES_VERTICAL,
@@ -46,7 +50,7 @@
 		IMG_IFACE_ACT_MEDIAN_HORIZONTAL,
 		IMG_IFACE_ACT_MEDIAN_VERTICAL,
 
-		IMG_IFACE_ACT_CV = 0x0100,
+		IMG_IFACE_ACT_CV = 0x000100u,
 		IMG_IFACE_ACT_PIXEL_VALUE,
 		IMG_IFACE_ACT_SET_ROI,
 		IMG_IFACE_ACT_SET_ROI_2RECT,
@@ -76,23 +80,27 @@
 		IMG_IFACE_ACT_MIN_AREA_RECT,
 		IMG_IFACE_ACT_HOUGH_CIRCLES,
 
-		IMG_IFACE_ACT_ZB = 0x0200,
-		IMG_IFACE_ACT_DECODE,
-
-		IMG_IFACE_ACT_OCR = 0x0400,
-		IMG_IFACE_ACT_READ,
-
-		IMG_IFACE_ACT_ORB = 0x0800,
+		IMG_IFACE_ACT_ORB = 0x000200u,
 		IMG_IFACE_ACT_ALIGN,
 
-		IMG_IFACE_ACT_IMGI = 0x1000,
+		IMG_IFACE_ACT_CALIB3D = 0x000400u,
+		IMG_IFACE_ACT_CALIBRATE,
+		IMG_IFACE_ACT_UNDISTORT,
+
+		IMG_IFACE_ACT_ZB = 0x000800u,
+		IMG_IFACE_ACT_DECODE,
+
+		IMG_IFACE_ACT_OCR = 0x001000u,
+		IMG_IFACE_ACT_READ,
+
+		IMG_IFACE_ACT_IMGI = 0x002000u,
 		IMG_IFACE_ACT_APPLY,
 		IMG_IFACE_ACT_DISCARD,
 		IMG_IFACE_ACT_SAVE_MEM,
 		IMG_IFACE_ACT_LOAD_MEM,
 		IMG_IFACE_ACT_SAVE_REF,
 
-		IMG_IFACE_ACT_SAVE = 0x2000,
+		IMG_IFACE_ACT_SAVE = 0x004000u,
 		IMG_IFACE_ACT_SAVE_FILE,
 		IMG_IFACE_ACT_SAVE_UPDT
 	};
@@ -194,35 +202,48 @@
 	};
 
 	struct	Img_Iface_Data_Contours {
-		std::vector <std::vector <class cv::Point_ <int>>>	*contours;
-		class cv::Mat						*hierarchy;
+		class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
+		class cv::Mat					*hierarchy;
 	};
 
 	struct	Img_Iface_Data_Contours_Size {
-		std::vector <std::vector <class cv::Point_ <int>>>	*contours;
-		double							*area;
-		double							*perimeter;
+		class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
+		double						*area;
+		double						*perimeter;
 	};
 
 	struct	Img_Iface_Data_Bounding_Rect {
-		std::vector <class cv::Point_ <int>>	*contour;
-		class cv::Rect_ <int>			*rect;
-		bool					show;
+		class std::vector <class cv::Point_ <int>>	*contour;
+		class cv::Rect_ <int>				*rect;
+		bool						show;
 	};
 
 	struct	Img_Iface_Data_MinARect {
-		std::vector <class cv::Point_ <int>>	*contour;
-		class cv::RotatedRect			*rect;
-		bool					show;
+		class std::vector <class cv::Point_ <int>>	*contour;
+		class cv::RotatedRect				*rect;
+		bool						show;
 	};
 
 	struct	Img_Iface_Data_Hough_Circles {
-		std::vector <class cv::Vec <float, 3>>	*circles;
-		double					dist_min;
-		double					param_1;
-		double					param_2;
-		int					radius_min;
-		int					radius_max;
+		class std::vector <class cv::Vec <float, 3>>	*circles;
+		double						dist_min;
+		double						param_1;
+		double						param_2;
+		int						radius_min;
+		int						radius_max;
+	};
+
+/* img_calib3d ---------------------------------------------------------------*/
+	struct	Img_Iface_Data_Calibrate {
+		class cv::Mat				*intrinsic_mat;
+		class cv::Mat				*dist_coefs;
+		class std::vector <class cv::Mat>	*rvecs;
+		class std::vector <class cv::Mat>	*tvecs;
+	};
+
+	struct	Img_Iface_Data_Undistort {
+		class cv::Mat				*intrinsic_mat;
+		class cv::Mat				*dist_coefs;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/

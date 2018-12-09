@@ -7,7 +7,7 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C++ --------------------------------------------------------------*/
-		/* std::vector */
+		/* class std::vector */
 	#include <vector>
 
 /* Standard C ----------------------------------------------------------------*/
@@ -33,12 +33,14 @@
 	#include "img_alx.hpp"
 		/* img_cv_act() */
 	#include "img_cv.hpp"
+		/* img_orb_act() */
+	#include "img_orb.hpp"
+		/* img_calib3d_act() */
+	#include "img_calib3d.hpp"
 		/* img_zb_act() */
 	#include "img_zbar.hpp"
-		/* OCR */
+		/* img_ocr_act() */
 	#include "img_ocr.hpp"
-		/* ORB */
-	#include "img_orb.hpp"
 
 	#include "img_iface.hpp"
 
@@ -70,13 +72,17 @@ static	class cv::Mat					histogram_c1;
 static	class cv::Mat					histogram_c2;
 static	class cv::Mat					hist_img_c1;
 static	class cv::Mat					hist_img_c3;
-static	std::vector <std::vector <cv::Point_ <int>>>	contours;
+static	class std::vector <class std::vector <cv::Point_ <int>>>	contours;
 static	double						area [CONTOURS_MAX];
 static	double						perimeter [CONTOURS_MAX];
 static	class cv::Mat					hierarchy;
 static	class cv::Rect_ <int>				rectangle;
 static	class cv::RotatedRect				rectangle_rot;
-static	std::vector <class cv::Vec <float, 3>>		circles;
+static	class std::vector <class cv::Vec <float, 3>>	circles;
+static	class cv::Mat					intrinsic_mat;
+static	class cv::Mat					dist_coefs;
+static	class std::vector <class cv::Mat>		rvecs;
+static	class std::vector <class cv::Mat>		tvecs;
 
 
 /******************************************************************************
@@ -132,12 +138,17 @@ static	void	img_iface_min_area_rect		(void *data);
 			/* Feature detection */
 static	void	img_iface_hough_circles		(void *data);
 
+	/* img_orb */
+static	void	img_iface_align			(void);
+	/* img_calib3d */
+static	void	img_iface_calibrate		(void *data);
+static	void	img_iface_undistort		(void *data);
+
 	/* img_zbar */
 static	void	img_iface_decode		(void *data);
 	/* img_ocr */
 static	void	img_iface_read			(void *data);
-	/* img_orb */
-static	void	img_iface_align			(void);
+
 	/* img_iface */
 static	void	img_iface_apply			(void);
 static	void	img_iface_discard		(void);
@@ -346,6 +357,14 @@ void	img_iface_act		(int action, void *data)
 	/* img_orb */
 	case IMG_IFACE_ACT_ALIGN:
 		img_iface_align();
+		break;
+
+	/* img_calib3d */
+	case IMG_IFACE_ACT_CALIBRATE:
+		img_iface_calibrate(data);
+		break;
+	case IMG_IFACE_ACT_UNDISTORT:
+		img_iface_undistort(data);
 		break;
 
 	/* img_zbar */
@@ -1507,6 +1526,86 @@ static	void	img_iface_hough_circles		(void *data)
 	(user_iface_log.len)++;
 }
 
+/* img_orb -------------------------------------------------------------------*/
+static	void	img_iface_align			(void)
+{
+	/* Must have defined a reference */
+	if (image_ref.empty()) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Reference is NULL");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Align to reference");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Align to reference image_ref */
+	img_orb_act(&image_ref, &image_copy_tmp, IMG_ORB_ACT_ALIGN);
+}
+
+/* img_calib3d ---------------------------------------------------------------*/
+static	void	img_iface_calibrate		(void *data)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Data */
+	struct Img_Iface_Data_Calibrate	data_tmp;
+	if (!data) {
+		data_tmp.intrinsic_mat	= &intrinsic_mat;
+		data_tmp.dist_coefs	= &dist_coefs;
+		data_tmp.rvecs		= &rvecs;
+		data_tmp.tvecs		= &tvecs;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Calibrate");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Contours */
+	img_calib3d_act(&image_copy_tmp, IMG_CALIB3D_ACT_CALIBRATE, data);
+}
+
+static	void	img_iface_undistort		(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Undistort	data_tmp;
+	if (!data) {
+		data_tmp.intrinsic_mat	= &intrinsic_mat;
+		data_tmp.dist_coefs	= &dist_coefs;
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Undistort");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Contours */
+	img_calib3d_act(&image_copy_tmp, IMG_CALIB3D_ACT_UNDISTORT, data);
+}
+
 /* img_zbar ------------------------------------------------------------------*/
 static	void	img_iface_decode		(void *data)
 {
@@ -1623,30 +1722,6 @@ static	void	img_iface_read			(void *data)
 		user_iface_log.lvl[user_iface_log.len]	= 2;
 		(user_iface_log.len)++;
 	}
-}
-
-/* img_orb -------------------------------------------------------------------*/
-static	void	img_iface_align			(void)
-{
-	/* Must have defined a reference */
-	if (image_ref.empty()) {
-		/* Write into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-							"! Reference is NULL");
-		user_iface_log.lvl[user_iface_log.len]	= 1;
-		(user_iface_log.len)++;
-
-		return;
-	}
-
-	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Align to reference");
-	user_iface_log.lvl[user_iface_log.len]	= 1;
-	(user_iface_log.len)++;
-
-	/* Align to reference image_ref */
-	img_orb_act(&image_ref, &image_copy_tmp, IMG_ORB_ACT_ALIGN);
 }
 
 /* img_iface -----------------------------------------------------------------*/

@@ -21,9 +21,9 @@
  ******* enums ****************************************************************
  ******************************************************************************/
 	enum	Img_Cv_Action {
-		IMG_CV_ACT_FOO = 0,
+		IMG_CV_ACT_FOO = 0x000000u,
 
-		IMG_CV_ACT_CV = 0x0100,
+		IMG_CV_ACT_CV = 0x000100u,
 		IMG_CV_ACT_PIXEL_VALUE,
 		IMG_CV_ACT_SET_ROI,
 		IMG_CV_ACT_AND_2REF,

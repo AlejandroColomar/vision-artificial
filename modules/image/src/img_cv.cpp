@@ -7,7 +7,7 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C++ --------------------------------------------------------------*/
-		/* std::vector */
+		/* class std::vector */
 	#include <vector>
 
 /* Standard C ----------------------------------------------------------------*/
@@ -583,7 +583,7 @@ static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)
 	data_cast	= (struct Img_Iface_Data_Contours *)data;
 
 	/* Contours */
-	std::vector <std::vector <class cv::Point_ <int>>>	*contours;
+	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
 	contours	= data_cast->contours;
 	class cv::Mat						*hierarchy;
 	hierarchy	= data_cast->hierarchy;
@@ -607,7 +607,7 @@ static	void	img_cv_contours_size	(void *data)
 	data_cast	= (struct Img_Iface_Data_Contours_Size *)data;
 
 	/* Contours */
-	std::vector <std::vector <class cv::Point_ <int>>>	*contours;
+	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
 	contours	= data_cast->contours;
 
 	/* Get area and perimeter */
@@ -627,7 +627,7 @@ static	void	img_cv_bounding_rect	(class cv::Mat  *imgptr, void *data)
 	data_cast	= (struct Img_Iface_Data_Bounding_Rect *)data;
 
 	/* Contours */
-	std::vector <class cv::Point_ <int>>	*contour;
+	class std::vector <class cv::Point_ <int>>	*contour;
 	contour	= data_cast->contour;
 	/* Rotated rectangle */
 	class cv::Rect_ <int>			*rect;
@@ -672,7 +672,7 @@ static	void	img_cv_fit_ellipse	(class cv::Mat  *imgptr, void *data)
 	data_cast	= (struct Img_Iface_Data_MinARect *)data;
 
 	/* Contours */
-	std::vector <class cv::Point_ <int>>	*contour;
+	class std::vector <class cv::Point_ <int>>	*contour;
 	contour	= data_cast->contour;
 	/* Rotated rectangle */
 	class cv::RotatedRect			*rect;
@@ -710,7 +710,7 @@ static	void	img_cv_min_area_rect	(class cv::Mat  *imgptr, void *data)
 	data_cast	= (struct Img_Iface_Data_MinARect *)data;
 
 	/* Contours */
-	std::vector <class cv::Point_ <int>>	*contour;
+	class std::vector <class cv::Point_ <int>>	*contour;
 	contour	= data_cast->contour;
 	/* Rotated rectangle */
 	class cv::RotatedRect			*rect;
@@ -749,7 +749,7 @@ static	void	img_cv_hough_circles	(class cv::Mat  *imgptr, void *data)
 	data_cast	= (struct Img_Iface_Data_Hough_Circles *)data;
 
 	/* Contours */
-	std::vector <class cv::Vec <float, 3>>	*circles;
+	class std::vector <class cv::Vec <float, 3>>	*circles;
 	circles		= data_cast->circles;
 	/* Parameters */
 	double					dist_min;

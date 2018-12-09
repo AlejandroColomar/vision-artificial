@@ -9,6 +9,7 @@
 /* Standard C ----------------------------------------------------------------*/
 		/* errno */
 	#include <errno.h>
+	#include <stdbool.h>
 		/* snprintf() & fflush() */
 	#include <stdio.h>
 		/* clock_t & clock() & CLOCKS_PER_SEC */
@@ -28,6 +29,7 @@
 
 /* Module --------------------------------------------------------------------*/
 	#include "proc_label.h"
+	#include "proc_objects.h"
 	#include "proc_coins.h"
 	#include "proc_resistor.h"
 	#include "proc_common.h"
@@ -67,13 +69,19 @@ int	proc_iface_single	(int action)
 
 	/* Process */
 	switch (action) {
-	case PROC_MODE_LABEL:
+	case PROC_MODE_LABEL_SERIES:
 		error	= proc_label();
 		break;
-	case PROC_MODE_COINS:
+	case PROC_MODE_OBJECTS_CALIB:
+		error	= proc_objects_calibrate();
+		break;
+	case PROC_MODE_OBJECTS_SERIES:
+		error	= proc_objects();
+		break;
+	case PROC_MODE_COINS_SERIES:
 		error	= proc_coins();
 		break;
-	case PROC_MODE_RESISTOR:
+	case PROC_MODE_RESISTOR_SERIES:
 		error	= proc_resistor();
 		break;
 	default:
@@ -105,35 +113,50 @@ void	proc_iface_series	(void)
 	char	file_name [FILENAME_MAX];
 	bool	proc_error;
 	char	save_error_as [FILENAME_MAX];
+	bool	wh;
+		/* if i starts being 0, the camera needs calibration */
+	int	i;
 
 	switch (proc_mode) {
-	case PROC_MODE_LABEL:
+	case PROC_MODE_LABEL_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", labels_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", labels_fail_path);
 		snprintf(file_basename, 80, "b");
 		num_len	= 4;
 		snprintf(file_ext, 80, ".BMP");
+		i	= 1;
 		break;
-	case PROC_MODE_COINS:
+	case PROC_MODE_OBJECTS_SERIES:
+		snprintf(proc_path, FILENAME_MAX, "%s", objects_path);
+		snprintf(proc_fail_path, FILENAME_MAX, "%s", objects_fail_path);
+		snprintf(file_basename, 80, "o");
+		num_len	= 4;
+		snprintf(file_ext, 80, ".jpeg");
+		i	= 0;
+		proc_mode++;
+		break;
+	case PROC_MODE_COINS_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", coins_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", coins_fail_path);
 		snprintf(file_basename, 80, "c");
 		num_len	= 4;
 		snprintf(file_ext, 80, ".png");
+		i	= 1;
 		break;
-	case PROC_MODE_RESISTOR:
+	case PROC_MODE_RESISTOR_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", resistors_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", resistors_fail_path);
 		snprintf(file_basename, 80, "r");
 		num_len	= 4;
 		snprintf(file_ext, 80, ".png");
+		i	= 1;
 		break;
+	default:
+		return;
 	}
 
-	bool	wh;
-	int	i;
 	wh	= true;
-	for (i = 0; wh; i++) {
+	for (; wh; i++) {
 		snprintf(file_name, FILENAME_MAX, "%s%04i%s",
 						file_basename, i, file_ext);
 
@@ -173,6 +196,10 @@ void	proc_iface_series	(void)
 			} else {
 				printf("errno:%i\n", errno);
 			}
+		}
+
+		if (!i) {
+			proc_mode--;
 		}
 	}
 }

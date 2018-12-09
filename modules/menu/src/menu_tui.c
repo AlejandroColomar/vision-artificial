@@ -223,12 +223,13 @@ static	void	menu_tui_series	(void)
 	h	= 23;
 	w	= 80;
 	int	N;
-	N	= 4;
-	struct Alx_Menu	mnu[4]	= {
+	N	= 5;
+	struct Alx_Menu	mnu[5]	= {
 		{6, 4, "[0]	Back"},
 		{2, 4, "[1]	Label"},
-		{3, 4, "[-]	-"},
-		{4, 4, "[2]	Resistor"}
+		{3, 4, "[2]	Objects"},
+		{4, 4, "[3]	Coins"},
+		{5, 4, "[4]	Resistor"}
 	};
 
 	/* Menu loop */
@@ -238,13 +239,16 @@ static	void	menu_tui_series	(void)
 	/* Selection */
 	switch (sw) {
 	case 1:
-		proc_mode	= PROC_MODE_LABEL;
+		proc_mode	= PROC_MODE_LABEL_SERIES;
 		break;
 	case 2:
-		proc_mode	= PROC_MODE_FOO;
+		proc_mode	= PROC_MODE_OBJECTS_SERIES;
 		break;
 	case 3:
-		proc_mode	= PROC_MODE_RESISTOR;
+		proc_mode	= PROC_MODE_COINS_SERIES;
+		break;
+	case 4:
+		proc_mode	= PROC_MODE_RESISTOR_SERIES;
 		break;
 	}
 

@@ -7,7 +7,7 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C++ --------------------------------------------------------------*/
-		/* std::vector */
+		/* class std::vector */
 	#include <vector>
 
 /* Standard C ----------------------------------------------------------------*/
@@ -58,8 +58,8 @@ static	void	img_orb_align	(class cv::Mat  *img_0,
 				class cv::Mat  *img_1)
 {
 	/* Variables to store keypoints & descriptors */
-	std::vector <class cv::KeyPoint>	keypoints_0;
-	std::vector <class cv::KeyPoint>	keypoints_1;
+	class std::vector <class cv::KeyPoint>	keypoints_0;
+	class std::vector <class cv::KeyPoint>	keypoints_1;
 	class cv::Mat				descriptors_0;
 	class cv::Mat				descriptors_1;
 
@@ -79,7 +79,7 @@ static	void	img_orb_align	(class cv::Mat  *img_0,
 
 
 	/* Match structures */
-	std::vector <struct cv::DMatch>		matches;
+	class std::vector <struct cv::DMatch>	matches;
 	cv::Ptr <class cv::DescriptorMatcher>	matcher;
 	matcher	= cv::DescriptorMatcher::create("BruteForce-Hamming");
 	matcher->match(descriptors_1, descriptors_0, matches, cv::Mat());
@@ -99,8 +99,8 @@ static	void	img_orb_align	(class cv::Mat  *img_0,
 	cv::imwrite("matches.jpg", img_matches);
 
 	/* Extract location of good matches */
-	std::vector <class cv::Point_ <float>>	points_0;
-	std::vector <class cv::Point_ <float>>	points_1;
+	class std::vector <class cv::Point_ <float>>	points_0;
+	class std::vector <class cv::Point_ <float>>	points_1;
 	int	i;
 	for (i = 0; i < (int)matches.size(); i++) {
 		points_1.push_back(keypoints_1[matches[i].queryIdx].pt);

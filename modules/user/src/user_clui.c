@@ -142,9 +142,24 @@ static	int	usr_input	(void)
 		/* Exercises from class */
 		switch (ch[1]) {
 		case '1':
+			/* Label */
+			switch (ch[2]) {
+			case '1':
+				action	= USER_IFACE_ACT_PROC_LABEL_SERIES;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '2':
+			/* Objects */
 			switch (ch[2]) {
 			case '0':
-				action	= USER_IFACE_ACT_PROC_LABEL;
+				action	= USER_IFACE_ACT_PROC_OBJECTS_CALIB;
+				break;
+			case '1':
+				action	= USER_IFACE_ACT_PROC_OBJECTS_SERIES;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -152,9 +167,10 @@ static	int	usr_input	(void)
 			}
 			break;
 		case '3':
+			/* Coins */
 			switch (ch[2]) {
-			case '0':
-				action	= USER_IFACE_ACT_PROC_COINS;
+			case '1':
+				action	= USER_IFACE_ACT_PROC_COINS_SERIES;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -162,9 +178,10 @@ static	int	usr_input	(void)
 			}
 			break;
 		case '4':
+			/* Resistor */
 			switch (ch[2]) {
-			case '0':
-				action	= USER_IFACE_ACT_PROC_RESISTOR;
+			case '1':
+				action	= USER_IFACE_ACT_PROC_RESISTOR_SERIES;
 				break;
 			default:
 				action	= USER_IFACE_ACT_FOO;
@@ -417,6 +434,20 @@ static	int	usr_input	(void)
 			}
 			break;
 		case '3':
+			/* img_calib3d */
+			switch (ch[2]) {
+			case '0':
+				action	= USER_IFACE_ACT_CALIBRATE;
+				break;
+			case '1':
+				action	= USER_IFACE_ACT_UNDISTORT;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
+		case '4':
 			/* img_zbar */
 			switch (ch[2]) {
 			case '0':
@@ -427,7 +458,7 @@ static	int	usr_input	(void)
 				break;
 			}
 			break;
-		case '4':
+		case '5':
 			/* img_ocr */
 			switch (ch[2]) {
 			case '0':
@@ -546,12 +577,16 @@ static	void	show_help	(void)
 	printf(" - Min. area rectangle:	%s\n",	"f1144");
 	printf(" - Hough circles:	%s\n",	"f1150");
 	printf(" - Align 2ref (ORB):	%s\n",	"f20");
-	printf(" - Scan codes (ZBAR):	%s\n",	"f30");
-	printf(" - Scan text (OCR):	%s\n",	"f40");
+	printf(" - Calibrate (Calib3d):	%s\n",	"f30");
+	printf(" - Undistort (Calib3d):	%s\n",	"f31");
+	printf(" - Scan codes (ZBAR):	%s\n",	"f40");
+	printf(" - Scan text (OCR):	%s\n",	"f50");
 	printf("Exercises:\n");
-	printf(" - Label:		%s\n",	"e10");
-	printf(" - Coins:		%s\n",	"e30");
-	printf(" - Resistor:		%s\n",	"e40");
+	printf(" - Label:		%s\n",	"e11");
+	printf(" - Objects (calib):	%s\n",	"e20");
+	printf(" - Objects:		%s\n",	"e21");
+	printf(" - Coins:		%s\n",	"e31");
+	printf(" - Resistor:		%s\n",	"e41");
 	printf("Other:\n");
 	printf(" - Show OCR text:	%s\n",	"u1");
 	printf("Quit:		%c\n",	'q');

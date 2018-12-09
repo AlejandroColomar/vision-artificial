@@ -29,19 +29,19 @@ export	USR_DIR
 #	action
 
 all:
-	@echo	'	MAKE	modules: about'
+	@echo	'	MAKE	modules:	about'
 	$(Q)make -C $(ABOUT_DIR)
-	@echo	'	MAKE	modules: ctrl'
+	@echo	'	MAKE	modules:	ctrl'
 	$(Q)make -C $(CTRL_DIR)
-	@echo	'	MAKE	modules: image'
+	@echo	'	MAKE	modules:	image'
 	$(Q)make -C $(IMG_DIR)
-	@echo	'	MAKE	modules: menu'
+	@echo	'	MAKE	modules:	menu'
 	$(Q)make -C $(MENU_DIR)
-	@echo	'	MAKE	modules: proc'
+	@echo	'	MAKE	modules:	proc'
 	$(Q)make -C $(PROC_DIR)
-	@echo	'	MAKE	modules: save'
+	@echo	'	MAKE	modules:	save'
 	$(Q)make -C $(SAVE_DIR)
-	@echo	'	MAKE	modules: usr'
+	@echo	'	MAKE	modules:	usr'
 	$(Q)make -C $(USR_DIR)
 	@echo	'	MAKE	modules.o'
 	$(Q)make -C $(TMP_DIR)

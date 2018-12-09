@@ -15,8 +15,9 @@ SRC_DIR		= $(PROC_DIR)/src/
 
 # dependencies
 
-_ALL	= proc_label.o proc_coins.o proc_resistor.o proc_common.o proc_iface.o
-ALL	= $(_ALL) proc_mod.o
+_ALL			= proc_label.o proc_objects.o proc_coins.o \
+			proc_resistor.o proc_common.o proc_iface.o
+ALL			= $(_ALL) proc_mod.o
 
 PROC_LAB_INC_IMG	= img_iface.hpp
 PROC_LAB_INC_USR	= user_iface.hpp
@@ -28,6 +29,20 @@ PROC_LAB_DEPS		= $(SRC_DIR)/proc_label.cpp \
 PROC_LAB_INC_DIRS	= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
 				-I $(USR_INC_DIR)
+
+PROC_OBJS_INC_LIBALX	= alx_math.hpp
+PROC_OBJS_INC_IMG	= img_iface.hpp
+PROC_OBJS_INC_USR	= user_iface.hpp
+PROC_OBJS_INC		= proc_objects.hpp	proc_common.hpp
+PROC_OBJS_DEPS		= $(SRC_DIR)/proc_objects.cpp \
+				$(patsubst %,$(INC_DIR)/%,$(PROC_OBJS_INC)) \
+				$(patsubst %,$(IMG_INC_DIR)/%,$(PROC_OBJS_INC_IMG)) \
+				$(patsubst %,$(USR_INC_DIR)/%,$(PROC_OBJS_INC_USR)) \
+				$(patsubst %,$(LIBALX_INC_DIR)/%,$(PROC_OBJS_INC_LIBALX))
+PROC_OBJS_INC_DIRS	= -I $(INC_DIR) \
+				-I $(IMG_INC_DIR) \
+				-I $(USR_INC_DIR) \
+				-I $(LIBALX_INC_DIR)
 
 PROC_COIN_INC_LIBALX	= alx_math.hpp
 PROC_COIN_INC_IMG	= img_iface.hpp
@@ -97,6 +112,13 @@ proc_label.s: $(PROC_LAB_DEPS)
 	$(Q)$(CXX) $(CXXFLAGS) $(PROC_LAB_INC_DIRS) -S $< -o $@
 	@echo  "	CXX	$@"
 proc_label.o: proc_label.s $(PROC_LAB_DEPS)
+	$(Q)$(AS) $< -o $@
+	@echo  "	AS	$@"
+
+proc_objects.s: $(PROC_OBJS_DEPS)
+	$(Q)$(CXX) $(CXXFLAGS) $(PROC_OBJS_INC_DIRS) -S $< -o $@
+	@echo  "	CXX	$@"
+proc_objects.o: proc_objects.s $(PROC_OBJS_DEPS)
 	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
 

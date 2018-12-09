@@ -21,9 +21,9 @@
  ******* enums ****************************************************************
  ******************************************************************************/
 	enum	Img_Alx_Action {
-		IMG_ALX_ACT_FOO = 0,
+		IMG_ALX_ACT_FOO = 0x000000u,
 
-		IMG_ALX_ACT_ALX = 0x0010,
+		IMG_ALX_ACT_ALX = 0x000010u,
 		IMG_ALX_ACT_LOCAL_MAX,
 		IMG_ALX_ACT_LINES_HORIZONTAL,
 		IMG_ALX_ACT_LINES_VERTICAL,
