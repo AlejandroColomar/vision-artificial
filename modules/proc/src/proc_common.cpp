@@ -88,6 +88,13 @@ void	proc_local_max		(void)
 	proc_show_img();
 }
 
+void	proc_skeleton		(void)
+{
+	img_iface_act(IMG_IFACE_ACT_SKELETON, NULL);
+
+	proc_show_img();
+}
+
 void	proc_lines_vertical	(void)
 {
 	img_iface_act(IMG_IFACE_ACT_LINES_VERTICAL, NULL);

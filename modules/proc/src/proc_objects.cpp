@@ -46,6 +46,9 @@ struct	Objects_Properties {
 	double	x_mm;
 	double	y_mm;
 
+	/* Calibration */
+	int8_t	value;
+
 	/* Angle */
 	double	angle;
 
@@ -59,7 +62,10 @@ struct	Objects_Properties {
 
 	/* type */
 	double	ratio_p2_a;
-	int8_t	value;
+	double	area_rect;
+	double	ratio_a_arect;
+	double	perimeter_rect;
+	double	ratio_p_prect;
 
 	/* diammeter */
 	uint8_t	diameter_pix;
@@ -114,7 +120,7 @@ int	proc_objects_calibrate		(void)
 		pattern_segmentate();
 
 		/* Measure time */
-		clock_stop("Segmentate coins");
+		clock_stop("Segmentate pattern squares");
 	}
 	/* Find coins positions */
 	{
@@ -257,14 +263,14 @@ static	void	pattern_segmentate	(void)
 	proc_distance_transform();
 	proc_local_max();
 	proc_dilate(6);
-	proc_save_mem(1);
+	proc_save_mem(3);
 }
 
 static	void	pattern_len_pix		(void)
 {
 	int	i;
 
-	proc_load_mem(1);
+	proc_load_mem(3);
 
 	/* Get pattern square side lenght in pixels */
 	for (i = 0; i < objects_n; i++) {
@@ -302,16 +308,30 @@ static	void	objects_segmentate	(void)
 
 	proc_cvt_color(cv::COLOR_BGR2GRAY);
 	proc_threshold(cv::THRESH_BINARY_INV, IMG_IFACE_THR_OTSU);
-	proc_distance_transform();
-	proc_threshold(cv::THRESH_BINARY, 20);
+	proc_dilate_erode(3);
+	proc_erode_dilate(3);
 	proc_save_mem(1);
+
+	proc_distance_transform();
+	proc_threshold(cv::THRESH_BINARY_INV, 30);
+	proc_distance_transform();
+	proc_skeleton();
+	proc_threshold(cv::THRESH_BINARY_INV, 10);
+	proc_save_ref();
+	proc_save_mem(2);
+
+	proc_load_mem(1);
+	proc_and_2ref();
+	proc_distance_transform();
+	proc_threshold(cv::THRESH_BINARY, 5);
+	proc_save_mem(3);
 }
 
 static	int	objects_contours	(void)
 {
 	int	status;
 
-	proc_load_mem(1);
+	proc_load_mem(3);
 
 	proc_contours(&contours, &hierarchy);
 	objects_n	= contours.size();
@@ -336,12 +356,6 @@ static	void	objects_position_pix	(void)
 
 		objects[i].x_pix	= rectangle[i].center.x;
 		objects[i].y_pix	= rectangle[i].center.y;
-
-		if (rectangle[i].size.width > rectangle[i].size.height) {
-			objects[i].angle	= rectangle[i].angle;
-		} else {
-			objects[i].angle	= rectangle[i].angle + 90.0;
-		}
 	}
 }
 
@@ -359,6 +373,24 @@ static	void	objects_size_pix	(void)
 		objects[i].perimeter_pix	= perimeter[i];
 
 		objects[i].ratio_p2_a	= pow(perimeter[i], 2) / area[i];
+
+
+		if (rectangle[i].size.width > rectangle[i].size.height) {
+			objects[i].angle	= rectangle[i].angle;
+		} else {
+			objects[i].angle	= rectangle[i].angle + 90.0;
+
+		}
+		objects[i].area_rect		= rectangle[i].size.width *
+						rectangle[i].size.height;
+		objects[i].perimeter_rect	= 2.0 *
+						(rectangle[i].size.width +
+						rectangle[i].size.height);
+
+		objects[i].ratio_p_prect	= objects[i].perimeter_pix /
+						objects[i].perimeter_rect;
+		objects[i].ratio_a_arect	= objects[i].area_pix2 /
+						objects[i].area_rect;
 	}
 }
 
@@ -392,47 +424,63 @@ static	void	objects_log	(void)
 
 	/* Get coins diameters in mm */
 	for (i = 0; i < objects_n; i++) {
-		/* Write diameters into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+		if (objects[i].area_mm2 > 100) {
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 					"Object[%i]:",
 					i);
-		user_iface_log.lvl[user_iface_log.len]	= 0;
-		(user_iface_log.len)++;
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
 
-		/* Write diameters into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 					"	pos:	(%.1lf, %.1lf) mm",
 					objects[i].x_mm, objects[i].y_mm);
-		user_iface_log.lvl[user_iface_log.len]	= 0;
-		(user_iface_log.len)++;
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
 
-		/* Write diameters into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 					"	ang	= %.1lf DEG",
 					objects[i].angle);
-		user_iface_log.lvl[user_iface_log.len]	= 0;
-		(user_iface_log.len)++;
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
 
-		/* Write diameters into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 					"	A	= %.1lf mm2",
 					objects[i].area_mm2);
-		user_iface_log.lvl[user_iface_log.len]	= 0;
-		(user_iface_log.len)++;
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
 
-		/* Write diameters into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 					"	P	= %.1lf mm",
 					objects[i].perimeter_mm);
-		user_iface_log.lvl[user_iface_log.len]	= 0;
-		(user_iface_log.len)++;
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
 
-		/* Write diameters into log */
-		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 					"	p2/A	= %.2lf",
 					objects[i].ratio_p2_a);
-		user_iface_log.lvl[user_iface_log.len]	= 0;
-		(user_iface_log.len)++;
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
+
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+					"	p/p_r	= %.2lf",
+					objects[i].ratio_p_prect);
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
+
+			/* Write diameters into log */
+			snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+					"	A/A_r	= %.2lf",
+					objects[i].ratio_a_arect);
+			user_iface_log.lvl[user_iface_log.len]	= 0;
+			(user_iface_log.len)++;
+		}
 	}
 }
 

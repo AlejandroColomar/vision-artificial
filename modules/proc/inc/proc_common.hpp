@@ -42,6 +42,7 @@ extern	"C" {
 	void	proc_save_update	(void);
 
 	void	proc_local_max		(void);
+	void	proc_skeleton		(void);
 	void	proc_lines_vertical	(void);
 	void	proc_median_horizontal	(void);
 	void	proc_median_vertical	(void);

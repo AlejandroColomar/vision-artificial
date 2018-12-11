@@ -215,9 +215,7 @@ static	void	coins_segmentate	(void)
 	proc_load_mem(0);
 
 	proc_cmp(IMG_IFACE_CMP_BLUE);
-//	proc_smooth(IMGI_SMOOTH_MEDIAN, 11);
 	proc_threshold(cv::THRESH_BINARY_INV, IMG_IFACE_THR_OTSU);
-//	proc_threshold(cv::THRESH_BINARY_INV, 100);
 	proc_distance_transform();
 	proc_local_max();
 	proc_dilate(6);
