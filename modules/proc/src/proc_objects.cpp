@@ -80,10 +80,11 @@ struct	Objects_Properties {
 /* Static --------------------------------------------------------------------*/
 static	std::vector <std::vector <cv::Point_ <int>>>	contours;
 static	class cv::Mat					hierarchy;
-static	class cv::RotatedRect				rectangle [CONTOURS_MAX];
+static	class cv::RotatedRect				rect_rot [CONTOURS_MAX];
 static	int						objects_n;
 static	struct Objects_Properties			objects [CONTOURS_MAX];
 static	double						ratio_mm_per_pix;
+static	double						pattern_angle;
 
 
 /******************************************************************************
@@ -92,13 +93,16 @@ static	double						ratio_mm_per_pix;
 static	void	result_objects		(int status);
 
 static	void	pattern_segmentate	(void);
+static	void	pattern_position_pix	(void);
 static	void	pattern_len_pix		(void);
 static	void	calibrate_mm_per_pix	(void);
+static	int	pattern_angle_get	(void);
 
 static	void	objects_segmentate	(void);
 static	int	objects_contours	(void);
 static	void	objects_position_pix	(void);
 static	void	objects_size_pix	(void);
+static	void	objects_shape		(void);
 static	void	objects_position_mm	(void);
 static	void	objects_size_mm		(void);
 static	void	objects_log		(void);
@@ -132,12 +136,12 @@ int	proc_objects_calibrate		(void)
 			result_objects(status);
 			return	status;
 		}
-		objects_position_pix();
+		pattern_position_pix();
 
 		/* Measure time */
 		clock_stop("Find squares");
 	}
-	/* Calibrate with the mean of the squares */
+	/* Calibrate size with the mean of the squares */
 	{
 		/* Measure time */
 		clock_start();
@@ -147,6 +151,20 @@ int	proc_objects_calibrate		(void)
 
 		/* Measure time */
 		clock_stop("Calibrate (mm per pix)");
+	}
+	/* Calibrate angle with the whole pattern */
+	{
+		/* Measure time */
+		clock_start();
+
+		status	= pattern_angle_get();
+		if (status) {
+			result_objects(status);
+			return	status;
+		}
+
+		/* Measure time */
+		clock_stop("Calibrate (angle)");
 	}
 
 	status	= OBJECTS_OK;
@@ -189,21 +207,31 @@ int	proc_objects			(void)
 		clock_start();
 
 		objects_position_pix();
-		objects_size_pix();
+		objects_position_mm();
 
 		/* Measure time */
-		clock_stop("Objects properties in pixels");
+		clock_stop("Objects positions");
 	}
 	/* Get objects properties in mm */
 	{
 		/* Measure time */
 		clock_start();
 
-		objects_position_mm();
+		objects_size_pix();
 		objects_size_mm();
 
 		/* Measure time */
-		clock_stop("Objects properties in mm");
+		clock_stop("Objects sizes");
+	}
+	/* Get objects properties in mm */
+	{
+		/* Measure time */
+		clock_start();
+
+		objects_shape();
+
+		/* Measure time */
+		clock_stop("Objects shapes");
 	}
 	/* Print properties of objects into log */
 	{
@@ -260,10 +288,27 @@ static	void	pattern_segmentate	(void)
 
 	proc_cvt_color(cv::COLOR_BGR2GRAY);
 	proc_threshold(cv::THRESH_BINARY_INV, IMG_IFACE_THR_OTSU);
+	proc_save_mem(1);
+
 	proc_distance_transform();
 	proc_local_max();
 	proc_dilate(6);
+	/* Needs to be 3 because objects_contours() loads mem3 */
 	proc_save_mem(3);
+}
+
+static	void	pattern_position_pix	(void)
+{
+	int	i;
+	class cv::Rect_ <int>	rect [CONTOURS_MAX];
+
+	/* Get position of each contour */
+	for (i = 0; i < objects_n; i++) {
+		proc_bounding_rect(&(contours[i]), &(rect[i]), true);
+
+		objects[i].x_pix	= rect[i].x + rect[i].width / 2.0;
+		objects[i].y_pix	= rect[i].y + rect[i].height / 2.0;
+	}
 }
 
 static	void	pattern_len_pix		(void)
@@ -299,6 +344,37 @@ static	void	calibrate_mm_per_pix	(void)
 					ratio_mm_per_pix);
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
+}
+
+static	int	pattern_angle_get	(void)
+{
+	int	status;
+
+	proc_load_mem(1);
+
+	proc_erode_dilate(2);
+	proc_dilate(2);
+	proc_contours(&contours, &hierarchy);
+	proc_save_mem(2);
+
+	/* If no contour is found, error:  NOK_PATTERN_ANGLE */
+	if (contours.size() != 1) {
+		status	= OBJECTS_NOK_PATTERN_ANGLE;
+		return	status;
+	}
+
+	proc_min_area_rect(&(contours[0]), &(rect_rot[0]), true);
+	pattern_angle	= -rect_rot[0].angle;
+
+	/* Write diameters into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+					"pattern angle	= %lf DEG",
+					pattern_angle);
+	user_iface_log.lvl[user_iface_log.len]	= 0;
+	(user_iface_log.len)++;
+
+	status	= OBJECTS_OK;
+	return	status;
 }
 
 /* process -------------------------------------------------------------------*/
@@ -352,45 +428,16 @@ static	void	objects_position_pix	(void)
 
 	/* Get position of each contour */
 	for (i = 0; i < objects_n; i++) {
-		proc_min_area_rect(&(contours[i]), &(rectangle[i]), true);
+		proc_fit_ellipse(&(contours[i]), &(rect_rot[i]), true);
 
-		objects[i].x_pix	= rectangle[i].center.x;
-		objects[i].y_pix	= rectangle[i].center.y;
-	}
-}
+		objects[i].x_pix	= rect_rot[i].center.x;
+		objects[i].y_pix	= rect_rot[i].center.y;
 
-static	void	objects_size_pix	(void)
-{
-	double	area [CONTOURS_MAX];
-	double	perimeter [CONTOURS_MAX];
-	int	i;
-
-	/* Get size of each contour */
-	proc_contours_size(&contours, area, perimeter);
-	for (i = 0; i < objects_n; i++) {
-
-		objects[i].area_pix2		= area[i];
-		objects[i].perimeter_pix	= perimeter[i];
-
-		objects[i].ratio_p2_a	= pow(perimeter[i], 2) / area[i];
-
-
-		if (rectangle[i].size.width > rectangle[i].size.height) {
-			objects[i].angle	= rectangle[i].angle;
-		} else {
-			objects[i].angle	= rectangle[i].angle + 90.0;
-
+		objects[i].angle	= (-rect_rot[i].angle + 90.0) -
+								pattern_angle;
+		if (objects[i].angle < 0) {
+			objects[i].angle	+= 180.0;
 		}
-		objects[i].area_rect		= rectangle[i].size.width *
-						rectangle[i].size.height;
-		objects[i].perimeter_rect	= 2.0 *
-						(rectangle[i].size.width +
-						rectangle[i].size.height);
-
-		objects[i].ratio_p_prect	= objects[i].perimeter_pix /
-						objects[i].perimeter_rect;
-		objects[i].ratio_a_arect	= objects[i].area_pix2 /
-						objects[i].area_rect;
 	}
 }
 
@@ -405,6 +452,20 @@ static	void	objects_position_mm	(void)
 	}
 }
 
+static	void	objects_size_pix	(void)
+{
+	double	area [CONTOURS_MAX];
+	double	perimeter [CONTOURS_MAX];
+	int	i;
+
+	/* Get size of each contour */
+	proc_contours_size(&contours, area, perimeter);
+	for (i = 0; i < objects_n; i++) {
+		objects[i].area_pix2		= area[i];
+		objects[i].perimeter_pix	= perimeter[i];
+	}
+}
+
 static	void	objects_size_mm	(void)
 {
 	int	i;
@@ -415,6 +476,30 @@ static	void	objects_size_mm	(void)
 						objects[i].area_pix2;
 		objects[i].perimeter_mm	= ratio_mm_per_pix *
 						objects[i].perimeter_pix;
+	}
+}
+
+static	void	objects_shape		(void)
+{
+	int	i;
+
+	/* Get shape of each contour */
+	for (i = 0; i < objects_n; i++) {
+		proc_min_area_rect(&(contours[i]), &(rect_rot[i]), true);
+
+		objects[i].ratio_p2_a	= pow(objects[i].perimeter_pix, 2) /
+						objects[i].area_pix2;
+
+		objects[i].area_rect		= rect_rot[i].size.width *
+						rect_rot[i].size.height;
+		objects[i].perimeter_rect	= 2.0 *
+						(rect_rot[i].size.width +
+						rect_rot[i].size.height);
+
+		objects[i].ratio_p_prect	= objects[i].perimeter_pix /
+						objects[i].perimeter_rect;
+		objects[i].ratio_a_arect	= objects[i].area_pix2 /
+						objects[i].area_rect;
 	}
 }
 

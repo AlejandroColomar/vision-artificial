@@ -20,6 +20,7 @@
  ******************************************************************************/
 	enum	Proc_Objects {
 		OBJECTS_OK,
+		OBJECTS_NOK_PATTERN_ANGLE,
 		OBJECTS_NOK_OBJECTS,
 		OBJECTS_NOK_SIZE
 	};
