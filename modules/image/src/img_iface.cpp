@@ -90,6 +90,7 @@ static	class std::vector <class cv::Mat>		tvecs;
  ******************************************************************************/
 	/* img_alx */
 static	void	img_iface_local_max		(void);
+static	void	img_iface_skeleton		(void);
 static	void	img_iface_lines_horizontal	(void);
 static	void	img_iface_lines_vertical	(void);
 static	void	img_iface_mean_horizontal	(void);
@@ -237,6 +238,9 @@ void	img_iface_act		(int action, void *data)
 	/* img_alx */
 	case IMG_IFACE_ACT_LOCAL_MAX:
 		img_iface_local_max();
+		break;
+	case IMG_IFACE_ACT_SKELETON:
+		img_iface_skeleton();
 		break;
 	case IMG_IFACE_ACT_LINES_HORIZONTAL:
 		img_iface_lines_horizontal();
@@ -450,6 +454,29 @@ static	void	img_iface_local_max		(void)
 	/* Write into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"Local maxima");
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
+static	void	img_iface_skeleton		(void)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Skeleton */
+	img_alx_act(&image_copy_tmp, IMG_ALX_ACT_SKELETON, NULL);
+
+	/* Write into log */
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Skeleton");
 	user_iface_log.lvl[user_iface_log.len]	= 1;
 	(user_iface_log.len)++;
 }

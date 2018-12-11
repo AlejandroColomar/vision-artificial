@@ -201,7 +201,18 @@ static	int	usr_input	(void)
 			/* img_alx */
 			switch (ch[2]) {
 			case '0':
-				action	= USER_IFACE_ACT_LOCAL_MAX;
+				/* Distance transform postprocessing */
+				switch (ch[3]) {
+				case '0':
+					action	= USER_IFACE_ACT_LOCAL_MAX;
+					break;
+				case '1':
+					action	= USER_IFACE_ACT_SKELETON;
+					break;
+				default:
+					action	= USER_IFACE_ACT_FOO;
+					break;
+				}
 				break;
 			case '1':
 				/* Lines */
@@ -541,7 +552,8 @@ static	void	show_help	(void)
 	printf("Save to ref:		%c\n",	'r');
 	printf("Save to file:		%c\n",	's');
 	printf("Functions:\n");
-	printf(" - Local maxima:	%s\n",	"f00");
+	printf(" - Local maxima:	%s\n",	"f000");
+	printf(" - Skeleton:		%s\n",	"f001");
 	printf(" - Horizontal lines:	%s\n",	"f010");
 	printf(" - Vertical lines:	%s\n",	"f011");
 	printf(" - Horizontal mean:	%s\n",	"f020");

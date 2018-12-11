@@ -9,6 +9,8 @@
 /* Standard C ----------------------------------------------------------------*/
 		/* true & false */
 	#include <cstdbool>
+		/* abs() */
+	#include <cstdlib>
 		/* snprintf() */
 	#include <cstdio>
 
@@ -31,6 +33,7 @@
  ******* static functions *****************************************************
  ******************************************************************************/
 static	void	img_alx_local_max		(class cv::Mat  *imgptr);
+static	void	img_alx_skeleton		(class cv::Mat  *imgptr);
 static	void	img_alx_lines_horizontal	(class cv::Mat  *imgptr);
 static	void	img_alx_lines_vertical		(class cv::Mat  *imgptr);
 static	void	img_alx_mean_horizontal		(class cv::Mat  *imgptr);
@@ -47,6 +50,9 @@ void	img_alx_act	(class cv::Mat  *imgptr, int action, void *data)
 	switch (action) {
 	case IMG_ALX_ACT_LOCAL_MAX:
 		img_alx_local_max(imgptr);
+		break;
+	case IMG_ALX_ACT_SKELETON:
+		img_alx_skeleton(imgptr);
 		break;
 
 	case IMG_ALX_ACT_LINES_HORIZONTAL:
@@ -82,8 +88,10 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 	int	k;
 	int	l;
 	bool		local_max;
-	int		dist_min;
-	int		val_min;
+	/* Minimum distance between local maxima */
+	const int	dist_min	= 16;
+	/* Minimum value of local maxima */
+	const int	val_min		= 16;
 	class cv::Mat	imgtmp;
 
 	/* pointer to a pixel (in imgptr) */
@@ -95,10 +103,6 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 
 	/* Tmp image copy */
 	imgptr->copyTo(imgtmp);
-	/* Minimum distance between local maxima */
-	dist_min	= 16;
-	/* Minimum value of local maxima */
-	val_min		= 16;
 
 	for (i = 0; i < imgptr->rows; i++) {
 	for (j = 0; j < imgptr->cols; j++) {
@@ -113,8 +117,8 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 		for (k = i - dist_min; (k < i + dist_min+1) && local_max; k++) {
 		for (l = j - dist_min; (l < j + dist_min+1) && local_max; l++) {
 			near_pix	= imgptr->data + k * imgptr->step + l;
-			if (k >= 0  &&  k < imgptr->rows) {
-			if (l >= 0  &&  l < imgptr->cols) {
+			if ((k >= 0)  &&  (k < imgptr->rows)) {
+			if ((l >= 0)  &&  (l < imgptr->cols)) {
 				if (*img_pix < *near_pix) {
 					local_max	= false;
 				}
@@ -124,6 +128,85 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 		}
 
 		if (local_max) {
+			*tmp_pix	= *img_pix;
+		} else {
+			*tmp_pix	= 0;
+		}
+	}
+	}
+
+	/* Cleanup */
+	imgtmp.copyTo(*imgptr);
+	imgtmp.release();
+}
+
+static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
+{
+	int	i;
+	int	j;
+	int	k;
+	int	l;
+	int	r;
+	int	dist_x;
+	int	dist_y;
+	/* Width of the skeleton */
+	const int	width	= 5;
+	/* Minimum value of the skeleton */
+	bool		skeleton;
+	int		cnt_lo [width];
+	int		cnt_hi_or_eq [width];
+	class cv::Mat	imgtmp;
+
+	/* pointer to a pixel (in imgptr) */
+	uint8_t	*img_pix;
+	/* pointer to a pixel near img_pix (in imgptr) */
+	uint8_t	*near_pix;
+	/* pointer to a pixel (same position as img_pix, but in imgtmp) */
+	uint8_t	*tmp_pix;
+
+	/* Tmp image copy */
+	imgptr->copyTo(imgtmp);
+
+	for (i = 0; i < imgptr->rows; i++) {
+	for (j = 0; j < imgptr->cols; j++) {
+		img_pix		= imgptr->data + i * imgptr->step + j;
+		tmp_pix		= imgtmp.data + i * imgptr->step + j;
+
+		for (r = 0; r < width; r++) {
+			cnt_lo[r]	= 0;
+			cnt_hi_or_eq[r]	= 0;
+		}
+		skeleton		= false;
+
+		for (k = i - width; k <= i + width; k++) {
+		for (l = j - width; l <= j + width; l++) {
+			near_pix	= imgptr->data + k * imgptr->step + l;
+
+			dist_x	= abs(k - i);
+			dist_y	= abs(l - j);
+
+			if ((k >= 0)  &&  (k < imgptr->rows)) {
+			if ((l >= 0)  &&  (l < imgptr->cols)) {
+			if (dist_x  ||  dist_y) {
+				if (*near_pix < *img_pix) {
+					cnt_lo[std::max(dist_x, dist_y)]++;
+				} else {
+					cnt_hi_or_eq[std::max(dist_x, dist_y)]++;
+				}
+			}
+			}
+			}
+
+		}
+		}
+
+		for (r = 0; r < width; r++) {
+			if (cnt_lo[r] > (cnt_hi_or_eq[r] + (1.6) * (r + 1))) {
+				skeleton	= true;
+			}
+		}
+
+		if (skeleton) {
 			*tmp_pix	= *img_pix;
 		} else {
 			*tmp_pix	= 0;
