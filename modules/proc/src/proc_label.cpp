@@ -246,7 +246,7 @@ static	void	label_align		(void)
 {
 	proc_load_mem(0);
 
-	proc_rotate(&rect);
+	proc_rotate(rect.center.x, rect.center.y, rect.angle);
 	proc_cmp(IMG_IFACE_CMP_GREEN);
 	proc_save_mem(1);
 }

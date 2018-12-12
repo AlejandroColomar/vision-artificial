@@ -327,10 +327,10 @@ static	int	resistor_find		(void)
 static	void	resistor_align		(void)
 {
 	proc_load_mem(19);
-	proc_rotate(&rect_rot);
+	proc_rotate(rect_rot.center.x, rect_rot.center.y, rect_rot.angle);
 	proc_save_mem(2);
 	proc_load_mem(1);
-	proc_rotate(&rect_rot);
+	proc_rotate(rect_rot.center.x, rect_rot.center.y, rect_rot.angle);
 	proc_save_mem(3);
 }
 

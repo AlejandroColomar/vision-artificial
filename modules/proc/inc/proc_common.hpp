@@ -58,7 +58,10 @@ extern	"C" {
 	void	proc_dilate_erode	(int size);
 	void	proc_erode_dilate	(int size);
 	void	proc_smooth		(int method, int ksize);
-	void	proc_rotate		(class cv::RotatedRect  *rect);
+	void	proc_rotate		(
+			double center_x,
+			double center_y,
+			double angle);
 	void	proc_adaptive_threshold	(int method, int type, int ksize);
 	void	proc_cvt_color		(int method);
 	void	proc_distance_transform	(void);

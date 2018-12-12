@@ -376,16 +376,13 @@ static	void	img_cv_rotate		(class cv::Mat  *imgptr, void *data)
 	double				angle;
 	angle		= data_cast->angle;
 
-	/* Don't rotate if angle is negligible */
-	if (fabs(angle) > 1.0) {
-		/* Get map_matrix */
-		map_matrix	= cv::getRotationMatrix2D(*center, angle, 1);
+	/* Get map_matrix */
+	map_matrix	= cv::getRotationMatrix2D(*center, angle, 1);
 
-		/* Rotate */
-		cv::warpAffine(*imgptr, *imgptr, map_matrix, imgptr->size(),
-					cv::INTER_LINEAR, cv::BORDER_CONSTANT,
-					cv::Scalar(0, 0, 0));
-	}
+	/* Rotate */
+	cv::warpAffine(*imgptr, *imgptr, map_matrix, imgptr->size(),
+				cv::INTER_LINEAR, cv::BORDER_CONSTANT,
+				cv::Scalar(0, 0, 0));
 
 	/* clean up */
 	map_matrix.release();

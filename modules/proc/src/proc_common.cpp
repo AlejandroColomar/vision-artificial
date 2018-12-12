@@ -213,12 +213,12 @@ void	proc_smooth		(int method, int ksize)
 	proc_show_img();
 }
 
-void	proc_rotate		(class cv::RotatedRect  *rect)
+void	proc_rotate		(double center_x, double center_y, double angle)
 {
 	struct Img_Iface_Data_Rotate		data;
-	data.center.x	= rect->center.x;
-	data.center.y	= rect->center.y;
-	data.angle	= rect->angle;
+	data.center.x	= center_x;
+	data.center.y	= center_y;
+	data.angle	= angle;
 	img_iface_act(IMG_IFACE_ACT_ROTATE, (void *)&data);
 
 	proc_show_img();
