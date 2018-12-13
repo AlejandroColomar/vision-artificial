@@ -172,6 +172,11 @@ static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 		img_pix		= imgptr->data + i * imgptr->step + j;
 		tmp_pix		= imgtmp.data + i * imgptr->step + j;
 
+		if (!(*img_pix)) {
+			*tmp_pix	= 0;
+			continue;
+		}
+
 		for (r = 0; r < width; r++) {
 			cnt_lo[r]	= 0;
 			cnt_hi_or_eq[r]	= 0;
