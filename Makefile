@@ -214,6 +214,8 @@ PHONY += libalx
 libalx:
 	@echo	'	MAKE	libalx-base'
 	$(Q)make base	-C $(LIBALX_DIR)
+	@echo	'	MAKE	libalx-io'
+	$(Q)make io	-C $(LIBALX_DIR)
 	@echo	'	MAKE	libalx-curses'
 	$(Q)make curses	-C $(LIBALX_DIR)
 
