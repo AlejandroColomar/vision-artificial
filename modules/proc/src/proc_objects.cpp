@@ -335,7 +335,7 @@ static	int	pattern_find		(void)
 	proc_load_mem(1);
 
 	proc_threshold(cv::THRESH_BINARY_INV, IMG_IFACE_THR_OTSU);
-	proc_erode_dilate(2);
+	proc_erode_dilate(16);
 	proc_dilate(2);
 	proc_contours(&contours, &hierarchy);
 
@@ -394,7 +394,7 @@ static	void	pattern_dimensions_get	(void)
 {
 	proc_load_mem(2);
 
-	proc_erode_dilate(2);
+	proc_erode_dilate(16);
 	proc_dilate(PATTERN_DILATE);
 	proc_contours(&contours, &hierarchy);
 	proc_bounding_rect(&(contours[0]), &(rect[0]), true);
@@ -526,7 +526,7 @@ static	void	objects_segment		(void)
 	proc_load_mem(3);
 	proc_and_2ref();
 	proc_distance_transform();
-	proc_threshold(cv::THRESH_BINARY, 5);
+	proc_threshold(cv::THRESH_BINARY, 10);
 	proc_save_mem(6);
 }
 
