@@ -53,8 +53,7 @@ struct	Point {
 struct	Pattern_Square {
 	struct Point	pos;
 
-	double		len_mm;
-	uint8_t		len_pix;
+	uint8_t		len;
 };
 
 struct	Pattern_Properties {
@@ -215,7 +214,7 @@ int	proc_objects			(void)
 		/* Measure time */
 		clock_stop("Align image to pattern");
 	}
-	/* Segmentate coins */
+	/* Segment objects */
 	{
 		/* Measure time */
 		clock_start();
@@ -225,7 +224,7 @@ int	proc_objects			(void)
 		/* Measure time */
 		clock_stop("Segment objects");
 	}
-	/* Find coins positions */
+	/* Find objects positions */
 	{
 		/* Measure time */
 		clock_start();
@@ -451,22 +450,22 @@ static	void	pattern_squares_len_get	(void)
 	for (i = 0; i < squares_n; i++) {
 		proc_pixel_value(pattern.square[i].pos.x_pix,
 				pattern.square[i].pos.y_pix,
-				&(pattern.square[i].len_pix));
-		pattern.square[i].len_pix	*= 2;
+				&(pattern.square[i].len));
+		pattern.square[i].len	*= 2;
 	}
 }
 
 static	void	pattern_calib_mm_pix	(void)
 {
 	int	i;
-	uint8_t	pattern_len_pix [OBJECTS_MAX];
+	uint8_t	pattern_len [OBJECTS_MAX];
 	uint8_t	median_size;
 
 	for (i = 0; i < squares_n; i++) {
-		pattern_len_pix[i]	= pattern.square[i].len_pix;
+		pattern_len[i]	= pattern.square[i].len;
 	}
 
-	median_size	= alx_median_u8(squares_n, pattern_len_pix);
+	median_size	= alx_median_u8(squares_n, pattern_len);
 	ratio_mm_pix	= PATTERN_SQUARE_LEN_MM / median_size;
 
 	/* Write diameters into log */
