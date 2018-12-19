@@ -119,6 +119,7 @@ static	void	img_iface_erode_dilate		(void *data);
 static	void	img_iface_smooth		(void *data);
 static	void	img_iface_sobel			(void *data);
 			/* Geometric image transformations */
+static	void	img_iface_mirror		(void *data);
 static	void	img_iface_rotate_orto		(void *data);
 static	void	img_iface_rotate		(void *data);
 static	void	img_iface_rotate_2rect		(void *data);
@@ -308,6 +309,9 @@ void	img_iface_act		(int action, void *data)
 		img_iface_sobel(data);
 		break;
 			/* Geometric image transformations */
+	case IMG_IFACE_ACT_MIRROR:
+		img_iface_mirror(data);
+		break;
 	case IMG_IFACE_ACT_ROTATE_ORTO:
 		img_iface_rotate_orto(data);
 		break;
@@ -1032,6 +1036,32 @@ static	void	img_iface_sobel			(void *data)
 }
 
 /* ----- ------- Geometric image transformations */
+static	void	img_iface_mirror		(void *data)
+{
+	/* Data */
+	struct Img_Iface_Data_Mirror	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Axis:  0=x;  1=y");
+		data_tmp.axis	= user_iface_getint(0, 1, 1, title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_Mirror	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Mirror *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Mirror axis: %i",
+						data_cast->axis);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Mirror */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_MIRROR, data);
+}
+
 static	void	img_iface_rotate_orto		(void *data)
 {
 	/* Data */

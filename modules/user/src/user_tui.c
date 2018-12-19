@@ -455,12 +455,15 @@ static	int	usr_input	(void)
 
 					switch (ch) {
 					case '0':
-						action	= USER_IFACE_ACT_ROTATE_ORTO;
+						action	= USER_IFACE_ACT_MIRROR;
 						break;
 					case '1':
-						action	= USER_IFACE_ACT_ROTATE;
+						action	= USER_IFACE_ACT_ROTATE_ORTO;
 						break;
 					case '2':
+						action	= USER_IFACE_ACT_ROTATE;
+						break;
+					case '3':
 						action	= USER_IFACE_ACT_ROTATE_2RECT;
 						break;
 					default:
@@ -719,9 +722,10 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - E-D:			%s",	"f1103");
 	mvwprintw(win_help, r++, c, " - Smooth:		%s",		"f1104");
 	mvwprintw(win_help, r++, c, " - Sobel:		%s",		"f1105");
-	mvwprintw(win_help, r++, c, " - Rotate ortogonally:	%s",	"f1110");
-	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f1111");
-	mvwprintw(win_help, r++, c, " - Rotate 2rect_rot:	%s",	"f1112");
+	mvwprintw(win_help, r++, c, " - Mirror:		%s",		"f1110");
+	mvwprintw(win_help, r++, c, " - Rotate ortogonally:	%s",	"f1111");
+	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f1112");
+	mvwprintw(win_help, r++, c, " - Rotate 2rect_rot:	%s",	"f1113");
 	mvwprintw(win_help, r++, c, " - Adaptive threshold:	%s",	"f1120");
 	mvwprintw(win_help, r++, c, " - Cvt color:		%s",	"f1121");
 	mvwprintw(win_help, r++, c, " - Distance transform:	%s",	"f1122");

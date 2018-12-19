@@ -49,6 +49,7 @@ static	void	img_cv_erode		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_smooth		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
 		/* Geometric image transformations */
+static	void	img_cv_mirror		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate		(class cv::Mat  *imgptr,  void  *data);
 		/* Miscellaneous image transformations */
@@ -109,6 +110,9 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 		img_cv_sobel(imgptr, data);
 		break;
 
+	case IMG_CV_ACT_MIRROR:
+		img_cv_mirror(imgptr, data);
+		break;
 	case IMG_CV_ACT_ROTATE_ORTO:
 		img_cv_rotate_orto(imgptr, data);
 		break;
@@ -332,6 +336,21 @@ static	void	img_cv_sobel		(class cv::Mat  *imgptr, void *data)
 }
 
 /* ----- Geometric image transformations */
+static	void	img_cv_mirror		(class cv::Mat  *imgptr, void *data)
+{
+	struct Img_Iface_Data_Mirror	*data_cast;
+	int	axis;
+
+	/* Data */
+	data_cast	= (struct Img_Iface_Data_Mirror *)data;
+
+	/* Rotate n * pi/2 rad */
+	axis	= data_cast->axis;
+
+	/* flip around axis */
+	cv::flip(*imgptr, *imgptr, axis);
+}
+
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr, void *data)
 {
 	/* Data */

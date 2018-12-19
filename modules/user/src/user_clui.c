@@ -342,12 +342,15 @@ static	int	usr_input	(void)
 					/* Geometric image transformations */
 					switch (ch[4]) {
 					case '0':
-						action	= USER_IFACE_ACT_ROTATE_ORTO;
+						action	= USER_IFACE_ACT_MIRROR;
 						break;
 					case '1':
-						action	= USER_IFACE_ACT_ROTATE;
+						action	= USER_IFACE_ACT_ROTATE_ORTO;
 						break;
 					case '2':
+						action	= USER_IFACE_ACT_ROTATE;
+						break;
+					case '3':
 						action	= USER_IFACE_ACT_ROTATE_2RECT;
 						break;
 					default:
@@ -573,9 +576,10 @@ static	void	show_help	(void)
 	printf(" - E-D:			%s\n",	"f1103");
 	printf(" - Smooth:		%s\n",	"f1104");
 	printf(" - Sobel:		%s\n",	"f1105");
-	printf(" - Rotate ortogonally:	%s\n",	"f1110");
-	printf(" - Rotate:		%s\n",	"f1111");
-	printf(" - Rotate 2rect_rot:	%s\n",	"f1112");
+	printf(" - Mirror:		%s\n",	"f1110");
+	printf(" - Rotate ortogonally:	%s\n",	"f1111");
+	printf(" - Rotate:		%s\n",	"f1112");
+	printf(" - Rotate 2rect_rot:	%s\n",	"f1113");
 	printf(" - Adaptive threshold:	%s\n",	"f1120");
 	printf(" - Cvt color:		%s\n",	"f1121");
 	printf(" - Distance transform:	%s\n",	"f1122");
