@@ -143,7 +143,7 @@ static	void	lighter_log		(void);
 /******************************************************************************
  ******* global functions *****************************************************
  ******************************************************************************/
-int	proc_lighter_calibrate		(void)
+int	proc_lighter_calibrate	(void)
 {
 	int	status;
 
@@ -195,7 +195,7 @@ int	proc_lighter_calibrate		(void)
 	return	status;
 }
 
-int	proc_lighter			(void)
+int	proc_lighter		(void)
 {
 	int	status;
 
@@ -546,8 +546,6 @@ static	int	lighter_contours	(void)
 
 static	void	lighter_position_pix	(void)
 {
-	int	i;
-
 	proc_fit_ellipse(&(contours[0]), &(rect_rot[0]), true);
 
 	lighter.pos.x_pix	= rect_rot[0].center.x;
@@ -561,8 +559,6 @@ static	void	lighter_position_pix	(void)
 
 static	void	lighter_position_mm	(void)
 {
-	int	i;
-
 	lighter.pos.x_mm	= ratio_mm_pix * lighter.pos.x_pix;
 	lighter.pos.y_mm	= ratio_mm_pix * lighter.pos.y_pix;
 }
@@ -571,7 +567,6 @@ static	void	lighter_size_pix	(void)
 {
 	double	area;
 	double	perimeter;
-	int	i;
 
 	/* Get size */
 	proc_contours_size(&contours, &area, &perimeter);
@@ -581,8 +576,6 @@ static	void	lighter_size_pix	(void)
 
 static	void	lighter_size_mm	(void)
 {
-	int	i;
-
 	/* Get size */
 	lighter.area_mm2	= pow(ratio_mm_pix, 2) * lighter.area_pix2;
 	lighter.perimeter_mm	= ratio_mm_pix * lighter.perimeter_pix;
@@ -590,27 +583,24 @@ static	void	lighter_size_mm	(void)
 
 static	void	lighter_shape		(void)
 {
-	int	i;
-
 	/* Get shape */
 	proc_min_area_rect(&(contours[0]), &(rect_rot[0]), true);
 
 	lighter.ratio_p2_a	= pow(lighter.perimeter_pix, 2) /
-							lighter.area_pix2;
+						lighter.area_pix2;
 
-	lighter.area_rect	= rect_rot.size.width * rect_rot.size.height;
-	lighter.perimeter_rect	= 2.0 * (rect_rot.size.width +
-							rect_rot.size.height);
+	lighter.area_rect	= rect_rot[0].size.width *
+						rect_rot[0].size.height;
+	lighter.perimeter_rect	= 2.0 * (rect_rot[0].size.width +
+						rect_rot[0].size.height);
 
 	lighter.ratio_p_prect	= lighter.perimeter_pix /
-							lighter.perimeter_rect;
+						lighter.perimeter_rect;
 	lighter.ratio_a_arect	= lighter.area_pix2 / lighter.area_rect;
 }
 
 static	void	lighter_log	(void)
 {
-	int	i;
-
 	/* Write diameters into log */
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 				"Lighter:");
@@ -666,7 +656,6 @@ static	void	lighter_log	(void)
 				lighter.ratio_a_arect);
 	user_iface_log.lvl[user_iface_log.len]	= 0;
 	(user_iface_log.len)++;
-	}
 }
 
 

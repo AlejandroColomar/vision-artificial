@@ -29,6 +29,7 @@
 
 /* Module --------------------------------------------------------------------*/
 	#include "proc_label.h"
+	#include "proc_lighter.h"
 	#include "proc_objects.h"
 	#include "proc_coins.h"
 	#include "proc_resistor.h"
