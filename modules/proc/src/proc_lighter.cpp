@@ -130,7 +130,10 @@ static	void	pattern_calib_mm_pix	(void);
 static	void	lighter_bgr2gray	(void);
 static	void	lighter_rotation_fix	(void);
 static	void	lighter_dimensions_fix	(void);
-static	void	lighter_segment		(void);
+static	void	lighter_segment_full	(void);
+static	int	lighter_align		(void);
+static	void	lighter_segment_base	(void);
+static	void	lighter_crop		(void);
 static	int	lighter_contours	(void);
 static	void	lighter_position_pix	(void);
 static	void	lighter_size_pix	(void);
@@ -217,12 +220,15 @@ int	proc_lighter		(void)
 		/* Measure time */
 		clock_start();
 
-		lighter_segment();
+		lighter_segment_full();
+		lighter_align();
+		lighter_segment_base();
+		lighter_crop();
 
 		/* Measure time */
 		clock_stop("Segment lighter");
 	}
-	/* Find lighters positions */
+#if 0	/* Find lighters positions */
 	{
 		/* Measure time */
 		clock_start();
@@ -278,7 +284,7 @@ int	proc_lighter		(void)
 		/* Measure time */
 		clock_stop("Lighter properties (log)");
 	}
-
+#endif
 	status	= LIGHTER_OK;
 	result_lighter(status);
 	return	status;
@@ -498,32 +504,87 @@ static	void	lighter_dimensions_fix	(void)
 	/* Need to correct also pattern dilatation (pattern_dimensions_get()) */
 	proc_load_mem(2);
 
-	proc_ROI(pattern.origin.x_pix, pattern.origin.y_pix,
-						pattern.width, pattern.height);
-	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
+	proc_ROI(pattern.origin.x_pix+200, pattern.origin.y_pix+200,
+					pattern.width-400, pattern.height-200);
 	proc_save_mem(3);
 }
 
-static	void	lighter_segment		(void)
+static	void	lighter_segment_full	(void)
 {
 	proc_load_mem(3);
 
-	proc_dilate_erode(8 / ratio_mm_pix);
+	proc_smooth(IMGI_SMOOTH_MEDIAN, 5);
+	proc_threshold(cv::THRESH_BINARY, 80);
 	proc_save_mem(4);
+}
 
-	proc_distance_transform();
-	proc_threshold(cv::THRESH_BINARY_INV, 30);
-	proc_distance_transform();
-	proc_skeleton();
-	proc_threshold(cv::THRESH_BINARY_INV, 10);
-	proc_save_ref();
+static	int	lighter_align		(void)
+{
+	int	status;
+
+	proc_load_mem(4);
+
+	proc_dilate_erode(2 / ratio_mm_pix);
+	proc_erode_dilate(4.5 / ratio_mm_pix);
+	proc_contours(&contours, &hierarchy);
+
+	/* If no contour is found, error:  NOK_RESISTOR */
+	if (contours.size() != 1) {
+		status	= LIGHTER_NOK_LIGHTER;
+		return	status;
+	}
+
+	proc_min_area_rect(&(contours[0]), &rect_rot[0], true);
+
+	/* If width > height, it is taking into acount the incorrect side */
+	if (rect_rot[0].size.width > rect_rot[0].size.height) {
+		int	tmp;
+		rect_rot[0].angle	+= 90.0;
+		tmp			= rect_rot[0].size.width;
+		rect_rot[0].size.width	= rect_rot[0].size.height;
+		rect_rot[0].size.height	= tmp;
+	}
+
+	proc_rotate(rect_rot[0].center.x, rect_rot[0].center.y, rect_rot[0].angle);
+
 	proc_save_mem(5);
 
+	status	= LIGHTER_OK;
+	return	status;
+}
+
+static	void	lighter_segment_base	(void)
+{
 	proc_load_mem(3);
-	proc_and_2ref();
-	proc_distance_transform();
-	proc_threshold(cv::THRESH_BINARY, 10);
+
+	proc_rotate(rect_rot[0].center.x, rect_rot[0].center.y, rect_rot[0].angle);
+	proc_smooth(IMGI_SMOOTH_MEDIAN, 5);
+	proc_threshold(cv::THRESH_BINARY, 65);
+	proc_erode_dilate(rect_rot[0].size.width * 0.43);
+//	proc_dilate_erode(rect_rot[0].size.width * 0.2);
+
+	proc_contours(&contours, &hierarchy);
+	proc_bounding_rect(&(contours[0]), &(rect[0]), true);
+
 	proc_save_mem(6);
+}
+
+static	void	lighter_crop		(void)
+{
+	int	x;
+	int	y;
+	int	w;
+	int	h;
+
+	proc_load_mem(3);
+
+	proc_rotate(rect_rot[0].center.x, rect_rot[0].center.y, rect_rot[0].angle);
+	w	= rect[0].width * 1.2;
+	h	= rect[0].width * 0.9;
+	x	= rect[0].x - rect[0].width * 0.1;
+	y	= rect[0].y - h * 0.9;
+	proc_ROI(x, y, w, h);
+	proc_save_mem(7);
 }
 
 static	int	lighter_contours	(void)

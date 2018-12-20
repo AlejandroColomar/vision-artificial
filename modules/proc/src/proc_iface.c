@@ -85,6 +85,12 @@ int	proc_iface_single	(int action)
 	case PROC_MODE_RESISTOR_SERIES:
 		error	= proc_resistor();
 		break;
+	case PROC_MODE_LIGHTER_CALIB:
+		error	= proc_lighter_calibrate();
+		break;
+	case PROC_MODE_LIGHTER_SERIES:
+		error	= proc_lighter();
+		break;
 	default:
 		error	= -1;
 	}
@@ -110,7 +116,7 @@ void	proc_iface_series	(void)
 	bool	file_error;
 	int	num_len;
 	char	file_basename [FILENAME_MAX];
-	char	file_ext [80];
+	char	file_ext [FILENAME_MAX];
 	char	file_name [FILENAME_MAX];
 	bool	proc_error;
 	char	save_error_as [FILENAME_MAX];
@@ -122,35 +128,44 @@ void	proc_iface_series	(void)
 	case PROC_MODE_LABEL_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", labels_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", labels_fail_path);
-		snprintf(file_basename, 80, "b");
+		snprintf(file_basename, FILENAME_MAX, "b");
 		num_len	= 4;
-		snprintf(file_ext, 80, ".BMP");
+		snprintf(file_ext, FILENAME_MAX, ".BMP");
 		i	= 1;
 		break;
 	case PROC_MODE_OBJECTS_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", objects_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", objects_fail_path);
-		snprintf(file_basename, 80, "o");
+		snprintf(file_basename, FILENAME_MAX, "o");
 		num_len	= 4;
-		snprintf(file_ext, 80, ".jpeg");
+		snprintf(file_ext, FILENAME_MAX, ".jpeg");
 		i	= 0;
 		proc_mode++;
 		break;
 	case PROC_MODE_COINS_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", coins_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", coins_fail_path);
-		snprintf(file_basename, 80, "c");
+		snprintf(file_basename, FILENAME_MAX, "c");
 		num_len	= 4;
-		snprintf(file_ext, 80, ".png");
+		snprintf(file_ext, FILENAME_MAX, ".jpeg");
 		i	= 1;
 		break;
 	case PROC_MODE_RESISTOR_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", resistors_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", resistors_fail_path);
-		snprintf(file_basename, 80, "r");
+		snprintf(file_basename, FILENAME_MAX, "r");
 		num_len	= 4;
-		snprintf(file_ext, 80, ".png");
+		snprintf(file_ext, FILENAME_MAX, ".png");
 		i	= 1;
+		break;
+	case PROC_MODE_LIGHTER_SERIES:
+		snprintf(proc_path, FILENAME_MAX, "%s", lighters_path);
+		snprintf(proc_fail_path, FILENAME_MAX, "%s", lighters_fail_path);
+		snprintf(file_basename, FILENAME_MAX, "lighter");
+		num_len	= 4;
+		snprintf(file_ext, FILENAME_MAX, ".png");
+		i	= 0;
+		proc_mode++;
 		break;
 	default:
 		return;
@@ -188,7 +203,7 @@ void	proc_iface_series	(void)
 
 				/* Show log */
 				char	txt_tmp [80];
-				snprintf(txt_tmp, 80, "%04i", i);
+				snprintf(txt_tmp, FILENAME_MAX, "%04i", i);
 				user_iface_show_log(txt_tmp, "Item");
 
 				if (proc_debug >= PROC_DBG_STOP_ITEM) {

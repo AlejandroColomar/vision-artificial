@@ -131,7 +131,7 @@ CXXFLAGS_W     += -Wextra
 CXXFLAGS_W     += -Werror
 CXXFLAGS_W     += -Wno-format-truncation
 CXXFLAGS_W     += -Wno-format-zero-length
-#CXXFLAGS_W     += -Wno-unused-function
+CXXFLAGS_W     += -Wno-unused-function
 CXXFLAGS_W     += -Wno-unused-parameter
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`

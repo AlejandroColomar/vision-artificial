@@ -39,6 +39,8 @@ char		user_prog_path [FILENAME_MAX];
 char		saved_path [FILENAME_MAX];
 char		labels_path [FILENAME_MAX];
 char		labels_fail_path [FILENAME_MAX];
+char		lighters_path [FILENAME_MAX];
+char		lighters_fail_path [FILENAME_MAX];
 char		objects_path [FILENAME_MAX];
 char		objects_fail_path [FILENAME_MAX];
 char		coins_path [FILENAME_MAX];
@@ -58,6 +60,8 @@ void	save_init	(void)
 	snprintf(saved_path, FILENAME_MAX, "%s/%s/", home_path, USER_SAVED_DIR);
 	snprintf(labels_path, FILENAME_MAX, "%s/%s/", home_path, USER_LABELS_DIR);
 	snprintf(labels_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_LABELS_FAIL_DIR);
+	snprintf(lighters_path, FILENAME_MAX, "%s/%s/", home_path, USER_LIGHTERS_DIR);
+	snprintf(lighters_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_LIGHTERS_FAIL_DIR);
 	snprintf(objects_path, FILENAME_MAX, "%s/%s/", home_path, USER_OBJECTS_DIR);
 	snprintf(objects_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_OBJECTS_FAIL_DIR);
 	snprintf(coins_path, FILENAME_MAX, "%s/%s/", home_path, USER_COINS_DIR);
