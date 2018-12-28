@@ -15,12 +15,13 @@ MAIN_OBJ_MODULES	= modules.o
 MAIN_OBJS		= $(TMP_DIR)/main.o \
 				$(patsubst %,$(MODULES_TMP_DIR)/%,$(MAIN_OBJ_MODULES))
 
-MAIN_LIB_LIBALX		= libalx-base.a libalx-curses.a
+MAIN_LIB_LIBALX		= libalx-base.a libalx-io.a libalx-curses.a
 MAIN_LIBS		= \
 				$(patsubst %,$(LIBALX_LIB_DIR)/%,$(MAIN_LIB_LIBALX))
 
 # static libs
-STATIC_LIB_LIBALX	= -L $(LIBALX_LIB_DIR) -l alx-curses -l alx-base
+STATIC_LIB_LIBALX	= -L $(LIBALX_LIB_DIR) \
+				-l alx-curses -l alx-io -l alx-base
 
 STATIC_LIBS	= $(STATIC_LIB_LIBALX)
 
