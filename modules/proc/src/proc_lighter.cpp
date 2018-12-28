@@ -132,8 +132,9 @@ static	void	lighter_rotation_fix	(void);
 static	void	lighter_dimensions_fix	(void);
 static	void	lighter_segment_full	(void);
 static	int	lighter_align		(void);
-static	void	lighter_segment_base	(void);
-static	void	lighter_crop		(void);
+static	void	lighter_segment_body	(void);
+static	void	lighter_crop_hood	(void);
+static	void	lighter_segment_hood	(void);
 static	int	lighter_contours	(void);
 static	void	lighter_position_pix	(void);
 static	void	lighter_size_pix	(void);
@@ -222,8 +223,11 @@ int	proc_lighter		(void)
 
 		lighter_segment_full();
 		lighter_align();
-		lighter_segment_base();
-		lighter_crop();
+		lighter_segment_body();
+		lighter_crop_hood();
+		lighter_segment_hood();
+proc_apply();
+proc_save_file();
 
 		/* Measure time */
 		clock_stop("Segment lighter");
@@ -553,7 +557,7 @@ static	int	lighter_align		(void)
 	return	status;
 }
 
-static	void	lighter_segment_base	(void)
+static	void	lighter_segment_body	(void)
 {
 	proc_load_mem(3);
 
@@ -562,29 +566,53 @@ static	void	lighter_segment_base	(void)
 	proc_threshold(cv::THRESH_BINARY, 65);
 	proc_erode_dilate(rect_rot[0].size.width * 0.43);
 //	proc_dilate_erode(rect_rot[0].size.width * 0.2);
+	proc_save_mem(6);
 
 	proc_contours(&contours, &hierarchy);
 	proc_bounding_rect(&(contours[0]), &(rect[0]), true);
 
-	proc_save_mem(6);
+	proc_save_mem(7);
 }
 
-static	void	lighter_crop		(void)
+static	void	lighter_crop_hood	(void)
 {
 	int	x;
 	int	y;
 	int	w;
 	int	h;
 
-	proc_load_mem(3);
+	proc_load_mem(6);
+	proc_not();
+	proc_save_ref();
 
+	proc_load_mem(3);
 	proc_rotate(rect_rot[0].center.x, rect_rot[0].center.y, rect_rot[0].angle);
+	proc_and_2ref();
 	w	= rect[0].width * 1.2;
-	h	= rect[0].width * 0.9;
+	h	= rect[0].width * 0.75;
 	x	= rect[0].x - rect[0].width * 0.1;
-	y	= rect[0].y - h * 0.9;
+	y	= rect[0].y - rect[0].width * 0.7;
 	proc_ROI(x, y, w, h);
-	proc_save_mem(7);
+	rect[0].x	= x;
+	rect[0].y	= y;
+	rect[0].width	= w;
+	rect[0].height	= h;
+	proc_save_mem(8);
+}
+
+static	void	lighter_segment_hood	(void)
+{
+	proc_load_mem(8);
+/*
+	proc_smooth(IMGI_SMOOTH_MEDIAN, 5);
+	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
+	proc_dilate_erode(5);
+	proc_erode_dilate(rect[0].height * 0.25);
+
+	proc_contours(&contours, &hierarchy);
+	proc_bounding_rect(&(contours[0]), &(rect[0]), true);
+*/
+	proc_save_mem(9);
 }
 
 static	int	lighter_contours	(void)
