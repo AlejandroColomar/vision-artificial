@@ -28,30 +28,39 @@ export	USR_DIR
 # target: dependencies
 #	action
 
+PHONY := all
 all:
 	@echo	'	MAKE	modules:	about'
-	$(Q)make -C $(ABOUT_DIR)
+	$(Q)$(MAKE) -C $(ABOUT_DIR)
 	@echo	'	MAKE	modules:	ctrl'
-	$(Q)make -C $(CTRL_DIR)
+	$(Q)$(MAKE) -C $(CTRL_DIR)
 	@echo	'	MAKE	modules:	image'
-	$(Q)make -C $(IMG_DIR)
+	$(Q)$(MAKE) -C $(IMG_DIR)
 	@echo	'	MAKE	modules:	menu'
-	$(Q)make -C $(MENU_DIR)
+	$(Q)$(MAKE) -C $(MENU_DIR)
 	@echo	'	MAKE	modules:	proc'
-	$(Q)make -C $(PROC_DIR)
+	$(Q)$(MAKE) -C $(PROC_DIR)
 	@echo	'	MAKE	modules:	save'
-	$(Q)make -C $(SAVE_DIR)
+	$(Q)$(MAKE) -C $(SAVE_DIR)
 	@echo	'	MAKE	modules:	usr'
-	$(Q)make -C $(USR_DIR)
+	$(Q)$(MAKE) -C $(USR_DIR)
 	@echo	'	MAKE	modules.o'
-	$(Q)make -C $(TMP_DIR)
-	@echo  ""
+	$(Q)$(MAKE) -C $(TMP_DIR)
+	@echo
 
 
+PHONY += clean
 clean:
-	@echo  "	RM	*.o *.s"
+	@echo	"	RM	*.o *.s"
 	$(Q)find . -type f -name '*.o' -exec rm '{}' '+'
 	$(Q)find . -type f -name '*.s' -exec rm '{}' '+'
+
+################################################################################
+# Declare the contents of the .PHONY variable as phony.
+.PHONY: $(PHONY)
+
+
+
 
 ################################################################################
 ######## End of file ###########################################################

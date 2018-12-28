@@ -9,6 +9,7 @@
 /* Standard C ----------------------------------------------------------------*/
 		/* INT_MAX */
 	#include <climits>
+	#include <cstddef>
 		/* snprintf() */
 	#include <cstdio>
 

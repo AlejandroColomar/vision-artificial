@@ -9,6 +9,7 @@
 /* Standard C ----------------------------------------------------------------*/
 		/* INT_MAX */
 	#include <limits.h>
+	#include <stddef.h>
 		/* snprintf() & FILENAME_MAX */
 	#include <stdio.h>
 

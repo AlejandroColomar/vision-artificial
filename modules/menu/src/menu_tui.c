@@ -9,6 +9,7 @@
 /* Standard C ----------------------------------------------------------------*/
 	#include <ncurses.h>
 	#include <stdbool.h>
+	#include <stddef.h>
 
 /* libalx --------------------------------------------------------------------*/
 	#include "alx_ncur.h"
