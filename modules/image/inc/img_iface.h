@@ -31,7 +31,7 @@
 /* Functions -----------------------------------------------------------------*/
 	# define	img_iface_act_nodata(x) \
 				do {					\
-					img_iface_act(x, NULL)		\
+					img_iface_act(x, NULL);		\
 				} while (0)
 
 
