@@ -9,6 +9,7 @@
 /* Standard C ----------------------------------------------------------------*/
 		/* errno */
 	#include <errno.h>
+	#include <stddef.h>
 		/* printf() */
 	#include <stdio.h>
 
