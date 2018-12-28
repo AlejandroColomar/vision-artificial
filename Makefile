@@ -207,73 +207,75 @@ export	BIN_NAME
 
 # That's the default target when none is given on the command line
 PHONY := all
-all: binary
+all: libalx modules main binary
 
 
 PHONY += libalx
 libalx:
-	@echo	'	MAKE	libalx-base'
-	$(Q)make base	-C $(LIBALX_DIR)
-	@echo	'	MAKE	libalx-io'
-	$(Q)make io	-C $(LIBALX_DIR)
-	@echo	'	MAKE	libalx-curses'
-	$(Q)make curses	-C $(LIBALX_DIR)
+	@echo	'	MAKE	libalx'
+	$(Q)$(MAKE) base	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) io		-C $(LIBALX_DIR)
+	$(Q)$(MAKE) curses	-C $(LIBALX_DIR)
 
 PHONY += modules
 modules: libalx
 	@echo	'	MAKE	modules'
-	$(Q)make -C $(MODULES_DIR)
+	$(Q)$(MAKE) -C $(MODULES_DIR)
 
-PHONY += object
-object: modules libalx
-	@echo	'	MAKE	objects'
-	$(Q)make -C $(TMP_DIR)
+PHONY += main
+main: modules libalx
+	@echo	'	MAKE	main'
+	$(Q)$(MAKE) -C $(TMP_DIR)
 
 PHONY += binary
-binary: object
+binary: main
 	@echo	'	MAKE	binary'
-	$(Q)make -C $(BIN_DIR)
+	$(Q)$(MAKE) -C $(BIN_DIR)
 
 PHONY += install
 install: uninstall
-	@echo  "	Install:"
-	@echo  "	MKDIR	$(INSTALL_BIN_DIR)/"
+	@echo	"	Install:"
+	@echo	"	MKDIR	$(INSTALL_BIN_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_BIN_DIR)/
 	@echo	"	CP	$(BIN_NAME)"
 	$(Q)cp			$(BIN_DIR)/$(BIN_NAME)	$(DESTDIR)/$(INSTALL_BIN_DIR)/
-	@echo  "	MKDIR	$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
+	@echo	"	MKDIR	$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
 	@echo	"	CP -r	share/*"
 	$(Q)cp -r		./share/*		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo  "	Done"
-	@echo  ""
+	@echo	"	Done"
+	@echo
 
 PHONY += uninstall
 uninstall:
-	@echo  "	Clean old installations:"
+	@echo	"	Clean old installations:"
 	@echo	'	RM	binary'
 	$(Q)rm -f		$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
 	@echo	'	RM	share/*'
 	$(Q)rm -f -r		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo  "	Done"
-	@echo  ""
+	@echo	"	Done"
+	@echo
 
 PHONY += clean
 clean:
-	@echo	'	CLEAN	libalx'
-	$(Q)make clean	-C $(LIBALX_DIR)
 	@echo	'	CLEAN	modules'
-	$(Q)make clean	-C $(MODULES_DIR)
+	$(Q)$(MAKE) clean	-C $(MODULES_DIR)
 	@echo	'	CLEAN	tmp'
-	$(Q)make clean	-C $(TMP_DIR)
+	$(Q)$(MAKE) clean	-C $(TMP_DIR)
 	@echo	'	CLEAN	bin'
-	$(Q)make clean	-C $(BIN_DIR)
+	$(Q)$(MAKE) clean	-C $(BIN_DIR)
+
+PHONY += mrproper
+mrproper: clean
+	@echo	'	CLEAN	libalx'
+	$(Q)$(MAKE) clean	-C $(LIBALX_DIR)
 
 PHONY += help
 help:
 	@echo  'Cleaning targets:'
 	@echo  '  clean		  - Remove all generated files'
-	@echo  ''
+	@echo  '  mrproper	  - Remove all generated files (including libraries)'
+	@echo
 	@echo  'Other generic targets:'
 	@echo  '  all		  - Build all targets marked with [*]'
 	@echo  '* libalx	  - Build the libalx library'
@@ -282,9 +284,9 @@ help:
 	@echo  '* binary	  - Build the binary'
 	@echo  '  install	  - Install the program into the filesystem'
 	@echo  '  uninstall	  - Uninstall the program off the filesystem'
-	@echo  ''
+	@echo
 	@echo  '  make V=0|1 [targets] 0 => quiet build (default), 1 => verbose build'
-	@echo  ''
+	@echo
 	@echo  'Execute "make" or "make all" to build all targets marked with [*] '
 	@echo  'For further info see the ./README file'
 
