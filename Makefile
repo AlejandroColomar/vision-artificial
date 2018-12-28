@@ -207,16 +207,14 @@ export	BIN_NAME
 
 # That's the default target when none is given on the command line
 PHONY := all
-all: binary
+all: libalx modules main binary
 
 
 PHONY += libalx
 libalx:
-	@echo	'	MAKE	libalx-base'
+	@echo	'	MAKE	libalx'
 	$(Q)$(MAKE) base	-C $(LIBALX_DIR)
-	@echo	'	MAKE	libalx-io'
 	$(Q)$(MAKE) io		-C $(LIBALX_DIR)
-	@echo	'	MAKE	libalx-curses'
 	$(Q)$(MAKE) curses	-C $(LIBALX_DIR)
 
 PHONY += modules
@@ -224,13 +222,13 @@ modules: libalx
 	@echo	'	MAKE	modules'
 	$(Q)$(MAKE) -C $(MODULES_DIR)
 
-PHONY += object
-object: modules libalx
-	@echo	'	MAKE	objects'
+PHONY += main
+main: modules libalx
+	@echo	'	MAKE	main'
 	$(Q)$(MAKE) -C $(TMP_DIR)
 
 PHONY += binary
-binary: object
+binary: main
 	@echo	'	MAKE	binary'
 	$(Q)$(MAKE) -C $(BIN_DIR)
 
