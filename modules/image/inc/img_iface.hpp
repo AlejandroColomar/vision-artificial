@@ -74,6 +74,7 @@
 		IMG_IFACE_ACT_ERODE_DILATE,
 		IMG_IFACE_ACT_SMOOTH,
 		IMG_IFACE_ACT_SOBEL,
+		IMG_IFACE_ACT_BORDER,
 		IMG_IFACE_ACT_MIRROR,
 		IMG_IFACE_ACT_ROTATE_ORTO,
 		IMG_IFACE_ACT_ROTATE,
@@ -179,6 +180,10 @@
 		int	dx;
 		int	dy;
 		int	ksize;
+	};
+
+	struct	Img_Iface_Data_Border {
+		int	size;
 	};
 
 	struct	Img_Iface_Data_Mirror {

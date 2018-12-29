@@ -102,7 +102,7 @@ struct	Objects_Properties {
 /* Global --------------------------------------------------------------------*/
 
 /* Static --------------------------------------------------------------------*/
-static	std::vector <std::vector <cv::Point_ <int>>>	contours;
+static	class std::vector <class std::vector <class cv::Point_ <int>>>	contours;
 static	class cv::Mat					hierarchy;
 static	class cv::RotatedRect				rect_rot [OBJECTS_MAX];
 static	class cv::Rect_ <int>				rect [OBJECTS_MAX];
@@ -292,8 +292,6 @@ int	proc_objects			(void)
  ******************************************************************************/
 static	void	result_objects		(int status)
 {
-	/* Cleanup */
-
 	/* Write result into log */
 	switch (status) {
 	case OBJECTS_OK:

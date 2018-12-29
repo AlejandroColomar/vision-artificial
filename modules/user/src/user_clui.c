@@ -333,6 +333,9 @@ static	int	usr_input	(void)
 					case '5':
 						action	= USER_IFACE_ACT_SOBEL;
 						break;
+					case '6':
+						action	= USER_IFACE_ACT_BORDER;
+						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
 						break;
@@ -576,6 +579,7 @@ static	void	show_help	(void)
 	printf(" - E-D:			%s\n",	"f1103");
 	printf(" - Smooth:		%s\n",	"f1104");
 	printf(" - Sobel:		%s\n",	"f1105");
+	printf(" - Border:		%s\n",	"f1106");
 	printf(" - Mirror:		%s\n",	"f1110");
 	printf(" - Rotate ortogonally:	%s\n",	"f1111");
 	printf(" - Rotate:		%s\n",	"f1112");

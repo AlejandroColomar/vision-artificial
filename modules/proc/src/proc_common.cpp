@@ -129,6 +129,7 @@ void	proc_pixel_value	(int x, int y, unsigned char *val)
 void	proc_ROI		(int x, int y, int w, int h)
 {
 	struct Img_Iface_Data_SetROI		data;
+
 	data.rect.x		= x;
 	data.rect.y		= y;
 	data.rect.width		= w;
@@ -162,6 +163,7 @@ void	proc_or_2ref		(void)
 void	proc_cmp		(int cmp)
 {
 	struct Img_Iface_Data_Component		data;
+
 	data.cmp	= cmp;
 	img_iface_act(IMG_IFACE_ACT_COMPONENT, (void *)&data);
 
@@ -171,6 +173,7 @@ void	proc_cmp		(int cmp)
 void	proc_dilate		(int size)
 {
 	struct Img_Iface_Data_Dilate_Erode	data;
+
 	data.i	= size;
 	img_iface_act(IMG_IFACE_ACT_DILATE, (void *)&data);
 
@@ -180,6 +183,7 @@ void	proc_dilate		(int size)
 void	proc_erode		(int size)
 {
 	struct Img_Iface_Data_Dilate_Erode	data;
+
 	data.i	= size;
 	img_iface_act(IMG_IFACE_ACT_ERODE, (void *)&data);
 
@@ -189,6 +193,7 @@ void	proc_erode		(int size)
 void	proc_dilate_erode	(int size)
 {
 	struct Img_Iface_Data_Dilate_Erode	data;
+
 	data.i	= size;
 	img_iface_act(IMG_IFACE_ACT_DILATE_ERODE, (void *)&data);
 
@@ -198,6 +203,7 @@ void	proc_dilate_erode	(int size)
 void	proc_erode_dilate	(int size)
 {
 	struct Img_Iface_Data_Dilate_Erode	data;
+
 	data.i	= size;
 	img_iface_act(IMG_IFACE_ACT_ERODE_DILATE, (void *)&data);
 
@@ -207,6 +213,7 @@ void	proc_erode_dilate	(int size)
 void	proc_smooth		(int method, int ksize)
 {
 	struct Img_Iface_Data_Smooth		data;
+
 	data.method	= method;
 	data.ksize	= ksize;
 	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
@@ -214,9 +221,20 @@ void	proc_smooth		(int method, int ksize)
 	proc_show_img();
 }
 
+void	proc_border		(int size)
+{
+	struct Img_Iface_Data_Border		data;
+
+	data.size	= size;
+	img_iface_act(IMG_IFACE_ACT_BORDER, (void *)&data);
+
+	proc_show_img();
+}
+
 void	proc_rotate		(double center_x, double center_y, double angle)
 {
 	struct Img_Iface_Data_Rotate		data;
+
 	data.center.x	= center_x;
 	data.center.y	= center_y;
 	data.angle	= angle;
@@ -228,6 +246,7 @@ void	proc_rotate		(double center_x, double center_y, double angle)
 void	proc_adaptive_threshold	(int method, int type, int ksize)
 {
 	struct Img_Iface_Data_Adaptive_Thr	data;
+
 	data.method	= method;
 	data.thr_typ	= type;
 	data.ksize	= ksize;
@@ -239,6 +258,7 @@ void	proc_adaptive_threshold	(int method, int type, int ksize)
 void	proc_cvt_color		(int method)
 {
 	struct Img_Iface_Data_Cvt_Color		data;
+
 	data.method	= method;
 	img_iface_act(IMG_IFACE_ACT_CVT_COLOR, (void *)&data);
 
@@ -248,6 +268,7 @@ void	proc_cvt_color		(int method)
 void	proc_threshold		(int type, int size)
 {
 	struct Img_Iface_Data_Threshold		data;
+
 	data.thr_typ	= type;
 	data.thr_val	= size;
 	img_iface_act(IMG_IFACE_ACT_THRESHOLD, (void *)&data);
@@ -263,23 +284,28 @@ void	proc_distance_transform	(void)
 }
 
 void	proc_contours		(
-			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
-			class cv::Mat  *hierarchy)
+	class std::vector <class std::vector <class cv::Point_ <int>>>  *contours,
+	class cv::Mat  *hierarchy
+)
 {
 	struct Img_Iface_Data_Contours		data;
+
 	data.contours	= contours;
 	data.hierarchy	= hierarchy;
+
 	img_iface_act(IMG_IFACE_ACT_CONTOURS, (void *)&data);
 
 	proc_show_img();
 }
 
-void	proc_contours_size		(
-			std::vector <std::vector <class cv::Point_ <int>>>  *contours,
-			double  *area,
-			double  *perimeter)
+void	proc_contours_size	(
+	class std::vector <class std::vector <class cv::Point_ <int>>>  *contours,
+	double  *area,
+	double  *perimeter
+)
 {
 	struct Img_Iface_Data_Contours_Size	data;
+
 	data.contours	= contours;
 	data.area	= area;
 	data.perimeter	= perimeter;
@@ -287,11 +313,13 @@ void	proc_contours_size		(
 }
 
 void	proc_bounding_rect	(
-			std::vector <class cv::Point_ <int>>  *contour,
-			class cv::Rect_ <int>  *rect,
-			bool  show)
+	class std::vector <class cv::Point_ <int>>  *contour,
+	class cv::Rect_ <int>  *rect,
+	bool  show
+)
 {
 	struct Img_Iface_Data_Bounding_Rect	data;
+
 	data.contour	= contour;
 	data.rect	= rect;
 	data.show	= show;
@@ -303,11 +331,13 @@ void	proc_bounding_rect	(
 }
 
 void	proc_fit_ellipse	(
-			std::vector <class cv::Point_ <int>>  *contour,
-			class cv::RotatedRect  *rect,
-			bool show)
+	class std::vector <class cv::Point_ <int>>  *contour,
+	class cv::RotatedRect  *rect,
+	bool show
+)
 {
 	struct Img_Iface_Data_MinARect		data;
+
 	data.contour	= contour;
 	data.rect	= rect;
 	data.show	= show;
@@ -320,11 +350,13 @@ void	proc_fit_ellipse	(
 }
 
 void	proc_min_area_rect	(
-			std::vector <class cv::Point_ <int>>  *contour,
-			class cv::RotatedRect  *rect,
-			bool  show)
+	class std::vector <class cv::Point_ <int>>  *contour,
+	class cv::RotatedRect  *rect,
+	bool  show
+)
 {
 	struct Img_Iface_Data_MinARect		data;
+
 	data.contour	= contour;
 	data.rect	= rect;
 	data.show	= show;
@@ -338,6 +370,7 @@ void	proc_min_area_rect	(
 void	proc_OCR		(int lang, int conf)
 {
 	struct Img_Iface_Data_Read		data;
+
 	data.lang	= lang;	/* eng=0, spa=1, cat=2 */
 	data.conf	= conf;	/* none=0, price=1 */
 	img_iface_act(IMG_IFACE_ACT_READ, (void *)&data);
@@ -346,6 +379,7 @@ void	proc_OCR		(int lang, int conf)
 void	proc_zbar		(int type)
 {
 	struct Img_Iface_Data_Decode		data;
+
 	data.code_type	= (enum zbar::zbar_symbol_type_e)type;
 	img_iface_act(IMG_IFACE_ACT_DECODE, (void *)&data);
 }

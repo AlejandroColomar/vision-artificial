@@ -444,6 +444,9 @@ static	int	usr_input	(void)
 					case '5':
 						action	= USER_IFACE_ACT_SOBEL;
 						break;
+					case '6':
+						action	= USER_IFACE_ACT_BORDER;
+						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
 						break;
@@ -722,6 +725,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - E-D:			%s",	"f1103");
 	mvwprintw(win_help, r++, c, " - Smooth:		%s",		"f1104");
 	mvwprintw(win_help, r++, c, " - Sobel:		%s",		"f1105");
+	mvwprintw(win_help, r++, c, " - Border:		%s",		"f1106");
 	mvwprintw(win_help, r++, c, " - Mirror:		%s",		"f1110");
 	mvwprintw(win_help, r++, c, " - Rotate ortogonally:	%s",	"f1111");
 	mvwprintw(win_help, r++, c, " - Rotate:		%s",		"f1112");
