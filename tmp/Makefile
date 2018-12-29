@@ -58,17 +58,16 @@ PHONY := all
 all: $(ALL)
 
 main.s: $(MAIN_DEPS)
+	@echo	"	CXX	$@"
 	$(Q)$(CXX) $(CXXFLAGS) $(MAIN_INC_DIRS) -S $< -o $@
-	@echo  "	CXX	$@"
 main.o: main.s
+	@echo	"	AS	$@"
 	$(Q)$(AS) $< -o $@
-	@echo  "	AS	$@"
-	@echo  ""
 
 
 PHONY += clean
 clean:
-	@echo  "	RM	*.o *.s"
+	@echo	"	RM	*.o *.s"
 	$(Q)rm -f *.o *.s
 
 ################################################################################

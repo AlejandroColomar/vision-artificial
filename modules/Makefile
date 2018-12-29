@@ -46,7 +46,6 @@ all:
 	$(Q)$(MAKE) -C $(USR_DIR)
 	@echo	'	MAKE	modules.o'
 	$(Q)$(MAKE) -C $(TMP_DIR)
-	@echo
 
 
 PHONY += clean

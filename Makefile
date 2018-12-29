@@ -216,21 +216,25 @@ libalx:
 	$(Q)$(MAKE) base	-C $(LIBALX_DIR)
 	$(Q)$(MAKE) io		-C $(LIBALX_DIR)
 	$(Q)$(MAKE) curses	-C $(LIBALX_DIR)
+	@echo
 
 PHONY += modules
 modules: libalx
 	@echo	'	MAKE	modules'
 	$(Q)$(MAKE) -C $(MODULES_DIR)
+	@echo
 
 PHONY += main
 main: modules libalx
 	@echo	'	MAKE	main'
 	$(Q)$(MAKE) -C $(TMP_DIR)
+	@echo
 
 PHONY += binary
 binary: main
 	@echo	'	MAKE	binary'
 	$(Q)$(MAKE) -C $(BIN_DIR)
+	@echo
 
 PHONY += install
 install: uninstall
@@ -264,11 +268,13 @@ clean:
 	$(Q)$(MAKE) clean	-C $(TMP_DIR)
 	@echo	'	CLEAN	bin'
 	$(Q)$(MAKE) clean	-C $(BIN_DIR)
+	@echo
 
 PHONY += mrproper
 mrproper: clean
 	@echo	'	CLEAN	libalx'
 	$(Q)$(MAKE) clean	-C $(LIBALX_DIR)
+	@echo
 
 PHONY += help
 help:
