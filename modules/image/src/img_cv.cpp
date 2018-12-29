@@ -48,6 +48,7 @@ static	void	img_cv_dilate		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_erode		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_smooth		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_sobel		(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_border		(class cv::Mat  *imgptr,  void  *data);
 		/* Geometric image transformations */
 static	void	img_cv_mirror		(class cv::Mat  *imgptr,  void  *data);
 static	void	img_cv_rotate_orto	(class cv::Mat  *imgptr,  void  *data);
@@ -108,6 +109,9 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 		break;
 	case IMG_CV_ACT_SOBEL:
 		img_cv_sobel(imgptr, data);
+		break;
+	case IMG_CV_ACT_BORDER:
+		img_cv_border(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_MIRROR:
@@ -190,16 +194,26 @@ static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
 /* ----- ROI */
 static	void	img_cv_set_ROI		(class cv::Mat  *imgptr, void *data)
 {
-	/* Data */
+	class cv::Mat			imgtmp;
 	struct Img_Iface_Data_SetROI	*data_cast;
+	class cv::Rect_ <int>		*rect;
+
+	/* Data */
 	data_cast	= (struct Img_Iface_Data_SetROI *)data;
 
 	/* Rectangle */
-	class cv::Rect_ <int>	*rect;
 	rect		= &(data_cast->rect);
 
 	/* Set ROI */
-	*imgptr	= (*imgptr)(*rect);
+	(*imgptr)(*rect).copyTo(imgtmp);
+	imgtmp.copyTo(*imgptr);
+
+	/* Write tmp into imgptr */
+	imgptr->release();
+	imgtmp.copyTo(*imgptr);
+
+	/* clean up */
+	imgtmp.release();
 }
 
 /* ----- Operations on arrays */
@@ -226,14 +240,14 @@ static	void	img_cv_or_2ref		(class cv::Mat  *imgptr, void *data)
 
 static	void	img_cv_component	(class cv::Mat  *imgptr, void *data)
 {
-	class cv::Mat	cmp_img[3];
+	class cv::Mat			cmp_img[3];
+	struct Img_Iface_Data_Component	*data_cast;
+	int	cmp;
 
 	/* Data */
-	struct Img_Iface_Data_Component	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Component *)data;
 
 	/* Color component */
-	int	cmp;
 	cmp	= data_cast->cmp;
 
 	/* Write components into cmp_img[] */
@@ -263,7 +277,7 @@ static	void	img_cv_dilate		(class cv::Mat  *imgptr, void *data)
 
 	/* Dilate */
 	cv::dilate(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_REPLICATE);
+					cv::BORDER_CONSTANT, cv::Scalar(0));
 }
 
 static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
@@ -278,7 +292,7 @@ static	void	img_cv_erode		(class cv::Mat  *imgptr, void *data)
 
 	/* Erode */
 	cv::erode(*imgptr, *imgptr, cv::Mat(), cv::Point(-1,-1), i,
-							cv::BORDER_REPLICATE);
+					cv::BORDER_CONSTANT, cv::Scalar(0));
 }
 
 static	void	img_cv_smooth		(class cv::Mat  *imgptr, void *data)
@@ -333,6 +347,29 @@ static	void	img_cv_sobel		(class cv::Mat  *imgptr, void *data)
 
 	cv::Sobel(*imgptr, *imgptr, -1, dx, dy, ksize, 1, 0,
 							cv::BORDER_DEFAULT);
+}
+
+static	void	img_cv_border		(class cv::Mat  *imgptr, void *data)
+{
+	class cv::Mat			imgtmp;
+	struct Img_Iface_Data_Border	*data_cast;
+	int	size;
+
+	/* Data */
+	data_cast	= (struct Img_Iface_Data_Border *)data;
+
+	size	= data_cast->size;
+
+	imgtmp	= cv::Mat(cv::Size(imgptr->cols + size, imgptr->rows + size),
+				CV_8U);
+	/* Get transform */
+	cv::copyMakeBorder(*imgptr, imgtmp, size, size, size, size,
+				cv::BORDER_CONSTANT, cv::Scalar(0));
+
+	imgtmp.copyTo(*imgptr);
+
+	/* Cleanup */
+	imgtmp.release();
 }
 
 /* ----- Geometric image transformations */
@@ -594,17 +631,19 @@ static	void	img_cv_histogram_c3	(class cv::Mat  *imgptr, void *data)
 /* ----- Structural analysis and shape descriptors */
 static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)
 {
-	/* Data */
 	struct Img_Iface_Data_Contours	*data_cast;
+	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
+	class cv::Mat						*hierarchy;
+
+	/* Data */
 	data_cast	= (struct Img_Iface_Data_Contours *)data;
 
 	/* Contours */
-	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
 	contours	= data_cast->contours;
-	class cv::Mat						*hierarchy;
 	hierarchy	= data_cast->hierarchy;
 
 	/* Get contours */
+
 	cv::findContours(*imgptr, *contours, *hierarchy, CV_RETR_EXTERNAL,
 							CV_CHAIN_APPROX_SIMPLE);
 
@@ -618,21 +657,28 @@ static	void	img_cv_contours		(class cv::Mat  *imgptr, void *data)
 
 static	void	img_cv_contours_size	(void *data)
 {
-	/* Data */
 	struct Img_Iface_Data_Contours_Size	*data_cast;
+	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
+	int	i;
+
+	/* Data */
 	data_cast	= (struct Img_Iface_Data_Contours_Size *)data;
 
 	/* Contours */
-	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
 	contours	= data_cast->contours;
 
 	/* Get area and perimeter */
-	int	i;
-	for (i = 0; i < (int)contours->size(); i++) {
-		data_cast->area[i]	= cv::contourArea(
+	if (data_cast->area) {
+		for (i = 0; i < (int)contours->size(); i++) {
+			data_cast->area[i]	= cv::contourArea(
 							(*contours)[i], false);
-		data_cast->perimeter[i]	= cv::arcLength(
+		}
+	}
+	if (data_cast->perimeter) {
+		for (i = 0; i < (int)contours->size(); i++) {
+			data_cast->perimeter[i]	= cv::arcLength(
 							(*contours)[i], true);
+		}
 	}
 }
 

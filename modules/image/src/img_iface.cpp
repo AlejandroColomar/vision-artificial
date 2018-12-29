@@ -119,6 +119,7 @@ static	void	img_iface_dilate_erode		(void *data);
 static	void	img_iface_erode_dilate		(void *data);
 static	void	img_iface_smooth		(void *data);
 static	void	img_iface_sobel			(void *data);
+static	void	img_iface_border		(void *data);
 			/* Geometric image transformations */
 static	void	img_iface_mirror		(void *data);
 static	void	img_iface_rotate_orto		(void *data);
@@ -308,6 +309,9 @@ void	img_iface_act		(int action, void *data)
 		break;
 	case IMG_IFACE_ACT_SOBEL:
 		img_iface_sobel(data);
+		break;
+	case IMG_IFACE_ACT_BORDER:
+		img_iface_border(data);
 		break;
 			/* Geometric image transformations */
 	case IMG_IFACE_ACT_MIRROR:
@@ -1034,6 +1038,43 @@ static	void	img_iface_sobel			(void *data)
 
 	/* Filter: sobel */
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_SOBEL, data);
+}
+
+static	void	img_iface_border		(void *data)
+{
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Data */
+	struct Img_Iface_Data_Border	data_tmp;
+	if (!data) {
+		/* Ask user */
+		char	title [80];
+		snprintf(title, 80, "Size");
+		data_tmp.size	= user_iface_getint(1, 1, 0xF000, title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Write into log */
+	struct Img_Iface_Data_Border	*data_cast;
+	data_cast	= (struct Img_Iface_Data_Border *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Border size=%i",
+						data_cast->size);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+
+	/* Add border */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_BORDER, data);
 }
 
 /* ----- ------- Geometric image transformations */
