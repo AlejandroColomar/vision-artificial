@@ -36,7 +36,7 @@
 /* Global --------------------------------------------------------------------*/
 
 /* Static --------------------------------------------------------------------*/
-static	std::vector <std::vector <cv::Point_ <int>>>	contours;
+static	class std::vector <class std::vector <class cv::Point_ <int>>>	contours;
 static	class cv::Mat					hierarchy;
 static	class cv::RotatedRect				rect;
 
@@ -205,6 +205,7 @@ static	void	result_label		(int status)
 static	int	label_find		(void)
 {
 	int	status;
+	int	tmp;
 
 	proc_load_mem(0);
 
@@ -231,7 +232,6 @@ static	int	label_find		(void)
 
 	/* If angle is < -45º, it is taking into acount the incorrect side */
 	if (rect.angle < -45.0) {
-		int	tmp;
 		rect.angle		+= 90.0;
 		tmp			= rect.size.width;
 		rect.size.width		= rect.size.height;
@@ -254,13 +254,14 @@ static	void	label_align		(void)
 static	int	find_cerdo		(void)
 {
 	int	status;
-
-	proc_load_mem(1);
-
 	int	x;
 	int	y;
 	int	w;
 	int	h;
+	bool	cerdo_nok;
+
+	proc_load_mem(1);
+
 	x	= rect.center.x - (1.05 * rect.size.width / 2);
 	if (x < 0) {
 		x	= 0;
@@ -277,7 +278,6 @@ static	int	find_cerdo		(void)
 	proc_OCR(IMG_IFACE_OCR_LANG_ENG, IMG_IFACE_OCR_CONF_NONE);
 
 	/* Compare Label text to "Cerdo". */
-	bool	cerdo_nok;
 	cerdo_nok	= strncmp(img_ocr_text, "Cerdo",
 						strlen("Cerdo"));
 
@@ -313,8 +313,8 @@ static	int	barcode_read		(void)
 static	int	barcode_chk_prod	(void)
 {
 	int	status;
-
 	bool	prod_nok;
+
 	prod_nok	= strncmp(zb_codes.arr[0].data, "2301703",
 						strlen("2301703"));
 	if (prod_nok) {
@@ -328,12 +328,13 @@ static	int	barcode_chk_prod	(void)
 
 static	void	price_read		(void)
 {
-	proc_load_mem(1);
-
 	int	x;
 	int	y;
 	int	w;
 	int	h;
+
+	proc_load_mem(1);
+
 	x	= rect.center.x + (0.33 * rect.size.width / 2);
 	y	= rect.center.y + (0.64 * rect.size.height / 2);
 	w	= rect.size.width * 0.225;
@@ -349,8 +350,8 @@ static	void	price_read		(void)
 static	int	price_chk		(void)
 {
 	int	status;
-
 	char	price [80];
+	bool	price_nok;
 
 	/* Extract price from barcode */
 	if (zb_codes.arr[0].data[8] != '0') {
@@ -367,7 +368,6 @@ static	int	price_chk		(void)
 	}
 
 	/* Compare price from barcode and from text */
-	bool	price_nok;
 	price_nok	= strncmp(img_ocr_text, price, strlen(price));
 
 	if (price_nok) {

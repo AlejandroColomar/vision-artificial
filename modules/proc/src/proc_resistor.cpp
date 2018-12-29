@@ -49,7 +49,7 @@ struct	Resistor_Bands {
 /* Global --------------------------------------------------------------------*/
 
 /* Static --------------------------------------------------------------------*/
-static	std::vector <std::vector <cv::Point_ <int>>>	contours;
+static	class std::vector <class std::vector <class cv::Point_ <int>>>	contours;
 static	class cv::Mat					hierarchy;
 static	class cv::RotatedRect				rect_rot;
 static	class cv::Rect_ <int>				rect;
@@ -96,7 +96,6 @@ static	int	chk_std_value		(void);
 int	proc_resistor		(void)
 {
 	int	status;
-
 
 	proc_save_mem(0);
 	/* Find resistor (position and angle) */
@@ -253,8 +252,6 @@ int	proc_resistor		(void)
  ******************************************************************************/
 static	void	result_resistor		(int status)
 {
-	/* Cleanup */
-
 	/* Write result into log */
 	switch (status) {
 	case RESISTOR_OK:
@@ -345,12 +342,13 @@ static	void	resistor_dimensions_0	(void)
 
 static	void	resistor_crop_0		(void)
 {
-	proc_load_mem(2);
-
 	int	x;
 	int	y;
 	int	w;
 	int	h;
+
+	proc_load_mem(2);
+
 	w	= rect.width;
 	h	= rect.height;
 	x	= rect.x;
@@ -361,8 +359,10 @@ static	void	resistor_crop_0		(void)
 
 static	void	resistor_bkgd		(void)
 {
-	/* hue */
 	uint8_t	bkgd_hue;
+	uint8_t	bkgd_sat;
+
+	/* hue */
 	proc_load_mem(4);
 	proc_cmp(IMG_IFACE_CMP_HUE);
 	proc_median_vertical();
@@ -370,7 +370,6 @@ static	void	resistor_bkgd		(void)
 	proc_pixel_value(0, 0, &bkgd_hue);
 
 	/* saturation */
-	uint8_t	bkgd_sat;
 	proc_load_mem(4);
 	proc_cmp(IMG_IFACE_CMP_SATURATION);
 	proc_median_vertical();
@@ -407,12 +406,13 @@ static	void	resistor_dimensions_1	(void)
 
 static	void	resistor_crop_1		(void)
 {
-	proc_load_mem(2);
-
 	int	x;
 	int	y;
 	int	w;
 	int	h;
+
+	proc_load_mem(2);
+
 	w	= rect.width * 0.95;
 	h	= rect.height * 0.8;
 	x	= rect.x + w * (1.0 - 0.95) / 2.0;
@@ -653,8 +653,9 @@ static	void	bands_colors		(void)
 
 static	void	bands_code		(void)
 {
-	/* Init to 0 */
 	int	i;
+
+	/* Init to 0 */
 	for (i = 0; i < 6; i++) {
 		code[i]	= '\0';
 	}
@@ -1307,6 +1308,8 @@ static	void	bands_code_deduce_1	(void)
 static	int	bands_code_deduce_no	(void)
 {
 	int	status;
+	int	i;
+
 	/*
 	 * Not able to segmentate:
 	 * q = 1 2
@@ -1318,7 +1321,6 @@ static	int	bands_code_deduce_no	(void)
 	 * u = 0 1 8
 	 */
 
-	int	i;
 	for (i = 0; i < 5; i++) {
 		switch (code[i]) {
 		case 'q':
@@ -1353,6 +1355,8 @@ static	int	bands_code_deduce_no	(void)
 
 static	void	resistor_value		(void)
 {
+	int	power;
+
 	/* Base value */
 	base	= code[2] - '0';
 	if (code[1] != 'n') {
@@ -1363,7 +1367,6 @@ static	void	resistor_value		(void)
 	}
 
 	/* Calculate resistance */
-	int	power;
 	if ((code[3] > '0')  &&  (code[3] < '9')) {
 		power	= code[3] - '0';
 	} else if (code[3] == 'g') {
@@ -1410,15 +1413,12 @@ static	int	resistor_tolerance	(void)
 static	int	chk_std_value		(void)
 {
 	int	status;
-
 	/* Check that base value is a standard value */
 	int	std_values_10 [12]	= {10,12,15,18,22,27,33,39,47,56,68,82};
 	int	std_values_5 [12]	= {11,13,16,20,24,30,36,43,51,62,75,91};
-
-	bool	std_value_nok;
-	std_value_nok	= true;
-
+	bool	std_value_nok		= true;
 	int	i;
+
 	if (bands_n != 1) {
 		for (i = 0; i < 12; i++) {
 			if (base == std_values_10[i]) {

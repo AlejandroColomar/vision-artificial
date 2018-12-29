@@ -57,7 +57,7 @@ struct	Coins_Properties {
 /* Global --------------------------------------------------------------------*/
 
 /* Static --------------------------------------------------------------------*/
-static	std::vector <std::vector <cv::Point_ <int>>>	contours;
+static	class std::vector <class std::vector <class cv::Point_ <int>>>	contours;
 static	class cv::Mat					hierarchy;
 static	class cv::Rect_ <int>				rectangle [COINS_MAX];
 static	int						coins_n;
@@ -225,6 +225,7 @@ static	void	coins_segmentate	(void)
 static	int	coins_positions		(void)
 {
 	int	status;
+	int	i;
 
 	proc_load_mem(1);
 
@@ -238,7 +239,6 @@ static	int	coins_positions		(void)
 	}
 
 	/* Get position of each contour */
-	int	i;
 	for (i = 0; i < coins_n; i++) {
 		proc_bounding_rect(&(contours[i]), &(rectangle[i]), true);
 		coins[i].x	= rectangle[i].x + rectangle[i].width / 2.0;
@@ -251,10 +251,11 @@ static	int	coins_positions		(void)
 
 static	void	coins_diameters_pix	(void)
 {
+	int	i;
+
 	proc_load_mem(1);
 
 	/* Get coins diameters in pixels */
-	int	i;
 	for (i = 0; i < coins_n; i++) {
 		proc_pixel_value(coins[i].x, coins[i].y,
 						&(coins[i].diameter_pix));
@@ -265,14 +266,14 @@ static	void	coins_diameters_pix	(void)
 static	void	calibrate_mm_per_pix	(void)
 {
 	uint8_t	coins_size_pix [coins_n];
-
 	int	i;
+	int	max_pos;
+	int	max_size;
+
 	for (i = 0; i < coins_n; i++) {
 		coins_size_pix[i]	= coins[i].diameter_pix;
 	}
 
-	int	max_pos;
-	int	max_size;
 	max_pos			= alx_maximum_u8(coins_n, coins_size_pix);
 	max_size		= coins_size_pix[max_pos];
 	ratio_mm_per_pix	= 25.75 / max_size;
@@ -280,8 +281,8 @@ static	void	calibrate_mm_per_pix	(void)
 
 static	void	coins_diameters_mm	(void)
 {
-	/* Get coins diameters in mm */
 	int	i;
+
 	for (i = 0; i < coins_n; i++) {
 		coins[i].diameter_mm	= ratio_mm_per_pix *
 							coins[i].diameter_pix;
@@ -299,9 +300,8 @@ static	void	coins_diameters_mm	(void)
 static	int	coins_values		(void)
 {
 	int	status;
-
-	/* Get coins values in € (EUR) */
 	int	i;
+
 	for (i = 0; i < coins_n; i++) {
 		coins[i].value	= coin_value(coins[i].diameter_mm);
 
@@ -356,10 +356,10 @@ static	double	coin_value		(double diameter_mm)
 
 static	void	coins_total_value	(void)
 {
+	int	i;
+
 	value_total	= 0.00;
 
-	/* Get total value in € (EUR) */
-	int	i;
 	for (i = 0; i < coins_n; i++) {
 		value_total	+= coins[i].value;
 	}
