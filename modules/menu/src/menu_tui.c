@@ -231,7 +231,7 @@ static	void	menu_tui_series	(void)
 		{3, 4, "[2]	Objects"},
 		{4, 4, "[3]	Coins"},
 		{5, 4, "[4]	Resistor"},
-		{6, 4, "[5]	Lighter"}
+		{6, 4, "[5]	Lighters"}
 	};
 
 	/* Menu loop */
