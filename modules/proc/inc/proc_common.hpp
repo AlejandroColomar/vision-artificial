@@ -58,6 +58,7 @@ extern	"C" {
 	void	proc_dilate_erode	(int size);
 	void	proc_erode_dilate	(int size);
 	void	proc_smooth		(int method, int ksize);
+	void	proc_border		(int size);
 	void	proc_rotate		(
 			double center_x,
 			double center_y,
