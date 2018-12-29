@@ -29,7 +29,7 @@
 
 /* Module --------------------------------------------------------------------*/
 	#include "proc_label.h"
-	#include "proc_lighter.h"
+	#include "proc_lighters.h"
 	#include "proc_objects.h"
 	#include "proc_coins.h"
 	#include "proc_resistor.h"
@@ -85,9 +85,6 @@ int	proc_iface_single	(int action)
 	case PROC_MODE_RESISTOR_SERIES:
 		error	= proc_resistor();
 		break;
-	case PROC_MODE_LIGHTER_CALIB:
-		error	= proc_lighter_calibrate();
-		break;
 	case PROC_MODE_LIGHTER_SERIES:
 		error	= proc_lighter();
 		break;
@@ -123,6 +120,7 @@ void	proc_iface_series	(void)
 	bool	wh;
 		/* if i starts being 0, the camera needs calibration */
 	int	i;
+	char	txt_tmp [80];
 
 	switch (proc_mode) {
 	case PROC_MODE_LABEL_SERIES:
@@ -161,11 +159,10 @@ void	proc_iface_series	(void)
 	case PROC_MODE_LIGHTER_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", lighters_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", lighters_fail_path);
-		snprintf(file_basename, FILENAME_MAX, "lighter");
+		snprintf(file_basename, FILENAME_MAX, "lighters");
 		num_len	= 4;
-		snprintf(file_ext, FILENAME_MAX, ".png");
-		i	= 0;
-		proc_mode++;
+		snprintf(file_ext, FILENAME_MAX, ".jpeg");
+		i	= 1;
 		break;
 	default:
 		return;
@@ -202,7 +199,6 @@ void	proc_iface_series	(void)
 				}
 
 				/* Show log */
-				char	txt_tmp [80];
 				snprintf(txt_tmp, FILENAME_MAX, "%04i", i);
 				user_iface_show_log(txt_tmp, "Item");
 
