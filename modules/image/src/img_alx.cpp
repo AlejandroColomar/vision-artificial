@@ -144,19 +144,13 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 
 static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 {
-	int	i;
-	int	j;
-	int	k;
-	int	l;
-	int	r;
-	int	dist_x;
-	int	dist_y;
 	/* Width of the skeleton */
 	const int	width	= 5;
-	/* Minimum value of the skeleton */
-	bool		skeleton;
-	int		cnt_lo [width];
-	int		cnt_hi_or_eq [width];
+	int	dist_x;
+	int	dist_y;
+	bool	skeleton;
+	int	cnt_lo [width];
+	int	cnt_hi_or_eq [width];
 	class cv::Mat	imgtmp;
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
@@ -164,6 +158,12 @@ static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 	uint8_t	*near_pix;
 	/* pointer to a pixel (same position as img_pix, but in imgtmp) */
 	uint8_t	*tmp_pix;
+
+	int	i;
+	int	j;
+	int	k;
+	int	l;
+	int	r;
 
 	/* Tmp image copy */
 	imgptr->copyTo(imgtmp);
@@ -182,7 +182,6 @@ static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 			cnt_lo[r]	= 0;
 			cnt_hi_or_eq[r]	= 0;
 		}
-		skeleton		= false;
 
 		for (k = i - width; k <= i + width; k++) {
 		for (l = j - width; l <= j + width; l++) {
@@ -206,6 +205,7 @@ static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 		}
 		}
 
+		skeleton	= false;
 		for (r = 0; r < width; r++) {
 			if (cnt_lo[r] > (cnt_hi_or_eq[r] + (1.6) * (r + 1))) {
 				skeleton	= true;
