@@ -89,7 +89,6 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 	int	j;
 	int	k;
 	int	l;
-	bool		local_max;
 	/* Minimum distance between local maxima */
 	const int	dist_min	= 16;
 	/* Minimum value of local maxima */
@@ -110,30 +109,30 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 	for (j = 0; j < imgptr->cols; j++) {
 		img_pix		= imgptr->data + i * imgptr->step + j;
 		tmp_pix		= imgtmp.data + i * imgptr->step + j;
-		local_max	= true;
+		*tmp_pix	= 0;
 
 		if (*img_pix < val_min) {
-			local_max	= false;
+			goto next_pixel;
 		}
 
-		for (k = i - dist_min; (k < i + dist_min+1) && local_max; k++) {
-		for (l = j - dist_min; (l < j + dist_min+1) && local_max; l++) {
+		for (k = (i - dist_min); k < (i + dist_min + 1); k++) {
+		for (l = (j - dist_min); l < (j + dist_min + 1); l++) {
 			near_pix	= imgptr->data + k * imgptr->step + l;
 			if ((k >= 0)  &&  (k < imgptr->rows)) {
 			if ((l >= 0)  &&  (l < imgptr->cols)) {
 				if (*img_pix < *near_pix) {
-					local_max	= false;
+					goto next_pixel;
 				}
 			}
 			}
 		}
 		}
 
-		if (local_max) {
-			*tmp_pix	= *img_pix;
-		} else {
-			*tmp_pix	= 0;
-		}
+		*tmp_pix	= *img_pix;
+		continue;
+
+next_pixel:
+		*tmp_pix	= 0;
 	}
 	}
 
@@ -144,7 +143,7 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 
 static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 {
-	/* Width of the skeleton */
+	/* (Half of the) width of the skeleton */
 	const int	width	= 5;
 	int	dist_x;
 	int	dist_y;
