@@ -34,7 +34,8 @@
  ******************************************************************************/
 	/* Core: The core functionality */
 		/* Pixel */
-static	void	img_cv_pixel_value	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_pixel_get	(class cv::Mat  *imgptr,  void  *data);
+static	void	img_cv_pixel_set	(class cv::Mat  *imgptr,  void  *data);
 		/* ROI */
 static	void	img_cv_set_ROI		(class cv::Mat  *imgptr,  void  *data);
 		/* Operations on Arrays */
@@ -77,8 +78,11 @@ static	void	img_cv_hough_circles	(class cv::Mat  *imgptr,  void  *data);
 void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
 {
 	switch (action) {
-	case IMG_CV_ACT_PIXEL_VALUE:
-		img_cv_pixel_value(imgptr, data);
+	case IMG_CV_ACT_PIXEL_GET:
+		img_cv_pixel_get(imgptr, data);
+		break;
+	case IMG_CV_ACT_PIXEL_SET:
+		img_cv_pixel_set(imgptr, data);
 		break;
 
 	case IMG_CV_ACT_SET_ROI:
@@ -172,23 +176,43 @@ void	img_cv_act	(class cv::Mat  *imgptr, int action, void *data)
  ******************************************************************************/
 /* Core: The core functionality */
 /* ----- Pixel */
-static	void	img_cv_pixel_value	(class cv::Mat  *imgptr, void *data)
+static	void	img_cv_pixel_get	(class cv::Mat  *imgptr, void *data)
 {
+	struct Img_Iface_Data_Pixel_Get	*data_cast;
+	unsigned char	*val;
+	int		x;
+	int		y;
 	/* Data */
-	struct Img_Iface_Data_Pixel_Value	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Pixel_Value *)data;
+	data_cast	= (struct Img_Iface_Data_Pixel_Get *)data;
 
 	/* Value */
-	unsigned char	*val;
 	val		= data_cast->val;
 	/* Position */
-	int		x;
 	x		= data_cast->x;
-	int		y;
 	y		= data_cast->y;
 
 	/* Get value */
 	*val	= imgptr->at<unsigned char>(y, x);
+}
+
+static	void	img_cv_pixel_set	(class cv::Mat  *imgptr, void *data)
+{
+	struct Img_Iface_Data_Pixel_Set	*data_cast;
+	unsigned char	val;
+	int		x;
+	int		y;
+
+	/* Data */
+	data_cast	= (struct Img_Iface_Data_Pixel_Set *)data;
+
+	/* Value */
+	val	= data_cast->val;
+	/* Position */
+	x	= data_cast->x;
+	y	= data_cast->y;
+
+	/* Set value */
+	imgptr->at<unsigned char>(y, x)	= val;
 }
 
 /* ----- ROI */

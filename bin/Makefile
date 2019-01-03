@@ -33,13 +33,12 @@ all: $(ALL)
 
 
 $(BIN_NAME): $(MAIN_OBJS) $(MAIN_LIBS)
+	@echo	"	CXX	$@"
 	$(Q)$(CXX) $(MAIN_OBJS) -o $@ $(STATIC_LIBS) $(LIBS)
-	@echo  "	CXX	$@"
-	@echo  ""
 
 
 clean:
-	@echo  "	RM	$(ALL)"
+	@echo	"	RM	$(ALL)"
 	$(Q)rm -f $(ALL)
 
 ################################################################################

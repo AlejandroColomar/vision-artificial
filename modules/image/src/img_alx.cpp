@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	(GPL-2.0-only  OR  LGPL-3.0-only)     *
  ******************************************************************************/
 
 
@@ -30,7 +31,7 @@
 
 
 /******************************************************************************
- ******* static functions *****************************************************
+ ******* static functions (prototypes) ****************************************
  ******************************************************************************/
 static	void	img_alx_local_max		(class cv::Mat  *imgptr);
 static	void	img_alx_skeleton		(class cv::Mat  *imgptr);
@@ -43,10 +44,11 @@ static	void	img_alx_median_vertical		(class cv::Mat  *imgptr);
 
 
 /******************************************************************************
- ******* main *****************************************************************
+ ******* global functions *****************************************************
  ******************************************************************************/
 void	img_alx_act	(class cv::Mat  *imgptr, int action, void *data)
 {
+
 	switch (action) {
 	case IMG_ALX_ACT_LOCAL_MAX:
 		img_alx_local_max(imgptr);
@@ -79,7 +81,7 @@ void	img_alx_act	(class cv::Mat  *imgptr, int action, void *data)
 
 
 /******************************************************************************
- ******* static functions *****************************************************
+ ******* static functions (definitions) ***************************************
  ******************************************************************************/
 static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 {
@@ -87,7 +89,6 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 	int	j;
 	int	k;
 	int	l;
-	bool		local_max;
 	/* Minimum distance between local maxima */
 	const int	dist_min	= 16;
 	/* Minimum value of local maxima */
@@ -108,30 +109,30 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 	for (j = 0; j < imgptr->cols; j++) {
 		img_pix		= imgptr->data + i * imgptr->step + j;
 		tmp_pix		= imgtmp.data + i * imgptr->step + j;
-		local_max	= true;
+		*tmp_pix	= 0;
 
 		if (*img_pix < val_min) {
-			local_max	= false;
+			goto next_pixel;
 		}
 
-		for (k = i - dist_min; (k < i + dist_min+1) && local_max; k++) {
-		for (l = j - dist_min; (l < j + dist_min+1) && local_max; l++) {
+		for (k = (i - dist_min); k < (i + dist_min + 1); k++) {
+		for (l = (j - dist_min); l < (j + dist_min + 1); l++) {
 			near_pix	= imgptr->data + k * imgptr->step + l;
 			if ((k >= 0)  &&  (k < imgptr->rows)) {
 			if ((l >= 0)  &&  (l < imgptr->cols)) {
 				if (*img_pix < *near_pix) {
-					local_max	= false;
+					goto next_pixel;
 				}
 			}
 			}
 		}
 		}
 
-		if (local_max) {
-			*tmp_pix	= *img_pix;
-		} else {
-			*tmp_pix	= 0;
-		}
+		*tmp_pix	= *img_pix;
+		continue;
+
+next_pixel:
+		*tmp_pix	= 0;
 	}
 	}
 
@@ -142,27 +143,26 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 
 static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 {
-	int	i;
-	int	j;
-	int	k;
-	int	l;
-	int	r;
+	/* (Half of the) width of the skeleton */
+	const int	width	= 5;
 	int	dist_x;
 	int	dist_y;
-	/* Width of the skeleton */
-	const int	width	= 5;
-	/* Minimum value of the skeleton */
-	bool		skeleton;
-	int		cnt_lo [width];
-	int		cnt_hi_or_eq [width];
+	bool	skeleton;
+	int	cnt_lo [width];
+	int	cnt_hi_or_eq [width];
 	class cv::Mat	imgtmp;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 	/* pointer to a pixel near img_pix (in imgptr) */
 	uint8_t	*near_pix;
 	/* pointer to a pixel (same position as img_pix, but in imgtmp) */
 	uint8_t	*tmp_pix;
+
+	int	i;
+	int	j;
+	int	k;
+	int	l;
+	int	r;
 
 	/* Tmp image copy */
 	imgptr->copyTo(imgtmp);
@@ -181,7 +181,6 @@ static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 			cnt_lo[r]	= 0;
 			cnt_hi_or_eq[r]	= 0;
 		}
-		skeleton		= false;
 
 		for (k = i - width; k <= i + width; k++) {
 		for (l = j - width; l <= j + width; l++) {
@@ -205,6 +204,7 @@ static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 		}
 		}
 
+		skeleton	= false;
 		for (r = 0; r < width; r++) {
 			if (cnt_lo[r] > (cnt_hi_or_eq[r] + (1.6) * (r + 1))) {
 				skeleton	= true;
@@ -229,7 +229,6 @@ static	void	img_alx_lines_horizontal	(class cv::Mat  *imgptr)
 	int	i;
 	int	j;
 	bool	white;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -258,7 +257,6 @@ static	void	img_alx_lines_vertical		(class cv::Mat  *imgptr)
 	int	i;
 	int	j;
 	bool	white;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -288,7 +286,6 @@ static	void	img_alx_mean_horizontal		(class cv::Mat  *imgptr)
 	int		j;
 	uint32_t	tmp;
 	uint8_t		mean;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -313,7 +310,6 @@ static	void	img_alx_mean_vertical		(class cv::Mat  *imgptr)
 	int		j;
 	uint32_t	tmp;
 	uint8_t		mean;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -338,7 +334,6 @@ static	void	img_alx_median_horizontal	(class cv::Mat  *imgptr)
 	int		j;
 	uint8_t		row [imgptr->cols];
 	uint8_t		median;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -362,7 +357,6 @@ static	void	img_alx_median_vertical		(class cv::Mat  *imgptr)
 	int		j;
 	uint8_t		col [imgptr->rows];
 	uint8_t		median;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 

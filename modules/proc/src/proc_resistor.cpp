@@ -367,14 +367,14 @@ static	void	resistor_bkgd		(void)
 	proc_cmp(IMG_IFACE_CMP_HUE);
 	proc_median_vertical();
 	proc_median_horizontal();
-	proc_pixel_value(0, 0, &bkgd_hue);
+	proc_pixel_get(0, 0, &bkgd_hue);
 
 	/* saturation */
 	proc_load_mem(4);
 	proc_cmp(IMG_IFACE_CMP_SATURATION);
 	proc_median_vertical();
 	proc_median_horizontal();
-	proc_pixel_value(0, 0, &bkgd_sat);
+	proc_pixel_get(0, 0, &bkgd_sat);
 
 	if (bkgd_hue < 50) {
 		/* Beige */
@@ -605,49 +605,49 @@ static	void	bands_colors		(void)
 	/* Hue */
 	proc_load_mem(9);
 	if (bands_n == 5) {
-		proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].h));
+		proc_pixel_get(bands[0].x, bands[0].y, &(bands[0].h));
 	}
 	if (bands_n >= 3) {
-		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].h));
+		proc_pixel_get(bands[1].x, bands[1].y, &(bands[1].h));
 	}
-	proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].h));
+	proc_pixel_get(bands[2].x, bands[2].y, &(bands[2].h));
 	if (bands_n >= 3) {
-		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].h));
+		proc_pixel_get(bands[3].x, bands[3].y, &(bands[3].h));
 	}
 	if (bands_n > 3) {
-		proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].h));
+		proc_pixel_get(bands[4].x, bands[4].y, &(bands[4].h));
 	}
 
 	/* Saturation */
 	proc_load_mem(10);
 	if (bands_n == 5) {
-		proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].s));
+		proc_pixel_get(bands[0].x, bands[0].y, &(bands[0].s));
 	}
 	if (bands_n >= 3) {
-		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].s));
+		proc_pixel_get(bands[1].x, bands[1].y, &(bands[1].s));
 	}
-	proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].s));
+	proc_pixel_get(bands[2].x, bands[2].y, &(bands[2].s));
 	if (bands_n >= 3) {
-		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].s));
+		proc_pixel_get(bands[3].x, bands[3].y, &(bands[3].s));
 	}
 	if (bands_n > 3) {
-		proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].s));
+		proc_pixel_get(bands[4].x, bands[4].y, &(bands[4].s));
 	}
 
 	/* Value */
 	proc_load_mem(11);
 	if (bands_n == 5) {
-		proc_pixel_value(bands[0].x, bands[0].y, &(bands[0].v));
+		proc_pixel_get(bands[0].x, bands[0].y, &(bands[0].v));
 	}
 	if (bands_n >= 3) {
-		proc_pixel_value(bands[1].x, bands[1].y, &(bands[1].v));
+		proc_pixel_get(bands[1].x, bands[1].y, &(bands[1].v));
 	}
-	proc_pixel_value(bands[2].x, bands[2].y, &(bands[2].v));
+	proc_pixel_get(bands[2].x, bands[2].y, &(bands[2].v));
 	if (bands_n >= 3) {
-		proc_pixel_value(bands[3].x, bands[3].y, &(bands[3].v));
+		proc_pixel_get(bands[3].x, bands[3].y, &(bands[3].v));
 	}
 	if (bands_n > 3) {
-		proc_pixel_value(bands[4].x, bands[4].y, &(bands[4].v));
+		proc_pixel_get(bands[4].x, bands[4].y, &(bands[4].v));
 	}
 }
 

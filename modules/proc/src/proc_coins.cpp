@@ -257,7 +257,7 @@ static	void	coins_diameters_pix	(void)
 
 	/* Get coins diameters in pixels */
 	for (i = 0; i < coins_n; i++) {
-		proc_pixel_value(coins[i].x, coins[i].y,
+		proc_pixel_get(coins[i].x, coins[i].y,
 						&(coins[i].diameter_pix));
 		coins[i].diameter_pix	*= 2;
 	}

@@ -446,7 +446,7 @@ static	void	pattern_squares_len_get	(void)
 
 	/* Get pattern square side lenght in pixels */
 	for (i = 0; i < squares_n; i++) {
-		proc_pixel_value(pattern.square[i].pos.x_pix,
+		proc_pixel_get(pattern.square[i].pos.x_pix,
 				pattern.square[i].pos.y_pix,
 				&(pattern.square[i].len));
 		pattern.square[i].len	*= 2;
