@@ -263,7 +263,10 @@ static	int	usr_input	(void)
 					/* Pixel */
 					switch (ch[4]) {
 					case '0':
-						action	= USER_IFACE_ACT_PIXEL_VALUE;
+						action	= USER_IFACE_ACT_PIXEL_GET;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_PIXEL_SET;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -566,7 +569,8 @@ static	void	show_help	(void)
 	printf(" - Vertical mean:	%s\n",	"f021");
 	printf(" - Horizontal median:	%s\n",	"f022");
 	printf(" - Vertical median:	%s\n",	"f023");
-	printf(" - Pixel value:		%s\n",	"f1000");
+	printf(" - Pixel get:		%s\n",	"f1000");
+	printf(" - Pixel set:		%s\n",	"f1001");
 	printf(" - Set ROI:		%s\n",	"f1010");
 	printf(" - Set ROI 2rect:	%s\n",	"f1011");
 	printf(" - Bitwise AND 2ref:	%s\n",	"f1020");

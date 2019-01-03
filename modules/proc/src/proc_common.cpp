@@ -117,13 +117,22 @@ void	proc_median_vertical	(void)
 	proc_show_img();
 }
 
-void	proc_pixel_value	(int x, int y, unsigned char *val)
+void	proc_pixel_get		(int x, int y, unsigned char *val)
 {
-	struct Img_Iface_Data_Pixel_Value	data;
+	struct Img_Iface_Data_Pixel_Get	data;
 	data.x		= x;
 	data.y		= y;
 	data.val	= val;
-	img_iface_act(IMG_IFACE_ACT_PIXEL_VALUE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_PIXEL_GET, (void *)&data);
+}
+
+void	proc_pixel_set		(int x, int y, unsigned char val)
+{
+	struct Img_Iface_Data_Pixel_Set	data;
+	data.x		= x;
+	data.y		= y;
+	data.val	= val;
+	img_iface_act(IMG_IFACE_ACT_PIXEL_SET, (void *)&data);
 }
 
 void	proc_ROI		(int x, int y, int w, int h)

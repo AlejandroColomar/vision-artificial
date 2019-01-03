@@ -366,7 +366,10 @@ static	int	usr_input	(void)
 
 					switch (ch) {
 					case '0':
-						action	= USER_IFACE_ACT_PIXEL_VALUE;
+						action	= USER_IFACE_ACT_PIXEL_GET;
+						break;
+					case '1':
+						action	= USER_IFACE_ACT_PIXEL_SET;
 						break;
 					default:
 						action	= USER_IFACE_ACT_FOO;
@@ -712,7 +715,8 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Vertical mean:	%s",		"f021");
 	mvwprintw(win_help, r++, c, " - Horizontal median:	%s",	"f022");
 	mvwprintw(win_help, r++, c, " - Vertical median:	%s",	"f023");
-	mvwprintw(win_help, r++, c, " - Pixel value:		%s",	"f1000");
+	mvwprintw(win_help, r++, c, " - Pixel get:		%s",	"f1000");
+	mvwprintw(win_help, r++, c, " - Pixel set:		%s",	"f1001");
 	mvwprintw(win_help, r++, c, " - Set ROI:		%s",	"f1010");
 	mvwprintw(win_help, r++, c, " - Set ROI 2rect:	%s",		"f1011");
 	mvwprintw(win_help, r++, c, " - Bitwise AND 2ref:	%s",	"f1020");
