@@ -102,7 +102,8 @@ static	void	img_iface_median_vertical	(void);
 	/* img_cv */
 		/* Core: The core functionality */
 			/* Pixel */
-static	void	img_iface_pixel_value		(void *data);
+static	void	img_iface_pixel_get		(void *data);
+static	void	img_iface_pixel_set		(void *data);
 			/* ROI */
 static	void	img_iface_set_ROI		(void *data);
 static	void	img_iface_set_ROI_2rect		(void *data);
@@ -267,8 +268,11 @@ void	img_iface_act		(int action, void *data)
 	/* img_cv */
 		/* Core: The core functionality */
 			/* Pixel */
-	case IMG_IFACE_ACT_PIXEL_VALUE:
-		img_iface_pixel_value(data);
+	case IMG_IFACE_ACT_PIXEL_GET:
+		img_iface_pixel_get(data);
+		break;
+	case IMG_IFACE_ACT_PIXEL_SET:
+		img_iface_pixel_set(data);
 		break;
 			/* ROI */
 	case IMG_IFACE_ACT_SET_ROI:
@@ -631,8 +635,13 @@ static	void	img_iface_median_vertical	(void)
 /* img_cv --------------------------------------------------------------------*/
 /* ----- Core: The core functionality */
 /* ----- ------- Pixel */
-static	void	img_iface_pixel_value		(void *data)
+static	void	img_iface_pixel_get		(void *data)
 {
+	struct Img_Iface_Data_Pixel_Get	data_tmp;
+	struct Img_Iface_Data_Pixel_Get	*data_cast;
+	unsigned char	val;
+	char		title [80];
+
 	/* Must have 1 channel */
 	if (image_copy_tmp.channels() != 1) {
 		/* Write into log */
@@ -645,13 +654,10 @@ static	void	img_iface_pixel_value		(void *data)
 	}
 
 	/* Data */
-	struct Img_Iface_Data_Pixel_Value	data_tmp;
-	unsigned char				val;
 	if (!data) {
 		data_tmp.val		= &val;
 
 		/* Ask user */
-		char	title [80];
 		snprintf(title, 80, "x:");
 		data_tmp.x		= user_iface_getint(0, 0,
 					image_copy_tmp.cols,
@@ -665,14 +671,13 @@ static	void	img_iface_pixel_value		(void *data)
 		data	= (void *)&data_tmp;
 	}
 
-	/* Contours size */
-	img_cv_act(&image_copy_tmp, IMG_CV_ACT_PIXEL_VALUE, data);
+	/* Get pixel value */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_PIXEL_GET, data);
 
 	/* Write into log */
-	struct Img_Iface_Data_Pixel_Value	*data_cast;
-	data_cast	= (struct Img_Iface_Data_Pixel_Value *)data;
+	data_cast	= (struct Img_Iface_Data_Pixel_Get *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
-						"Pixel value:  (%i, %i): %i",
+						"Pixel get:  (%i, %i): %i",
 						data_cast->x,
 						data_cast->y,
 						*(data_cast->val));
@@ -680,14 +685,67 @@ static	void	img_iface_pixel_value		(void *data)
 	(user_iface_log.len)++;
 }
 
+static	void	img_iface_pixel_set		(void *data)
+{
+	struct Img_Iface_Data_Pixel_Set	data_tmp;
+	struct Img_Iface_Data_Pixel_Set	*data_cast;
+	char		title [80];
+
+	/* Must have 1 channel */
+	if (image_copy_tmp.channels() != 1) {
+		/* Write into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+							"! Invalid input");
+		user_iface_log.lvl[user_iface_log.len]	= 1;
+		(user_iface_log.len)++;
+
+		return;
+	}
+
+	/* Data */
+	if (!data) {
+		/* Ask user */
+		snprintf(title, 80, "x:");
+		data_tmp.x		= user_iface_getint(0, 0,
+					image_copy_tmp.cols,
+					title, NULL);
+
+		snprintf(title, 80, "y:");
+		data_tmp.y		= user_iface_getint(0, 0,
+					image_copy_tmp.rows,
+					title, NULL);
+
+		snprintf(title, 80, "val:");
+		data_tmp.val		= user_iface_getint(0, 0, 255,
+					title, NULL);
+
+		data	= (void *)&data_tmp;
+	}
+
+	/* Set pixel value */
+	img_cv_act(&image_copy_tmp, IMG_CV_ACT_PIXEL_SET, data);
+
+	/* Write into log */
+	data_cast	= (struct Img_Iface_Data_Pixel_Set *)data;
+	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"Pixel get:  (%i, %i): %i",
+						data_cast->x,
+						data_cast->y,
+						data_cast->val);
+	user_iface_log.lvl[user_iface_log.len]	= 1;
+	(user_iface_log.len)++;
+}
+
 /* ----- ------- ROI */
 static	void	img_iface_set_ROI		(void *data)
 {
-	/* Data */
 	struct Img_Iface_Data_SetROI	data_tmp;
+	struct Img_Iface_Data_SetROI	*data_cast;
+	char	title [80];
+
+	/* Data */
 	if (!data) {
 		/* Ask user */
-		char	title [80];
 		snprintf(title, 80, "Origin:  x:");
 		data_tmp.rect.x		= user_iface_getint(0, 0,
 					image_copy_tmp.cols,
@@ -714,7 +772,6 @@ static	void	img_iface_set_ROI		(void *data)
 	}
 
 	/* Write into log */
-	struct Img_Iface_Data_SetROI	*data_cast;
 	data_cast	= (struct Img_Iface_Data_SetROI *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"ROI: (%i,%i) w=%i,h=%i",
@@ -731,8 +788,10 @@ static	void	img_iface_set_ROI		(void *data)
 
 static	void	img_iface_set_ROI_2rect		(void *data)
 {
-	/* Data */
 	struct Img_Iface_Data_SetROI	data_tmp;
+	struct Img_Iface_Data_SetROI	*data_cast;
+
+	/* Data */
 	if (!data) {
 		data_tmp.rect.x		= rectangle.x;
 		data_tmp.rect.y		= rectangle.y;
@@ -743,7 +802,6 @@ static	void	img_iface_set_ROI_2rect		(void *data)
 	}
 
 	/* Write into log */
-	struct Img_Iface_Data_SetROI	*data_cast;
 	data_cast	= (struct Img_Iface_Data_SetROI *)data;
 	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
 						"ROI: (%i,%i) w=%i,h=%i",

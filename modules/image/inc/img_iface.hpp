@@ -61,7 +61,8 @@
 		IMG_IFACE_ACT_MEDIAN_VERTICAL,
 
 		IMG_IFACE_ACT_CV = 0x000100u,
-		IMG_IFACE_ACT_PIXEL_VALUE,
+		IMG_IFACE_ACT_PIXEL_GET,
+		IMG_IFACE_ACT_PIXEL_SET,
 		IMG_IFACE_ACT_SET_ROI,
 		IMG_IFACE_ACT_SET_ROI_2RECT,
 		IMG_IFACE_ACT_AND_2REF,
@@ -153,8 +154,14 @@
  ******* structs **************************************************************
  ******************************************************************************/
 /* img_cv --------------------------------------------------------------------*/
-	struct	Img_Iface_Data_Pixel_Value {
+	struct	Img_Iface_Data_Pixel_Get {
 		unsigned char	*val;
+		int		x;
+		int		y;
+	};
+
+	struct	Img_Iface_Data_Pixel_Set {
+		unsigned char	val;
 		int		x;
 		int		y;
 	};

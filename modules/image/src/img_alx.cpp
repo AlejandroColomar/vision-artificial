@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	(GPL-2.0-only  OR  LGPL-3.0-only)     *
  ******************************************************************************/
 
 
@@ -47,6 +48,7 @@ static	void	img_alx_median_vertical		(class cv::Mat  *imgptr);
  ******************************************************************************/
 void	img_alx_act	(class cv::Mat  *imgptr, int action, void *data)
 {
+
 	switch (action) {
 	case IMG_ALX_ACT_LOCAL_MAX:
 		img_alx_local_max(imgptr);
@@ -156,7 +158,6 @@ static	void	img_alx_skeleton		(class cv::Mat  *imgptr)
 	int		cnt_lo [width];
 	int		cnt_hi_or_eq [width];
 	class cv::Mat	imgtmp;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 	/* pointer to a pixel near img_pix (in imgptr) */
@@ -229,7 +230,6 @@ static	void	img_alx_lines_horizontal	(class cv::Mat  *imgptr)
 	int	i;
 	int	j;
 	bool	white;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -258,7 +258,6 @@ static	void	img_alx_lines_vertical		(class cv::Mat  *imgptr)
 	int	i;
 	int	j;
 	bool	white;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -288,7 +287,6 @@ static	void	img_alx_mean_horizontal		(class cv::Mat  *imgptr)
 	int		j;
 	uint32_t	tmp;
 	uint8_t		mean;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -313,7 +311,6 @@ static	void	img_alx_mean_vertical		(class cv::Mat  *imgptr)
 	int		j;
 	uint32_t	tmp;
 	uint8_t		mean;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -338,7 +335,6 @@ static	void	img_alx_median_horizontal	(class cv::Mat  *imgptr)
 	int		j;
 	uint8_t		row [imgptr->cols];
 	uint8_t		median;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
@@ -362,7 +358,6 @@ static	void	img_alx_median_vertical		(class cv::Mat  *imgptr)
 	int		j;
 	uint8_t		col [imgptr->rows];
 	uint8_t		median;
-
 	/* pointer to a pixel (in imgptr) */
 	uint8_t	*img_pix;
 
