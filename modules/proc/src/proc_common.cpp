@@ -133,6 +133,8 @@ void	proc_pixel_set		(int x, int y, unsigned char val)
 	data.y		= y;
 	data.val	= val;
 	img_iface_act(IMG_IFACE_ACT_PIXEL_SET, (void *)&data);
+
+	proc_show_img();
 }
 
 void	proc_ROI		(int x, int y, int w, int h)
