@@ -1971,7 +1971,6 @@ static	void	img_iface_save_ref		(void)
 	/* Write into ref */
 	image_ref.release();
 	image_copy_tmp.copyTo(image_ref);
-	image_ref	= image_copy_tmp;
 }
 
 /* save ----------------------------------------------------------------------*/
