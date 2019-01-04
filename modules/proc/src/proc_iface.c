@@ -85,7 +85,7 @@ int	proc_iface_single	(int action)
 	case PROC_MODE_RESISTOR_SERIES:
 		error	= proc_resistor();
 		break;
-	case PROC_MODE_LIGHTER_SERIES:
+	case PROC_MODE_LIGHTERS_SERIES:
 		error	= proc_lighter();
 		break;
 	default:
@@ -156,12 +156,12 @@ void	proc_iface_series	(void)
 		snprintf(file_ext, FILENAME_MAX, ".png");
 		i	= 1;
 		break;
-	case PROC_MODE_LIGHTER_SERIES:
+	case PROC_MODE_LIGHTERS_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", lighters_path);
 		snprintf(proc_fail_path, FILENAME_MAX, "%s", lighters_fail_path);
 		snprintf(file_basename, FILENAME_MAX, "lighters");
 		num_len	= 4;
-		snprintf(file_ext, FILENAME_MAX, ".jpeg");
+		snprintf(file_ext, FILENAME_MAX, ".png");
 		i	= 1;
 		break;
 	default:
