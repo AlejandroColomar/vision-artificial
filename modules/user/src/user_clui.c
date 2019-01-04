@@ -188,6 +188,17 @@ static	int	usr_input	(void)
 				break;
 			}
 			break;
+		case '5':
+			/* Lighters */
+			switch (ch[2]) {
+			case '1':
+				action	= USER_IFACE_ACT_PROC_LIGHTERS_SERIES;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
 			break;
@@ -611,6 +622,7 @@ static	void	show_help	(void)
 	printf(" - Objects:		%s\n",	"e21");
 	printf(" - Coins:		%s\n",	"e31");
 	printf(" - Resistor:		%s\n",	"e41");
+	printf(" - Lighters:		%s\n",	"e51");
 	printf("Other:\n");
 	printf(" - Show OCR text:	%s\n",	"u1");
 	printf("Quit:		%c\n",	'q');

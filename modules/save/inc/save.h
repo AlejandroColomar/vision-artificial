@@ -27,6 +27,8 @@
 	# define	USER_SAVED_DIR		"vision-artificial/saved/"
 	# define	USER_LABELS_DIR		"vision-artificial/labels/"
 	# define	USER_LABELS_FAIL_DIR	"vision-artificial/labels/fail"
+	# define	USER_LIGHTERS_DIR	"vision-artificial/lighters/"
+	# define	USER_LIGHTERS_FAIL_DIR	"vision-artificial/lighters/fail"
 	# define	USER_OBJECTS_DIR	"vision-artificial/objects/"
 	# define	USER_OBJECTS_FAIL_DIR	"vision-artificial/objects/fail"
 	# define	USER_COINS_DIR		"vision-artificial/coins/"
@@ -44,6 +46,8 @@
 	extern	char	saved_path [FILENAME_MAX];
 	extern	char	labels_path [FILENAME_MAX];
 	extern	char	labels_fail_path [FILENAME_MAX];
+	extern	char	lighters_path [FILENAME_MAX];
+	extern	char	lighters_fail_path [FILENAME_MAX];
 	extern	char	objects_path [FILENAME_MAX];
 	extern	char	objects_fail_path [FILENAME_MAX];
 	extern	char	coins_path [FILENAME_MAX];
