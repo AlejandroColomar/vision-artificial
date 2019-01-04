@@ -66,8 +66,11 @@ struct	Lighter_Properties {
 
 	bool	fork;
 	bool	valve;
-	int	hood;
+	int	hood_;
+	bool	hood;
 	bool	wheel;
+
+	bool	ok;
 };
 
 
@@ -95,10 +98,14 @@ static	void	lighters_bgr2gray	(void);
 static	void	lighters_segment_full	(void);
 static	int	lighters_find		(void);
 static	void	lighter_segment_body	(int i);
+static	void	lighter_rm_body		(int i);
 static	void	lighter_crop_head	(int i);
-static	void	lighter_chk_wheel	(int i);
 static	void	lighter_chk_hood	(int i);
-static	void	lighter_segment_head	(int i);
+static	void	lighter_rm_hood		(int i);
+static	void	lighter_chk_fork	(int i);
+static	void	lighter_chk_wheel	(int i);
+static	void	lighter_chk_valve	(int i);
+static	void	lighters_log		(void);
 
 
 /******************************************************************************
@@ -120,32 +127,40 @@ int	proc_lighter		(void)
 		lighters_find();
 
 		/* Measure time */
-		clock_stop("Segment lighten");
+		clock_stop("Segment lighters");
 	}
+	/* Check each lighter */
 	for (i = 0; (unsigned)i < lighters_n; i++) {
-		/* Segment lighter */
-		{
-			/* Measure time */
-			clock_start();
+		/* Measure time */
+		clock_start();
 
-			lighter_segment_body(i);
-
-			/* Measure time */
-			clock_stop("Segment lighten");
+		lighter[i].ok	= true;
+		lighter_segment_body(i);
+		lighter_rm_body(i);
+		lighter_crop_head(i);
+		lighter_chk_hood(i);
+		if (lighter[i].hood_ != HOOD_NOT_PRESENT) {
+			lighter_rm_hood(i);
+		} else {
+			proc_load_mem(7);
+			proc_save_mem(8);
 		}
-		/* Segment interest zone */
-		{
-			/* Measure time */
-			clock_start();
+		lighter_chk_fork(i);
+		lighter_chk_wheel(i);
+		lighter_chk_valve(i);
 
-			lighter_crop_head(i);
-			lighter_chk_wheel(i);
-			lighter_chk_hood(i);
-			(void)lighter_segment_head;
+		/* Measure time */
+		clock_stop("Check parts");
+	}
+	/* Print results of lighters into log */
+	{
+		/* Measure time */
+		clock_start();
 
-			/* Measure time */
-			clock_stop("Segment interest zone");
-		}
+		lighters_log();
+
+		/* Measure time */
+		clock_stop("Lighters properties (log)");
 	}
 
 	status	= LIGHTER_OK;
@@ -192,19 +207,24 @@ static	void	lighters_bgr2gray	(void)
 
 	proc_cvt_color(cv::COLOR_BGR2GRAY);
 	proc_not();
-	proc_border(100);
 	proc_save_mem(1);
+
+	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
+	proc_border(100);
+	proc_save_mem(3);
+
+	proc_load_mem(1);
+	proc_border(100);
+	proc_save_mem(2);
 }
 
 static	void	lighters_segment_full	(void)
 {
 
-	proc_load_mem(1);
-
-	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
+	proc_load_mem(3);
 	proc_erode_dilate(1);
-	proc_dilate_erode(1);
-	proc_save_mem(2);
+	proc_dilate_erode(2);
+	proc_save_mem(4);
 }
 
 static	int	lighters_find		(void)
@@ -213,8 +233,7 @@ static	int	lighters_find		(void)
 	int	i;
 	int	tmp;
 
-	proc_load_mem(2);
-
+	proc_load_mem(4);
 	proc_contours(&contours_all, &hierarchy);
 	lighters_n	= contours_all.size();
 
@@ -237,7 +256,7 @@ static	int	lighters_find		(void)
 
 		lighter[i].pos.x	= rect_rot[i].center.x;
 		lighter[i].pos.y	= rect_rot[i].center.y;
-		lighter[i].angle	= rect_rot[i].angle;
+		lighter[i].angle	= -rect_rot[i].angle;
 		lighter[i].size.h	= rect_rot[i].size.height;
 		lighter[i].size.w	= rect_rot[i].size.width;
 	}
@@ -253,9 +272,9 @@ static	void	lighter_segment_body	(int i)
 	int	w;
 	int	h;
 
-	proc_load_mem(1);
+	proc_load_mem(2);
 
-	proc_rotate(lighter[i].pos.x, lighter[i].pos.y, lighter[i].angle);
+	proc_rotate(lighter[i].pos.x, lighter[i].pos.y, -lighter[i].angle);
 	w	= lighter[i].size.w * 1.25;
 	h	= lighter[i].size.h * 1.25;
 	x	= lighter[i].pos.x - (w / 2.0);
@@ -266,10 +285,34 @@ static	void	lighter_segment_body	(int i)
 	proc_erode_dilate(1);
 	proc_dilate_erode(1);
 	proc_erode_dilate(lighter[i].size.w * 0.43);
-	proc_save_mem(3);
+	proc_save_mem(5);
 
 	proc_contours(&contours_one, &hierarchy);
 	proc_bounding_rect(&(contours_one[0]), &rect, true);
+}
+
+static	void	lighter_rm_body		(int i)
+{
+	int	x;
+	int	y;
+	int	w;
+	int	h;
+
+	proc_load_mem(5);
+	proc_not();
+	proc_erode(5);
+	proc_save_ref();
+
+	proc_load_mem(3);
+	proc_rotate(lighter[i].pos.x, lighter[i].pos.y, -lighter[i].angle);
+	w	= lighter[i].size.w * 1.25;
+	h	= lighter[i].size.h * 1.25;
+	x	= lighter[i].pos.x - (w / 2.0);
+	y	= lighter[i].pos.y - (h / 2.0);
+	proc_ROI(x, y, w, h);
+	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
+	proc_and_2ref();
+	proc_save_mem(6);
 }
 
 static	void	lighter_crop_head	(int i)
@@ -279,20 +322,7 @@ static	void	lighter_crop_head	(int i)
 	int	w;
 	int	h;
 
-	proc_load_mem(3);
-	proc_not();
-	proc_erode(1);
-	proc_save_ref();
-
-	proc_load_mem(1);
-	proc_rotate(lighter[i].pos.x, lighter[i].pos.y, lighter[i].angle);
-	w	= lighter[i].size.w * 1.25;
-	h	= lighter[i].size.h * 1.25;
-	x	= lighter[i].pos.x - (w / 2.0);
-	y	= lighter[i].pos.y - (h / 2.0);
-	proc_ROI(x, y, w, h);
-	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
-	proc_and_2ref();
+	proc_load_mem(6);
 //
 	w	= rect.width * 1.15;
 	h	= rect.width * 0.65;
@@ -305,61 +335,175 @@ static	void	lighter_crop_head	(int i)
 	rect.height	= h;
 	lighter[i].size.w	= w;
 	lighter[i].size.h	= h;
-	proc_save_mem(4);
+	proc_save_mem(7);
 }
 
 static	void	lighter_chk_hood	(int i)
 {
 	uint8_t	val1;
 	uint8_t	val2;
-	proc_load_mem(4);
+	proc_load_mem(7);
 
-	proc_pixel_get(lighter[i].size.w * 0.2, lighter[i].size.h * 0.3, &val1);
-	proc_pixel_set(lighter[i].size.w * 0.2, lighter[i].size.h * 0.3, 0);
+	proc_pixel_get(rect.width * 0.2, rect.height * 0.3, &val1);
+	proc_pixel_set(rect.width * 0.2, rect.height * 0.3, UINT8_MAX / 2);
+	proc_save_mem(9);
+
 	if (val1) {
-		proc_pixel_get(lighter[i].size.w * 0.2, lighter[i].size.h * 0.8,
-									&val2);
-		proc_pixel_set(lighter[i].size.w * 0.2, lighter[i].size.h * 0.8,
-									0);
+		proc_pixel_get(rect.width * 0.2, rect.height * 0.8, &val2);
+		proc_pixel_set(rect.width * 0.2, rect.height * 0.8, UINT8_MAX /2);
 		if (val2) {
-			lighter[i].hood	= HOOD_OK;
+			lighter[i].hood_	= HOOD_OK;
+			lighter[i].hood		= true;
 		} else {
-			lighter[i].hood	= HOOD_NOT_OK;
+			lighter[i].hood_	= HOOD_NOT_OK;
+			lighter[i].hood		= false;
+			lighter[i].ok		= false;
 		}
 	} else {
-		lighter[i].hood	= HOOD_NOT_PRESENT;
+		lighter[i].hood_	= HOOD_NOT_PRESENT;
+		lighter[i].hood		= false;
+		lighter[i].ok		= false;
 	}
+}
 
-proc_apply();
-proc_save_file();
-	proc_save_mem(7);
+static	void	lighter_rm_hood		(int i)
+{
+
+	proc_load_mem(7);
+	proc_border(2);
+	proc_save_ref();
+
+	proc_dilate_erode(2);
+	proc_erode_dilate(rect.height * 0.25);
+	proc_dilate(2);
+	proc_not();
+	proc_and_2ref();
+	proc_save_mem(8);
+}
+
+static	void	lighter_chk_fork	(int i)
+{
+	uint8_t	val;
+
+	proc_load_mem(8);
+
+	proc_dilate_erode(2);
+	proc_pixel_get(rect.width * 0.8, rect.height * 0.8, &val);
+	proc_pixel_set(rect.width * 0.8, rect.height * 0.8, UINT8_MAX / 2);
+	proc_save_mem(10);
+
+	if (val) {
+		lighter[i].fork	= true;
+	} else {
+		lighter[i].fork	= false;
+		lighter[i].ok	= false;
+	}
 }
 
 static	void	lighter_chk_wheel	(int i)
 {
 	uint8_t	val;
 
-	proc_load_mem(4);
+	proc_load_mem(8);
 
-	proc_pixel_get(lighter[i].size.w * 0.58, lighter[i].size.h * 0.19, &val);
-	proc_pixel_set(lighter[i].size.w * 0.58, lighter[i].size.h * 0.19, 0);
-	lighter[i].wheel	= (bool)val;
-	proc_save_mem(6);
+	proc_dilate(5);
+	proc_pixel_get(rect.width * 0.58, rect.height * 0.19, &val);
+	proc_pixel_set(rect.width * 0.58, rect.height * 0.19, UINT8_MAX / 2);
+	proc_save_mem(11);
+
+	if (val) {
+		lighter[i].wheel	= true;
+	} else {
+		lighter[i].wheel	= false;
+		lighter[i].ok		= false;
+	}
 }
 
-static	void	lighter_segment_head	(int i)
+static	void	lighter_chk_valve	(int i)
 {
-	proc_load_mem(8);
-/*
-	proc_smooth(IMGI_SMOOTH_MEDIAN, 5);
-	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
-	proc_dilate_erode(5);
-	proc_erode_dilate(rect[0].height * 0.25);
+	uint8_t	val;
 
-	proc_contours(&contours, &hierarchy);
-	proc_bounding_rect(&(contours[0]), &(rect[0]), true);
-*/
-	proc_save_mem(9);
+	proc_load_mem(8);
+
+	if (lighter[i].hood_ == HOOD_NOT_PRESENT) {
+		proc_dilate(5);
+	} else {
+		proc_dilate(10);
+	}
+	proc_pixel_get(rect.width * 0.07, rect.height * 0.92, &val);
+	proc_pixel_set(rect.width * 0.07, rect.height * 0.92, UINT8_MAX / 2);
+	proc_save_mem(12);
+
+	if (val) {
+		lighter[i].valve	= true;
+	} else {
+		lighter[i].valve	= false;
+		lighter[i].ok		= false;
+	}
+}
+
+static	void	lighters_log		(void)
+{
+	int	i;
+
+	for (i = 0; (unsigned)i < lighters_n; i++) {
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"Lighter[%i]:",
+				i);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"	pos:	(%i, %i) pix",
+				lighter[i].pos.x,
+				lighter[i].pos.y);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"	ang	= %.1lf DEG",
+				lighter[i].angle);
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"	hood	= %s",
+				lighter[i].hood ? "ok" : "nok");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"	fork	= %s",
+				lighter[i].fork ? "ok" : "nok");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"	wheel	= %s",
+				lighter[i].wheel ? "ok" : "nok");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"	valve	= %s",
+				lighter[i].valve ? "ok" : "nok");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+
+		/* Write diameters into log */
+		snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+				"	RESULT	= %s",
+				lighter[i].ok ? "OK" : "NOK");
+		user_iface_log.lvl[user_iface_log.len]	= 0;
+		(user_iface_log.len)++;
+	}
 }
 
 
