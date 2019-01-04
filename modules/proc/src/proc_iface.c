@@ -120,7 +120,7 @@ void	proc_iface_series	(void)
 	bool	wh;
 		/* if i starts being 0, the camera needs calibration */
 	int	i;
-	char	txt_tmp [80];
+	char	txt_tmp [FILENAME_MAX];
 
 	switch (proc_mode) {
 	case PROC_MODE_LABEL_SERIES:
