@@ -36,6 +36,16 @@
 
 
 /******************************************************************************
+ ******* enums ****************************************************************
+ ******************************************************************************/
+enum	Lighter_Hood {
+	HOOD_OK,
+	HOOD_NOT_PRESENT,
+	HOOD_NOT_OK
+};
+
+
+/******************************************************************************
  ******* structs **************************************************************
  ******************************************************************************/
 struct	Point {
@@ -56,7 +66,7 @@ struct	Lighter_Properties {
 
 	bool	fork;
 	bool	valve;
-	bool	hood;
+	int	hood;
 	bool	wheel;
 };
 
@@ -86,6 +96,8 @@ static	void	lighters_segment_full	(void);
 static	int	lighters_find		(void);
 static	void	lighter_segment_body	(int i);
 static	void	lighter_crop_head	(int i);
+static	void	lighter_chk_wheel	(int i);
+static	void	lighter_chk_hood	(int i);
 static	void	lighter_segment_head	(int i);
 
 
@@ -127,7 +139,9 @@ int	proc_lighter		(void)
 			clock_start();
 
 			lighter_crop_head(i);
-			lighter_segment_head(i);
+			lighter_chk_wheel(i);
+			lighter_chk_hood(i);
+			(void)lighter_segment_head;
 
 			/* Measure time */
 			clock_stop("Segment interest zone");
@@ -145,7 +159,6 @@ int	proc_lighter		(void)
  ******************************************************************************/
 static	void	result_lighter		(int status)
 {
-	/* Cleanup */
 
 	/* Write result into log */
 	switch (status) {
@@ -174,6 +187,7 @@ static	void	result_lighter		(int status)
 /* process -------------------------------------------------------------------*/
 static	void	lighters_bgr2gray	(void)
 {
+
 	proc_load_mem(0);
 
 	proc_cvt_color(cv::COLOR_BGR2GRAY);
@@ -184,6 +198,7 @@ static	void	lighters_bgr2gray	(void)
 
 static	void	lighters_segment_full	(void)
 {
+
 	proc_load_mem(1);
 
 	proc_threshold(cv::THRESH_BINARY, IMG_IFACE_THR_OTSU);
@@ -288,10 +303,48 @@ static	void	lighter_crop_head	(int i)
 	rect.y		= y;
 	rect.width	= w;
 	rect.height	= h;
-	proc_save_mem(8);
+	lighter[i].size.w	= w;
+	lighter[i].size.h	= h;
+	proc_save_mem(4);
+}
+
+static	void	lighter_chk_hood	(int i)
+{
+	uint8_t	val1;
+	uint8_t	val2;
+	proc_load_mem(4);
+
+	proc_pixel_get(lighter[i].size.w * 0.2, lighter[i].size.h * 0.3, &val1);
+	proc_pixel_set(lighter[i].size.w * 0.2, lighter[i].size.h * 0.3, 0);
+	if (val1) {
+		proc_pixel_get(lighter[i].size.w * 0.2, lighter[i].size.h * 0.8,
+									&val2);
+		proc_pixel_set(lighter[i].size.w * 0.2, lighter[i].size.h * 0.8,
+									0);
+		if (val2) {
+			lighter[i].hood	= HOOD_OK;
+		} else {
+			lighter[i].hood	= HOOD_NOT_OK;
+		}
+	} else {
+		lighter[i].hood	= HOOD_NOT_PRESENT;
+	}
 
 proc_apply();
 proc_save_file();
+	proc_save_mem(7);
+}
+
+static	void	lighter_chk_wheel	(int i)
+{
+	uint8_t	val;
+
+	proc_load_mem(4);
+
+	proc_pixel_get(lighter[i].size.w * 0.58, lighter[i].size.h * 0.19, &val);
+	proc_pixel_set(lighter[i].size.w * 0.58, lighter[i].size.h * 0.19, 0);
+	lighter[i].wheel	= (bool)val;
+	proc_save_mem(6);
 }
 
 static	void	lighter_segment_head	(int i)
