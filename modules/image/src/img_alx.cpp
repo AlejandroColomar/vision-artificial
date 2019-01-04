@@ -109,7 +109,6 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 	for (j = 0; j < imgptr->cols; j++) {
 		img_pix		= imgptr->data + i * imgptr->step + j;
 		tmp_pix		= imgtmp.data + i * imgptr->step + j;
-		*tmp_pix	= 0;
 
 		if (*img_pix < val_min) {
 			goto next_pixel;
