@@ -275,6 +275,19 @@ static	int	usr_input	(void)
 				break;
 			}
 			break;
+		case '5':
+			/* Lighters */
+			ch = wgetch(win_log);
+
+			switch (ch) {
+			case '1':
+				action	= USER_IFACE_ACT_PROC_LIGHTERS_SERIES;
+				break;
+			default:
+				action	= USER_IFACE_ACT_FOO;
+				break;
+			}
+			break;
 		default:
 			action	= USER_IFACE_ACT_FOO;
 			break;
@@ -757,6 +770,7 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Objects:		%s",	"e21");
 	mvwprintw(win_help, r++, c, " - Coins:		%s",		"e31");
 	mvwprintw(win_help, r++, c, " - Resistor:		%s",	"e41");
+	mvwprintw(win_help, r++, c, " - Lighters:		%s",	"e51");
 	mvwprintw(win_help, r++, c, "Other:");
 	mvwprintw(win_help, r++, c, " - Show OCR:		%s",	"u1");
 	mvwprintw(win_help, r++, c, "Quit:			%c",	'q');
