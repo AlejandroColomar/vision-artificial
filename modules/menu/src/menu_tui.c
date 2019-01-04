@@ -253,7 +253,7 @@ static	void	menu_tui_series	(void)
 		proc_mode	= PROC_MODE_RESISTOR_SERIES;
 		break;
 	case 5:
-		proc_mode	= PROC_MODE_LIGHTER_SERIES;
+		proc_mode	= PROC_MODE_LIGHTERS_SERIES;
 		break;
 	}
 
