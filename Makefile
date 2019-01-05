@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 VERSION		= 2
-PATCHLEVEL	= ~b5
-SUBLEVEL	= 
+PATCHLEVEL	= 0
+SUBLEVEL	= 0
 EXTRAVERSION	=
 NAME		=
 
@@ -66,7 +66,7 @@ export	BUILD_VERBOSE
 MAKEFLAGS += --no-print-directory
 
 ################################################################################
-PROGRAMVERSION	= $(VERSION)$(if $(PATCHLEVEL),$(PATCHLEVEL)$(if $(SUBLEVEL),$(SUBLEVEL)))$(EXTRAVERSION)
+PROGRAMVERSION	= $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 export	PROGRAMVERSION
 
 ################################################################################
@@ -86,6 +86,7 @@ export	LD
 ################################################################################
 # cflags
 CFLAGS_STD	= -std=c11
+CFLAGS_STD     += -Wpedantic
 
 CFLAGS_OPT	= -O3
 CFLAGS_OPT     += -march=native
@@ -94,10 +95,8 @@ CFLAGS_W	= -Wall
 CFLAGS_W       += -Wextra
 CFLAGS_W       += -Wstrict-prototypes
 CFLAGS_W       += -Werror
-CFLAGS_W       += -Wno-format-truncation
-CFLAGS_W       += -Wno-format-zero-length
-#CFLAGS_W       += -Wno-unused-function
-CFLAGS_W       += -Wno-unused-parameter
+#CFLAGS_W       += -Wno-error=unused-function
+#CFLAGS_W       += -Wno-error=unused-parameter
 
 CFLAGS_PKG	= `pkg-config --cflags ncurses`
 CFLAGS_PKG     += `pkg-config --cflags opencv`

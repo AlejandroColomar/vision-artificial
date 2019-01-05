@@ -171,8 +171,10 @@ void	proc_iface_series	(void)
 
 	wh	= true;
 	for (; wh; i++) {
-		snprintf(file_name, FILENAME_MAX, "%s%04i%s",
-						file_basename, i, file_ext);
+		if (snprintf(file_name, FILENAME_MAX, "%s%04i%s",
+						file_basename, i, file_ext)) {
+			goto err_path;
+		}
 
 		file_error	= alx_sscan_fname(proc_path, file_name,
 						true, file_name);
@@ -190,13 +192,15 @@ void	proc_iface_series	(void)
 				if (proc_error) {
 					/* Save failed image into file */
 					proc_show_img();
-					snprintf(save_error_as, FILENAME_MAX,
-							"%s%0*i_err%s",
-							file_basename,
-							num_len, i,
-							file_ext);
+					if (snprintf(save_error_as, FILENAME_MAX,
+								"%s%0*i_err%s",
+								file_basename,
+								num_len, i,
+								file_ext)) {
+						goto err_path;
+					}
 					save_image_file(proc_fail_path,
-							save_error_as);
+								save_error_as);
 				}
 
 				/* Show log */
@@ -215,6 +219,11 @@ void	proc_iface_series	(void)
 			proc_mode--;
 		}
 	}
+
+	return;
+
+err_path:
+	printf("Path is too large and has been truncated\n");
 }
 
 

@@ -88,7 +88,12 @@ static	void	img_ocr_read	(void *data)
 	conf	= data_cast->conf;
 	switch (conf) {
 	case IMG_IFACE_OCR_CONF_PRICE:
-		snprintf(conf_str, 6, "%s/%s", share_path, "price");
+		if (snprintf(conf_str, FILENAME_MAX, "%s/%s",
+							share_path, "price")) {
+			printf("Path is too large and has been truncated\n");
+			printf("Price configuration was not possible!\n");
+			conf	= IMG_IFACE_OCR_CONF_NONE;
+		}
 		break;
 	}
 
