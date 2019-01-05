@@ -56,20 +56,58 @@ char		saved_name [FILENAME_MAX];
  ******************************************************************************/
 void	save_init	(void)
 {
-	snprintf(home_path, FILENAME_MAX, "%s/", getenv(ENV_HOME));
-	snprintf(user_prog_path, FILENAME_MAX, "%s/%s/", home_path, USER_PROG_DIR);
-	snprintf(saved_path, FILENAME_MAX, "%s/%s/", home_path, USER_SAVED_DIR);
-	snprintf(labels_path, FILENAME_MAX, "%s/%s/", home_path, USER_LABELS_DIR);
-	snprintf(labels_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_LABELS_FAIL_DIR);
-	snprintf(lighters_path, FILENAME_MAX, "%s/%s/", home_path, USER_LIGHTERS_DIR);
-	snprintf(lighters_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_LIGHTERS_FAIL_DIR);
-	snprintf(objects_path, FILENAME_MAX, "%s/%s/", home_path, USER_OBJECTS_DIR);
-	snprintf(objects_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_OBJECTS_FAIL_DIR);
-	snprintf(coins_path, FILENAME_MAX, "%s/%s/", home_path, USER_COINS_DIR);
-	snprintf(coins_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_COINS_FAIL_DIR);
-	snprintf(resistors_path, FILENAME_MAX, "%s/%s/", home_path, USER_RESISTORS_DIR);
-	snprintf(resistors_fail_path, FILENAME_MAX, "%s/%s/", home_path, USER_RESISTORS_FAIL_DIR);
-	sprintf(saved_name, "");
+	if (snprintf(home_path, FILENAME_MAX, "%s/", getenv(ENV_HOME))) {
+		goto err_path;
+	}
+	if (snprintf(user_prog_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_PROG_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(saved_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_SAVED_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(labels_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_LABELS_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(labels_fail_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_LABELS_FAIL_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(lighters_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_LIGHTERS_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(lighters_fail_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_LIGHTERS_FAIL_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(objects_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_OBJECTS_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(objects_fail_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_OBJECTS_FAIL_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(coins_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_COINS_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(coins_fail_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_COINS_FAIL_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(resistors_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_RESISTORS_DIR)) {
+		goto err_path;
+	}
+	if (snprintf(resistors_fail_path, FILENAME_MAX, "%s/%s/",
+					home_path, USER_RESISTORS_FAIL_DIR)) {
+		goto err_path;
+	}
+	saved_name[0]	= '\0';
 
 	int	err;
 	err	= mkdir(user_prog_path, 0700);
@@ -96,11 +134,28 @@ void	save_init	(void)
 	mkdir(saved_path, 0700);
 	mkdir(labels_path, 0700);
 	mkdir(labels_fail_path, 0700);
+
+	return;
+
+
+err_path:
+	printf("Path is too large and has been truncated\n");
+	exit(EXIT_FAILURE);
 }
 
 void	save_clr	(void)
 {
-	snprintf(saved_path, FILENAME_MAX, "%s/%s/", home_path, USER_SAVED_DIR);
+	if (snprintf(saved_path, FILENAME_MAX, "%s/%s/",
+						home_path, USER_SAVED_DIR)) {
+		goto err_path;
+	}
+
+	return;
+
+
+err_path:
+	printf("Path is too large and has been truncated\n");
+	exit(EXIT_FAILURE);
 }
 
 void	load_image_file	(const char *fpath, const char *fname)
@@ -129,7 +184,9 @@ void	load_image_file	(const char *fpath, const char *fname)
 	}
 
 	/* File name */
-	snprintf(file_name, FILENAME_MAX, "%s/%s", file_path, saved_name);
+	if (snprintf(file_name, FILENAME_MAX, "%s/%s", file_path, saved_name)) {
+		goto err_path;
+	}
 
 	/* Load image */
 	image	= cv::imread(file_name, CV_LOAD_IMAGE_COLOR);
@@ -139,6 +196,13 @@ void	load_image_file	(const char *fpath, const char *fname)
 		printf("Could not load file: %s\n", file_name);
 //		exit(0);
 	}
+
+	return;
+
+
+err_path:
+	printf("Path is too large and has been truncated\n");
+	exit(EXIT_FAILURE);
 }
 
 void	save_cleanup	(void)
@@ -173,24 +237,37 @@ void	save_image_file	(const char *fpath, const char *save_as)
 	}
 
 	/* Prepend the path */
-	snprintf(file_name, FILENAME_MAX, "%s/%s", file_path, saved_name);
+	if (snprintf(file_name, FILENAME_MAX, "%s/%s", file_path, saved_name)) {
+		goto err_path;
+	}
 
 	fp =	fopen(file_name, "r");
 	if (fp) {
 		/* Name in use;  ask once more */
 		fclose(fp);
 		user_iface_fname(saved_path, saved_name);
-		snprintf(file_name, FILENAME_MAX, "%s/%s", file_path, saved_name);
+		if (snprintf(file_name, FILENAME_MAX, "%s/%s",
+						file_path, saved_name)) {
+			goto err_path;
+		}
 	}
 
 	/* Write into log */
-	snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN, "%s", saved_name);
+	(void)snprintf(user_iface_log.line[user_iface_log.len], LOG_LINE_LEN,
+						"%s", saved_name);
 	user_iface_log.lvl[user_iface_log.len]	= 2;
 	(user_iface_log.len)++;
 
 
 	/* Write to a new file */
 	cv::imwrite(file_name, image);
+
+	return;
+
+
+err_path:
+	printf("Path is too large and has been truncated\n");
+	exit(EXIT_FAILURE);
 }
 
 

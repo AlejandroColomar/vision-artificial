@@ -102,7 +102,7 @@ static	void	lighter_segment_body	(int i);
 static	void	lighter_rm_body		(int i);
 static	void	lighter_crop_head	(int i);
 static	void	lighter_chk_hood	(int i);
-static	void	lighter_rm_hood		(int i);
+static	void	lighter_rm_hood		(void);
 static	void	lighter_chk_fork	(int i);
 static	void	lighter_chk_wheel	(int i);
 static	void	lighter_chk_valve	(int i);
@@ -141,7 +141,7 @@ int	proc_lighter		(void)
 		lighter_crop_head(i);
 		lighter_chk_hood(i);
 		if (lighter[i].hood_ != HOOD_NOT_PRESENT) {
-			lighter_rm_hood(i);
+			lighter_rm_hood();
 		} else {
 			proc_load_mem(7);
 			proc_save_mem(8);
@@ -367,7 +367,7 @@ static	void	lighter_chk_hood	(int i)
 	}
 }
 
-static	void	lighter_rm_hood		(int i)
+static	void	lighter_rm_hood		(void)
 {
 
 	proc_load_mem(7);

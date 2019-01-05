@@ -95,6 +95,7 @@ CFLAGS_W	= -Wall
 CFLAGS_W       += -Wextra
 CFLAGS_W       += -Wstrict-prototypes
 CFLAGS_W       += -Werror
+#CFLAGS_W       += -Wno-error=format-truncation
 #CFLAGS_W       += -Wno-error=unused-function
 #CFLAGS_W       += -Wno-error=unused-parameter
 
@@ -128,10 +129,9 @@ CXXFLAGS_OPT   += -march=native
 CXXFLAGS_W	= -Wall
 CXXFLAGS_W     += -Wextra
 CXXFLAGS_W     += -Werror
-CXXFLAGS_W     += -Wno-format-truncation
-CXXFLAGS_W     += -Wno-format-zero-length
-CXXFLAGS_W     += -Wno-unused-function
-CXXFLAGS_W     += -Wno-unused-parameter
+CXXFLAGS_W     += -Wno-error=format-truncation
+CXXFLAGS_W     += -Wno-error=unused-function
+CXXFLAGS_W     += -Wno-error=unused-parameter
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv`
@@ -252,9 +252,9 @@ install: uninstall
 PHONY += uninstall
 uninstall:
 	@echo	"	Clean old installations:"
-	@echo	'	RM	binary'
+	@echo	"	RM	bin"
 	$(Q)rm -f		$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
-	@echo	'	RM	share/*'
+	@echo	"	RM -r	$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
 	$(Q)rm -f -r		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
 	@echo	"	Done"
 	@echo

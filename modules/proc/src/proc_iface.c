@@ -13,6 +13,8 @@
 	#include <stdbool.h>
 		/* snprintf() & fflush() */
 	#include <stdio.h>
+		/* exit() */
+	#include <stdlib.h>
 		/* clock_t & clock() & CLOCKS_PER_SEC */
 	#include <time.h>
 
@@ -222,8 +224,10 @@ void	proc_iface_series	(void)
 
 	return;
 
+
 err_path:
 	printf("Path is too large and has been truncated\n");
+	exit(EXIT_FAILURE);
 }
 
 

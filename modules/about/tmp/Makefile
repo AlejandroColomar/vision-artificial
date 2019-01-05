@@ -29,16 +29,16 @@ all: $(ALL)
 
 
 about_mod.o: $(_ALL)
-	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
+	$(Q)$(LD) -r $^ -o $@
 
 
 about.s: $(ABOU_DEPS)
-	$(Q)$(CC) $(CFLAGS) $(ABOU_INC_DIRS) -S $< -o $@
 	@echo  "	CC	$@"
+	$(Q)$(CC) $(CFLAGS) $(ABOU_INC_DIRS) -S $< -o $@
 about.o: about.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 
 clean:
