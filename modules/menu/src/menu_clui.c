@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -42,32 +43,38 @@ void	menu_clui	(void)
 	ch	= 'n';
 	printf("Read 'Disclaimer of warranty'? (yes/NO): ");
 	fgets(buff, BUFF_SIZE, stdin);
-	sscanf(buff, " %c", &ch);
+	if (sscanf(buff, " %c", &ch)) {
+		return;
+	}
 	if (ch == 'y' || ch == 'Y') {
-		puts (" >yes");
+		printf(" >yes\n");
 		print_share_file(SHARE_DISCLAIMER);
 	} else {
-		puts (" >NO");
+		printf(" >NO\n");
 	}
 
 	ch	= 'n';
 	printf("Read 'License'? (yes/NO): ");
 	fgets(buff, BUFF_SIZE, stdin);
-	sscanf(buff, " %c", &ch);
+	if (sscanf(buff, " %c", &ch)) {
+		return;
+	}
 	if (ch == 'y' || ch == 'Y') {
-		puts (" >yes");
+		printf(" >yes\n");
 		print_share_file(SHARE_LICENSE);
 	} else {
-		puts (" >NO");
+		printf(" >NO\n");
 	}
 #if 0
 	printf("Game interface? (NCURSES/text): ");
-	scanf(" %c%*s ", &ch);
+	if (sscanf(buff, " %c", &ch)) {
+		return;
+	}
 	if (ch == 't' || ch == 'T') {
-		puts (" >text");
+		printf(" >text\n");
 		// FIXME
 	} else {
-		puts (" >NCURSES");
+		printf(" >NCURSES\n");
 		// FIXME
 	}
 #endif
@@ -81,7 +88,7 @@ void	menu_clui	(void)
 static	void	menu_clui_load		(void)
 {
 #if 0
-	/* File name */ // FIXME
+	/* File name */ /* FIXME */
 	alx_w_getfname(USER_SAVED_DIR, saved_name, "File name:", saved_name, NULL);
 #endif
 	menu_clui_start();
@@ -89,7 +96,7 @@ static	void	menu_clui_load		(void)
 
 static	void	menu_clui_start		(void)
 {
-	puts(" >>START:");
+	printf(" >>START:\n");
 	start_switch();
 
 	char	buff [BUFF_SIZE];
@@ -98,14 +105,16 @@ static	void	menu_clui_start		(void)
 	ch	= 'm';
 	printf("Load again? (MENU/load/exit): ");
 	fgets(buff, BUFF_SIZE, stdin);
-	sscanf(buff, " %c", &ch);
+	if (sscanf(buff, " %c", &ch)) {
+		return;
+	}
 	if (ch == 'p' || ch == 'P') {
-		puts (" >load");
+		printf(" >load\n");
 		menu_clui_start();
 	} else if (ch == 'e' || ch == 'E') {
-		puts (" >exit!");
+		printf(" >exit!\n");
 	} else {
-		puts (" >MENU");
+		printf(" >MENU\n");
 		menu_clui();
 	}
 }

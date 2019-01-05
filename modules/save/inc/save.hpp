@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -51,31 +52,31 @@ extern	"C" {
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	class cv::Mat	image;
-	extern	char		home_path [FILENAME_MAX];
-	extern	char		user_prog_path [FILENAME_MAX];
-	extern	char		saved_path [FILENAME_MAX];
-	extern	char		labels_path [FILENAME_MAX];
-	extern	char		labels_fail_path [FILENAME_MAX];
-	extern	char		lighters_path [FILENAME_MAX];
-	extern	char		lighters_fail_path [FILENAME_MAX];
-	extern	char		objects_path [FILENAME_MAX];
-	extern	char		objects_fail_path [FILENAME_MAX];
-	extern	char		coins_path [FILENAME_MAX];
-	extern	char		coins_fail_path [FILENAME_MAX];
-	extern	char		resistors_path [FILENAME_MAX];
-	extern	char		resistors_fail_path [FILENAME_MAX];
-	extern	char		saved_name [FILENAME_MAX];
+extern	class cv::Mat	image;
+extern	char		home_path [FILENAME_MAX];
+extern	char		user_prog_path [FILENAME_MAX];
+extern	char		saved_path [FILENAME_MAX];
+extern	char		labels_path [FILENAME_MAX];
+extern	char		labels_fail_path [FILENAME_MAX];
+extern	char		lighters_path [FILENAME_MAX];
+extern	char		lighters_fail_path [FILENAME_MAX];
+extern	char		objects_path [FILENAME_MAX];
+extern	char		objects_fail_path [FILENAME_MAX];
+extern	char		coins_path [FILENAME_MAX];
+extern	char		coins_fail_path [FILENAME_MAX];
+extern	char		resistors_path [FILENAME_MAX];
+extern	char		resistors_fail_path [FILENAME_MAX];
+extern	char		saved_name [FILENAME_MAX];
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	save_init	(void);
-	void	save_cleanup	(void);
-	void	save_clr	(void);
-	void	load_image_file	(const char *fpath, const char *fname);
-	void	save_image_file	(const char *fpath, const char *save_as);
+void	save_init	(void);
+void	save_cleanup	(void);
+void	save_clr	(void);
+void	load_image_file	(const char *fpath, const char *fname);
+void	save_image_file	(const char *fpath, const char *save_as);
 
 
 /******************************************************************************

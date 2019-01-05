@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -46,6 +47,7 @@ static	void	start_series	(void);
  ******************************************************************************/
 void	start_switch	(void)
 {
+
 	switch (start_mode) {
 	case START_FOO:
 		start_foo();
@@ -67,11 +69,13 @@ void	start_switch	(void)
  ******************************************************************************/
 static	void	start_foo	(void)
 {
+
 	/* empty */
 }
 
 static	void	start_single	(void)
 {
+
 	errno	= 0;
 	img_iface_load(NULL, saved_name);
 
@@ -89,6 +93,7 @@ static	void	start_single	(void)
 static	void	start_series	(void)
 {
 	int	tmp;
+
 	tmp		= user_iface_mode;
 	user_iface_mode	= USER_IFACE_CLUI;
 

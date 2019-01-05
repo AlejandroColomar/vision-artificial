@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -38,7 +39,8 @@ char	share_path [FILENAME_MAX];
  ******************************************************************************/
 void	about_init		(void)
 {
-	snprintf(share_path, FILENAME_MAX, "%s/%s/", INSTALL_SHARE_DIR, SHARE_DIR);
+	snprintf(share_path, FILENAME_MAX, "%s/%s/",
+						INSTALL_SHARE_DIR, SHARE_DIR);
 }
 
 void	snprint_share_file	(char *dest, int destsize, int share_file)
@@ -47,19 +49,24 @@ void	snprint_share_file	(char *dest, int destsize, int share_file)
 
 	switch (share_file) {
 	case SHARE_COPYRIGHT:
-		snprintf(file_name, FILENAME_MAX, "%s/%s", share_path, "COPYRIGHT.txt");
+		snprintf(file_name, FILENAME_MAX, "%s/%s",
+						share_path, "COPYRIGHT.txt");
 		break;
 	case SHARE_DISCLAIMER:
-		snprintf(file_name, FILENAME_MAX, "%s/%s", share_path, "DISCLAIMER.txt");
+		snprintf(file_name, FILENAME_MAX, "%s/%s",
+						share_path, "DISCLAIMER.txt");
 		break;
 	case SHARE_HELP:
-		snprintf(file_name, FILENAME_MAX, "%s/%s", share_path, "HELP.txt");
+		snprintf(file_name, FILENAME_MAX, "%s/%s",
+						share_path, "HELP.txt");
 		break;
 	case SHARE_LICENSE:
-		snprintf(file_name, FILENAME_MAX, "%s/%s", share_path, "LICENSE.txt");
+		snprintf(file_name, FILENAME_MAX, "%s/%s",
+						share_path, "LICENSE.txt");
 		break;
 	case SHARE_USAGE:
-		snprintf(file_name, FILENAME_MAX, "%s/%s", share_path, "USAGE.txt");
+		snprintf(file_name, FILENAME_MAX, "%s/%s",
+						share_path, "USAGE.txt");
 		break;
 	}
 

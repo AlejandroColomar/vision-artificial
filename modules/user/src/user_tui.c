@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -49,21 +50,30 @@ static	void	show_help	(void);
  ******************************************************************************/
 void	user_tui_init		(void)
 {
+	int	h1;
+	int	w1;
+	int	r1;
+	int	c1;
+	int	h2;
+	int	w2;
+	int	r2;
+	int	c2;
+
 	/* Use curses mode */
 	alx_resume_curses();
 
 	/* Dimensions: log */
-	const int	h1 =	54;
-	const int	w1 =	40;
-	const int	r1 =	0;
-	const int	c1 =	30;
-	win_log		= newwin(h1, w1, r1, c1);
+	h1	= 54;
+	w1	= 40;
+	r1	= 0;
+	c1	= 30;
+	win_log	= newwin(h1, w1, r1, c1);
 
 	/* Dimensions: help */
-	const int	h2 =	54;
-	const int	w2 =	40;
-	const int	r2 =	0;
-	const int	c2 =	0;
+	h2	= 54;
+	w2	= 40;
+	r2	= 0;
+	c2	= 0;
 	win_help	= newwin(h2, w2, r2, c2);
 
 	/* Activate keypad, don't echo input */
@@ -73,6 +83,7 @@ void	user_tui_init		(void)
 
 void	user_tui_cleanup	(void)
 {
+
 	/* Del wins & return to terminal mode */
 	alx_win_del(win_log);
 	alx_win_del(win_help);
@@ -82,7 +93,6 @@ void	user_tui_cleanup	(void)
 int	user_tui		(const char *title, const char *subtitle)
 {
 	int	action;
-//	action	= USER_IFACE_ACT_FOO;
 
 	show_help();
 	user_tui_show_log(title, subtitle);
@@ -93,9 +103,10 @@ int	user_tui		(const char *title, const char *subtitle)
 
 void	user_tui_fname		(const char *filepath, char *filename)
 {
-	/* Input box */
 	int	w;
 	int	r;
+
+	/* Input box */
 	w	= 75;
 	r	= 10;
 
@@ -106,6 +117,7 @@ void	user_tui_fname		(const char *filepath, char *filename)
 
 void	user_tui_show_log	(const char *title, const char *subtitle)
 {
+
 	/* Clear & box */
 	werase(win_log);
 	box(win_log, 0, 0);
@@ -125,15 +137,17 @@ void	user_tui_show_log	(const char *title, const char *subtitle)
 double	user_tui_getdbl		(double m, double def, double M,
 				const char *title, const char *help)
 {
-	/* Input box */
 	int	w;
 	int	r;
+	double	R;
+
+	/* Input box */
 	w	= 75;
 	r	= 10;
 
 	/* Request int */
-	double	R;
 	R	= alx_w_getdbl(w, r, title, m, def, M, help);
+
 	return	R;
 }
 
@@ -143,17 +157,20 @@ int64_t	user_tui_getint		(double m, int64_t def, double M,
 	/* Input box */
 	int	w;
 	int	r;
+	int64_t	i;
+
 	w	= 75;
 	r	= 10;
 
 	/* Request int */
-	int64_t	i;
 	i	= alx_w_getint(w, r, title, m, def, M, help);
+
 	return	i;
 }
 
 void	user_tui_show_ocr	(void)
 {
+
 	alx_pause_curses();
 
 	printf("%s", img_ocr_text);
@@ -705,11 +722,11 @@ static	int	usr_input	(void)
  *	*	*	*	*	*	*	*	*	*/
 static	void	show_help	(void)
 {
-	/* Clear */
-	werase(win_help);
-
 	int	r;
 	int	c;
+
+	/* Clear */
+	werase(win_help);
 
 	r	= 0;
 	c	= 0;

@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -37,8 +38,8 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	parse_file		(char* argument);
-static	void	parse_iface		(char* argument);
+static	void	parse_file	(char *argument);
+static	void	parse_iface	(char *argument);
 
 
 /******************************************************************************
@@ -106,10 +107,11 @@ void	parser	(int argc, char *argv[])
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	parse_file		(char* argument)
+static	void	parse_file	(char *argument)
 {
-	// FIXME
 	FILE	*fp;
+
+	/* FIXME */
 	fp	= fopen(argument, "r");
 	if (!fp) {
 		printf("--file argument not valid\n");
@@ -123,13 +125,16 @@ static	void	parse_file		(char* argument)
 	}
 }
 
-static	void	parse_iface		(char* argument)
+static	void	parse_iface	(char *argument)
 {
+
 	menu_iface_mode		= atoi(argument);
 	user_iface_mode		= menu_iface_mode;
-	if (menu_iface_mode < MENU_IFACE_CLUI || menu_iface_mode > MENU_IFACE_TUI) {
+	if ((menu_iface_mode < MENU_IFACE_CLUI)  ||
+					(menu_iface_mode > MENU_IFACE_TUI)) {
 		printf("--iface argument not valid\n");
-		printf("It must be an integer [%i U %i]\n", MENU_IFACE_CLUI, MENU_IFACE_TUI);
+		printf("It must be an integer [%i U %i]\n",
+					MENU_IFACE_CLUI, MENU_IFACE_TUI);
 		exit(EXIT_FAILURE);
 	}
 }

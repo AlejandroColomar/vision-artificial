@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -43,8 +44,8 @@ struct User_Iface_Log	user_iface_log;
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-void	user_iface_act		(int action);
-void	user_iface_show_ocr	(void);
+static	void	user_iface_act		(int action);
+static	void	user_iface_show_ocr	(void);
 
 
 /******************************************************************************
@@ -188,7 +189,7 @@ double	user_iface_getdbl	(double m, double def, double M,
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-void	user_iface_act		(int action)
+static	void	user_iface_act		(int action)
 {
 	if (action & USER_IFACE_ACT_USRI) {
 		switch (action) {
@@ -208,7 +209,7 @@ void	user_iface_act		(int action)
 	}
 }
 
-void	user_iface_show_ocr	(void)
+static	void	user_iface_show_ocr	(void)
 {
 	switch (user_iface_mode) {
 	case USER_IFACE_CLUI:

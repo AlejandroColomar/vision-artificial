@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -70,22 +71,22 @@ int	user_clui		(const char *title, const char *subtitle)
 
 void	user_clui_fname		(const char *filepath, char *filename)
 {
-	puts("File name:");
-	puts("Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff");
+	printf("File name:\n");
+	printf("Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff\n");
 	fgets(filename, FILENAME_MAX, stdin);
 	alx_sscan_fname(filepath, filename, false, filename);
 }
 
 void	user_clui_show_log	(const char *title, const char *subtitle)
 {
-	puts("________________________________________________________________________________");
+	printf("________________________________________________________________________________\n");
 
 	/* Board */
 	log_loop();
 
 	/* Subtitle & title */
 	printf("%s	-	%s\n", subtitle, title);
-	puts("--------------------------------------------------------------------------------");
+	printf("--------------------------------------------------------------------------------\n");
 
 }
 
@@ -128,7 +129,10 @@ static	int	usr_input	(void)
 	fgets(buff, BUFF_SIZE, stdin);
 
 	/* Interpret input */
-	sscanf(buff, " %c%c%c%c%c", &ch[0], &ch[1], &ch[2], &ch[3], &ch[4]);
+	if (sscanf(buff, " %c%c%c%c%c", &ch[0], &ch[1], &ch[2], &ch[3], &ch[4])) {
+		ch[0]	= '\0';
+	}
+	action	= USER_IFACE_ACT_FOO;
 	switch (ch[0]) {
 	case '+':
 		action	= USER_IFACE_ACT_APPLY;

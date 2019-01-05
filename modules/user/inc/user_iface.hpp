@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -142,22 +143,22 @@ extern	"C" {
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	int			user_iface_mode;
-	extern	struct User_Iface_Log	user_iface_log;
+extern	int			user_iface_mode;
+extern	struct User_Iface_Log	user_iface_log;
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	user_iface_init		(void);
-	void	user_iface_cleanup	(void);
-	void	user_iface		(void);
-	void	user_iface_show_log	(const char *title, const char *subtitle);
-	void	user_iface_fname	(const char *filepath, char *filename);
-	double	user_iface_getdbl	(double m, double def, double M,
-					const char *title, const char *help);
-	int64_t	user_iface_getint	(double m, int64_t def, double M,
-					const char *title, const char *help);
+void	user_iface_init		(void);
+void	user_iface_cleanup	(void);
+void	user_iface		(void);
+void	user_iface_show_log	(const char *title, const char *subtitle);
+void	user_iface_fname	(const char *filepath, char *filename);
+double	user_iface_getdbl	(double m, double def, double M,
+				const char *title, const char *help);
+int64_t	user_iface_getint	(double m, int64_t def, double M,
+				const char *title, const char *help);
 
 
 /******************************************************************************

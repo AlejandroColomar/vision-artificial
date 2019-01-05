@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -757,7 +758,7 @@ static	void	img_iface_set_ROI		(void *data)
 					title, NULL);
 
 		snprintf(title, 80, "Width:");
-		data_tmp.rect.width	= user_iface_getint(1, 
+		data_tmp.rect.width	= user_iface_getint(1,
 					image_copy_tmp.cols - data_tmp.rect.x,
 					image_copy_tmp.cols - data_tmp.rect.x,
 					title, NULL);

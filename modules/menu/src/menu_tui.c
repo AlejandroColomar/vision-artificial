@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -44,16 +45,19 @@ static	void	menu_tui_devel		(void);
  ******************************************************************************/
 void	menu_tui		(void)
 {
+	int	h;
+	int	w;
+	int	N;
+	bool	wh;
+	int	sw;
+
 	alx_resume_curses();
 
 	/* Menu dimensions & options */
-	int	h;
-	int	w;
 	h	= 23;
 	w	= 80;
-	int	N;
 	N	= 4;
-	struct Alx_Menu	mnu[4]	= {
+	static const struct Alx_Menu	mnu[4]	= {
 		{7, 4, "[0]	Exit program"},
 		{2, 4, "[1]	Continue"},
 		{4, 4, "[2]	Disclaimer of warranty"},
@@ -61,8 +65,6 @@ void	menu_tui		(void)
 	};
 
 	/* Menu */
-	bool	wh;
-	int	sw;
 	wh	= true;
 	while (wh) {
 		/* Menu loop */
@@ -103,19 +105,24 @@ void	menu_tui		(void)
  ******************************************************************************/
 static	void	menu_tui_continue	(void)
 {
-	/* Menu dimensions & options */
 	WINDOW	*win;
 	int	h;
 	int	w;
 	int	r;
 	int	c;
+	int	N;
+	int	w2;
+	int	r2;
+	bool	wh;
+	int	sw;
+
+	/* Menu dimensions & options */
 	h	= 23;
 	w	= 80;
 	r	= 1;
 	c	= (80 - w) / 2;
-	int	N;
 	N	= 6;
-	struct Alx_Menu	mnu[6]	= {
+	static const struct Alx_Menu	mnu[6]	= {
 		{8, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
 		{3, 4, "[2]	Select"},
@@ -125,15 +132,11 @@ static	void	menu_tui_continue	(void)
 	};
 
 	/* Input box */
-	int	w2;
-	int	r2;
 	w2	= w - 8;
 	r2	= r + h - 5;
-	char	*txt[]	= {"File name:"};
+	static const char	*txt[]	= {"File name:"};
 
 	/* Menu */
-	bool	wh;
-	int	sw;
 	wh	= true;
 	while (wh) {
 		/* Menu loop */
@@ -186,21 +189,22 @@ static	void	menu_tui_continue	(void)
 
 static	void	menu_tui_select	(void)
 {
-	/* Menu dimensions & options */
 	int	h;
 	int	w;
+	int	N;
+	int	sw;
+
+	/* Menu dimensions & options */
 	h	= 23;
 	w	= 80;
-	int	N;
 	N	= 3;
-	struct Alx_Menu	mnu[3]	= {
+	static const struct Alx_Menu	mnu[3]	= {
 		{6, 4, "[0]	Back"},
 		{2, 4, "[1]	Single image"},
 		{4, 4, "[2]	Series"}
 	};
 
 	/* Menu loop */
-	int	sw;
 	sw	= alx_menu(h, w, N, mnu, "SELECT MODE:");
 
 	/* Selection */
@@ -218,14 +222,16 @@ static	void	menu_tui_select	(void)
 
 static	void	menu_tui_series	(void)
 {
-	/* Menu dimensions & options */
 	int	h;
 	int	w;
+	int	N;
+	int	sw;
+
+	/* Menu dimensions & options */
 	h	= 23;
 	w	= 80;
-	int	N;
 	N	= 6;
-	struct Alx_Menu	mnu[6]	= {
+	static const struct Alx_Menu	mnu[6]	= {
 		{8, 4, "[0]	Back"},
 		{2, 4, "[1]	Label"},
 		{3, 4, "[2]	Objects"},
@@ -235,7 +241,6 @@ static	void	menu_tui_series	(void)
 	};
 
 	/* Menu loop */
-	int	sw;
 	sw	= alx_menu(h, w, N, mnu, "SELECT LEVEL:");
 
 	/* Selection */
@@ -266,13 +271,18 @@ static	void	menu_tui_devel		(void)
 	int	w;
 	int	r;
 	int	c;
+	int	N;
+	int	w2;
+	int	r2;
+	bool	wh;
+	int	sw;
+
 	h	= 23;
 	w	= 80;
 	r	= 1;
 	c	= (80 - w) / 2;
-	int	N;
 	N	= 4;
-	struct Alx_Menu	mnu[4]	= {
+	static const struct Alx_Menu	mnu[4]	= {
 		{6, 4, "[0]	Back"},
 		{2, 4, "[1]	Change process mode"},
 		{3, 4, "[2]	Change log mode"},
@@ -280,11 +290,9 @@ static	void	menu_tui_devel		(void)
 	};
 
 	/* Input box */
-	int	w2;
-	int	r2;
 	w2	= w - 8;
 	r2	= r + h - 5;
-	char	*txt[]	= {
+	static const char	*txt[]	= {
 		"Modes: 0=Auto; 1=Stop@prod; 2=Delay@step; 3=Stop@step",
 		"Modes: 0=Results; 1=Operations; 2=All",
 		"Modes: 1=CLUI; 2=TUI"
@@ -294,8 +302,6 @@ static	void	menu_tui_devel		(void)
 	win	= newwin(h, w, r, c);
 
 	/* Menu loop */
-	bool	wh;
-	int	sw;
 	wh	= true;
 	while (wh) {
 		/* Selection */
@@ -308,8 +314,8 @@ static	void	menu_tui_devel		(void)
 
 		case 1:
 			proc_debug		= alx_w_getint(w2, r2, txt[0],
-						PROC_DBG_NO, 0, PROC_DBG_STOP_STEP,
-									NULL);
+						PROC_DBG_NO, 0,
+						PROC_DBG_STOP_STEP, NULL);
 			break;
 
 		case 2:

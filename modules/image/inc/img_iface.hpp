@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -310,20 +311,20 @@ extern	"C" {
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	extern	char				img_ocr_text [OCR_TEXT_MAX];
-	extern	struct Img_Iface_ZB_Codes	zb_codes;
+extern	char				img_ocr_text [OCR_TEXT_MAX];
+extern	struct Img_Iface_ZB_Codes	zb_codes;
 
 
 /******************************************************************************
  ******* functions ************************************************************
  ******************************************************************************/
-	void	img_iface_cleanup_main	(void);
-	void	img_iface_load		(const char *fpath, const char *fname);
-	void	img_iface_cleanup	(void);
-	void	img_iface_act		(int action, void *data);
-	void	img_iface_show_img	(void);
-	void	img_iface_show_hist_c1	(void);
-	void	img_iface_show_hist_c3	(void);
+void	img_iface_cleanup_main	(void);
+void	img_iface_load		(const char *fpath, const char *fname);
+void	img_iface_cleanup	(void);
+void	img_iface_act		(int action, void *data);
+void	img_iface_show_img	(void);
+void	img_iface_show_hist_c1	(void);
+void	img_iface_show_hist_c3	(void);
 
 
 /******************************************************************************

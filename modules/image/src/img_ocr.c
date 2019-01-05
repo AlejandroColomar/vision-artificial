@@ -1,5 +1,6 @@
 /******************************************************************************
  *	Copyright (C) 2018	Alejandro Colomar Andrés		      *
+ *	SPDX-License-Identifier:	GPL-2.0-only			      *
  ******************************************************************************/
 
 
@@ -52,15 +53,18 @@ void	img_ocr_act	(int action, void *data)
  ******************************************************************************/
 static	void	img_ocr_read	(void *data)
 {
-	struct TessBaseAPI	*handle_ocr;
+	struct Img_Iface_Data_Read	*data_cast;
+	struct TessBaseAPI		*handle_ocr;
+	int	lang;
+	char	lang_str [20 + 1];
+	int	conf;
+	char	conf_str [FILENAME_MAX];
+	char	*txt;
 
 	/* Data */
-	struct Img_Iface_Data_Read	*data_cast;
 	data_cast	= (struct Img_Iface_Data_Read *)data;
 
 	/* Language */
-	int	lang;
-	char	lang_str [20 + 1];
 	lang	= data_cast->lang;
 	switch (lang) {
 	case IMG_IFACE_OCR_LANG_ENG:
@@ -81,8 +85,6 @@ static	void	img_ocr_read	(void *data)
 	}
 
 	/* Config file */
-	int	conf;
-	char	conf_str [FILENAME_MAX];
 	conf	= data_cast->conf;
 	switch (conf) {
 	case IMG_IFACE_OCR_CONF_PRICE:
@@ -92,13 +94,12 @@ static	void	img_ocr_read	(void *data)
 
 	/* init OCR */
 	handle_ocr	= TessBaseAPICreate();
-	TessBaseAPIInit2(handle_ocr, NULL, lang_str,
 #ifdef	OEM_LSTM_ONLY
-						OEM_LSTM_ONLY);
+	TessBaseAPIInit2(handle_ocr, NULL, lang_str, OEM_LSTM_ONLY);
 #else
-						OEM_DEFAULT);
+	TessBaseAPIInit2(handle_ocr, NULL, lang_str, OEM_DEFAULT);
 #endif
-//						OEM_TESSERACT_LSTM_COMBINED);
+/*	TessBaseAPIInit2(handle_ocr, NULL, lang_str, OEM_TESSERACT_LSTM_COMBINED);*/
 	if (conf) {
 		/* Configure OCR (whitelist chars) */
 		TessBaseAPIReadConfigFile(handle_ocr, conf_str);
@@ -110,7 +111,6 @@ static	void	img_ocr_read	(void *data)
 				data_cast->img.B_per_pix,
 				data_cast->img.B_per_line);
 	TessBaseAPIRecognize(handle_ocr, NULL);
-	char	*txt;
 	txt	= TessBaseAPIGetUTF8Text(handle_ocr);
 
 	/* Copy text to global variable */
