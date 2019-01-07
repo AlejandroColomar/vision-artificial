@@ -9,7 +9,7 @@ MODULES_TMP_DIR	= $(MODULES_DIR)/tmp/
 TMP_DIR		= $(MAIN_DIR)/tmp/
 
 # dependencies
-ALL	= $(BIN_NAME)
+ALL	= $(BIN_NAME) size
 
 MAIN_OBJ_MODULES	= modules.o
 MAIN_OBJS		= $(TMP_DIR)/main.o \
@@ -35,6 +35,10 @@ all: $(ALL)
 $(BIN_NAME): $(MAIN_OBJS) $(MAIN_LIBS)
 	@echo	"	CXX	$@"
 	$(Q)$(CXX) $(MAIN_OBJS) -o $@ $(STATIC_LIBS) $(LIBS)
+
+size: $(BIN_NAME)
+	@echo	"	SZ	$(BIN_NAME)"
+	$(Q)$(SZ) $(BIN_NAME)
 
 
 clean:

@@ -204,7 +204,7 @@
 
 	struct	Img_Iface_Data_Rotate {
 		class cv::Point_ <float>	center;
-		double				angle;
+		double	angle;
 	};
 
 	struct	Img_Iface_Data_Adaptive_Thr {
@@ -235,19 +235,19 @@
 	};
 
 	struct	Img_Iface_Data_Contours_Size {
-		class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
+		const	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
 		double						*area;
 		double						*perimeter;
 	};
 
 	struct	Img_Iface_Data_Bounding_Rect {
-		class std::vector <class cv::Point_ <int>>	*contour;
+		const	class std::vector <class cv::Point_ <int>>  *contour;
 		class cv::Rect_ <int>				*rect;
 		bool						show;
 	};
 
 	struct	Img_Iface_Data_MinARect {
-		class std::vector <class cv::Point_ <int>>	*contour;
+		const	class std::vector <class cv::Point_ <int>>  *contour;
 		class cv::RotatedRect				*rect;
 		bool						show;
 	};
@@ -270,8 +270,8 @@
 	};
 
 	struct	Img_Iface_Data_Undistort {
-		class cv::Mat				*intrinsic_mat;
-		class cv::Mat				*dist_coefs;
+		const	class cv::Mat			*intrinsic_mat;
+		const	class cv::Mat			*dist_coefs;
 	};
 
 /* img_zbar -------------------------------------------------------------------*/
@@ -321,7 +321,7 @@ extern	struct Img_Iface_ZB_Codes	zb_codes;
 void	img_iface_cleanup_main	(void);
 void	img_iface_load		(const char *fpath, const char *fname);
 void	img_iface_cleanup	(void);
-void	img_iface_act		(int action, void *data);
+void	img_iface_act		(int action, const void *data);
 void	img_iface_show_img	(void);
 void	img_iface_show_hist_c1	(void);
 void	img_iface_show_hist_c3	(void);

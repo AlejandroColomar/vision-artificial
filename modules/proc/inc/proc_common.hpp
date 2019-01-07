@@ -67,22 +67,22 @@ void	proc_cvt_color		(int method);
 void	proc_distance_transform	(void);
 void	proc_threshold		(int type, int ksize);
 void	proc_contours		(
-		std::vector <std::vector <class cv::Point_ <int>>>  *contours,
+		class std::vector <class std::vector <class cv::Point_ <int>>>  *contours,
 		class cv::Mat  *hierarchy);
 void	proc_contours_size	(
-		std::vector <std::vector <class cv::Point_ <int>>>  *contours,
+		const class std::vector <class std::vector <class cv::Point_ <int>>>  *contours,
 		double  *area,
 		double  *perimeter);
 void	proc_bounding_rect	(
-		std::vector <class cv::Point_ <int>>  *contour,
+		const class std::vector <class cv::Point_ <int>>  *contour,
 		class cv::Rect_ <int>  *rect,
 		bool  show);
 void	proc_fit_ellipse	(
-		std::vector <class cv::Point_ <int>>  *contour,
+		const class std::vector <class cv::Point_ <int>>  *contour,
 		class cv::RotatedRect  *rect,
 		bool show);
 void	proc_min_area_rect	(
-		std::vector <class cv::Point_ <int>>  *contour,
+		const class std::vector <class cv::Point_ <int>>  *contour,
 		class cv::RotatedRect  *rect,
 		bool show);
 

@@ -71,17 +71,19 @@ export	PROGRAMVERSION
 
 ################################################################################
 # Make variables (CC, etc...)
-  CC		= gcc
-  CXX		= g++
-  AS		= as
-  AR		= ar
-  LD		= ld
+  CC	= gcc
+  CXX	= g++
+  AS	= as
+  AR	= ar
+  LD	= ld
+  SZ	= size
 
 export	CC
 export	CXX
 export	AS
 export	AR
 export	LD
+export	SZ
 
 ################################################################################
 # cflags

@@ -37,14 +37,14 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_calib3d_calibrate	(class cv::Mat  *imgptr, void *data);
-static	void	img_calib3d_undistort	(class cv::Mat  *imgptr, void *data);
+static	void	img_calib3d_calibrate	(class cv::Mat  *imgptr, const void *data);
+static	void	img_calib3d_undistort	(class cv::Mat  *imgptr, const void *data);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_calib3d_act	(class cv::Mat  *imgptr, int action, void *data)
+void	img_calib3d_act	(class cv::Mat  *imgptr, int action, const void *data)
 {
 	switch (action) {
 	case IMG_CALIB3D_ACT_CALIBRATE:
@@ -61,11 +61,9 @@ void	img_calib3d_act	(class cv::Mat  *imgptr, int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_calib3d_calibrate	(class cv::Mat  *imgptr, void *data)
+static	void	img_calib3d_calibrate	(class cv::Mat *imgptr, const void *data)
 {
-	/* Data */
-	struct Img_Iface_Data_Calibrate	*data_cast;
-
+	const	struct Img_Iface_Data_Calibrate	*data_cast;
 	class cv::Mat				*intrinsic_mat;
 	class cv::Mat				*dist_coefs;
 	class std::vector <class cv::Mat>	*rvecs;
@@ -76,12 +74,11 @@ static	void	img_calib3d_calibrate	(class cv::Mat  *imgptr, void *data)
 	class std::vector <class std::vector <class cv::Point_ <float>>>  image_points;
 	class std::vector <class cv::Point_ <float>>	corners;
 	class std::vector <class cv::Point3_ <float>>	obj;
-
 	bool	found;
 	int	i;
 	int	j;
 
-	data_cast	= (struct Img_Iface_Data_Calibrate *)data;
+	data_cast	= (const struct Img_Iface_Data_Calibrate *)data;
 	intrinsic_mat	= data_cast->intrinsic_mat;
 	dist_coefs	= data_cast->dist_coefs;
 	rvecs		= data_cast->rvecs;
@@ -111,28 +108,23 @@ static	void	img_calib3d_calibrate	(class cv::Mat  *imgptr, void *data)
 	image_points.push_back(corners);
 	object_points.push_back(obj);
 
-	/* Calibrate */
 	cv::calibrateCamera(object_points, image_points, imgptr->size(),
 				*intrinsic_mat, *dist_coefs, *rvecs, *tvecs);
 }
 
-static	void	img_calib3d_undistort	(class cv::Mat  *imgptr, void *data)
+static	void	img_calib3d_undistort	(class cv::Mat *imgptr, const void *data)
 {
-	class cv::Mat	imgtmp;
+	class cv::Mat				imgtmp;
+	const	struct Img_Iface_Data_Undistort	*data_cast;
+	const	class cv::Mat			*intrinsic_mat;
+	const	class cv::Mat			*dist_coefs;
 
-	/* Data */
-	struct Img_Iface_Data_Undistort	*data_cast;
-
-	class cv::Mat				*intrinsic_mat;
-	class cv::Mat				*dist_coefs;
-
-	data_cast	= (struct Img_Iface_Data_Undistort *)data;
+	data_cast	= (const struct Img_Iface_Data_Undistort *)data;
 	intrinsic_mat	= data_cast->intrinsic_mat;
 	dist_coefs	= data_cast->dist_coefs;
 
 	cv::undistort(*imgptr, imgtmp, *intrinsic_mat, *dist_coefs);
 
-	/* Write tmp into imgptr */
 	imgptr->release();
 	imgtmp.copyTo(*imgptr);
 }

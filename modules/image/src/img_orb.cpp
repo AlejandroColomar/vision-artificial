@@ -34,14 +34,14 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_orb_align	(class cv::Mat  *img_0,
+static	void	img_orb_align	(const class cv::Mat  *img_0,
 				class cv::Mat  *img_1);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_orb_act	(class cv::Mat  *img_ref,
+void	img_orb_act	(const class cv::Mat  *img_ref,
 			class cv::Mat  *imgptr, int action)
 {
 	switch (action) {
@@ -55,7 +55,7 @@ void	img_orb_act	(class cv::Mat  *img_ref,
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_orb_align	(class cv::Mat  *img_0,
+static	void	img_orb_align	(const class cv::Mat  *img_0,
 				class cv::Mat  *img_1)
 {
 	/* Variables to store keypoints & descriptors */

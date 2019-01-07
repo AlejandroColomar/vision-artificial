@@ -46,7 +46,7 @@ static	void	img_alx_median_vertical		(class cv::Mat  *imgptr);
 /******************************************************************************
  ******* global functions *****************************************************
  ******************************************************************************/
-void	img_alx_act	(class cv::Mat  *imgptr, int action, void *data)
+void	img_alx_act	(class cv::Mat  *imgptr, int action, const void *data)
 {
 
 	switch (action) {

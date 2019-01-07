@@ -57,8 +57,8 @@ IMGOCR_INC_DIRS		= -I $(INC_DIR) \
 
 IMGI_INC_SAVE		= save.hpp
 IMGI_INC_USR		= user_iface.hpp
-IMGI_INC		= img_iface.hpp	img_alx.hpp img_cv.hpp img_zbar.hpp \
-					img_ocr.hpp img_orb.hpp
+IMGI_INC		= img_iface.hpp	img_alx.hpp img_calib3d.hpp img_cv.hpp \
+					img_zbar.hpp img_ocr.hpp img_orb.hpp
 IMGI_DEPS		= $(SRC_DIR)/img_iface.cpp \
 			$(patsubst %,$(INC_DIR)/%,$(IMGI_INC)) \
 			$(patsubst %,$(SAVE_INC_DIR)/%,$(IMGI_INC_SAVE)) \
@@ -80,53 +80,53 @@ img_mod.o: $(_ALL)
 
 
 img_alx.s: $(IMGALX_DEPS)
-	$(Q)$(CXX) $(CXXFLAGS) $(IMGALX_INC_DIRS) -S $< -o $@
 	@echo  "	CXX	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(IMGALX_INC_DIRS) -S $< -o $@
 img_alx.o: img_alx.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 img_cv.s: $(IMGCV_DEPS)
-	$(Q)$(CXX) $(CXXFLAGS) $(IMGCV_INC_DIRS) -S $< -o $@
 	@echo  "	CXX	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(IMGCV_INC_DIRS) -S $< -o $@
 img_cv.o: img_cv.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 img_orb.s: $(IMGORB_DEPS)
-	$(Q)$(CXX) $(CXXFLAGS) $(IMGORB_INC_DIRS) -S $< -o $@
 	@echo  "	CXX	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(IMGORB_INC_DIRS) -S $< -o $@
 img_orb.o: img_orb.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 img_calib3d.s: $(IMGC3D_DEPS)
-	$(Q)$(CXX) $(CXXFLAGS) $(IMGC3D_INC_DIRS) -S $< -o $@
 	@echo  "	CXX	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(IMGC3D_INC_DIRS) -S $< -o $@
 img_calib3d.o: img_calib3d.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 img_zbar.s: $(IMGZB_DEPS)
-	$(Q)$(CXX) $(CXXFLAGS) $(IMGZB_INC_DIRS) -S $< -o $@
 	@echo  "	CXX	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(IMGZB_INC_DIRS) -S $< -o $@
 img_zbar.o: img_zbar.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 img_ocr.s: $(IMGOCR_DEPS)
-	$(Q)$(CC) $(CFLAGS) $(IMGOCR_INC_DIRS) -S $< -o $@
 	@echo  "	CC	$@"
+	$(Q)$(CC) $(CFLAGS) $(IMGOCR_INC_DIRS) -S $< -o $@
 img_ocr.o: img_ocr.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 img_iface.s: $(IMGI_DEPS)
-	$(Q)$(CXX) $(CXXFLAGS) $(IMGI_INC_DIRS) -S $< -o $@
 	@echo  "	CXX	$@"
+	$(Q)$(CXX) $(CXXFLAGS) $(IMGI_INC_DIRS) -S $< -o $@
 img_iface.o: img_iface.s
-	$(Q)$(AS) $< -o $@
 	@echo  "	AS	$@"
+	$(Q)$(AS) $< -o $@
 
 
 PHONY += clean

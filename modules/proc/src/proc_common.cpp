@@ -53,38 +53,45 @@ static	clock_t	clock_1;
  ******************************************************************************/
 void	proc_apply		(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_APPLY, NULL);
 }
 
 void	proc_save_mem		(int n)
 {
-	img_iface_act(IMG_IFACE_ACT_SAVE_MEM, (void *)&n);
+
+	img_iface_act(IMG_IFACE_ACT_SAVE_MEM, (const void *)&n);
 }
 
 void	proc_load_mem		(int n)
 {
-	img_iface_act(IMG_IFACE_ACT_LOAD_MEM, (void *)&n);
+
+	img_iface_act(IMG_IFACE_ACT_LOAD_MEM, (const void *)&n);
 
 	proc_show_img();
 }
 
 void	proc_save_ref		(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_SAVE_REF, NULL);
 }
 
 void	proc_save_file		(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_SAVE_FILE, NULL);
 }
 
 void	proc_save_update	(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_SAVE_UPDT, NULL);
 }
 
 void	proc_local_max		(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_LOCAL_MAX, NULL);
 
 	proc_show_img();
@@ -92,6 +99,7 @@ void	proc_local_max		(void)
 
 void	proc_skeleton		(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_SKELETON, NULL);
 
 	proc_show_img();
@@ -106,6 +114,7 @@ void	proc_lines_vertical	(void)
 
 void	proc_median_horizontal	(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_MEDIAN_HORIZONTAL, NULL);
 
 	proc_show_img();
@@ -113,6 +122,7 @@ void	proc_median_horizontal	(void)
 
 void	proc_median_vertical	(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_MEDIAN_VERTICAL, NULL);
 
 	proc_show_img();
@@ -124,7 +134,7 @@ void	proc_pixel_get		(int x, int y, unsigned char *val)
 	data.x		= x;
 	data.y		= y;
 	data.val	= val;
-	img_iface_act(IMG_IFACE_ACT_PIXEL_GET, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_PIXEL_GET, (const void *)&data);
 }
 
 void	proc_pixel_set		(int x, int y, unsigned char val)
@@ -133,7 +143,7 @@ void	proc_pixel_set		(int x, int y, unsigned char val)
 	data.x		= x;
 	data.y		= y;
 	data.val	= val;
-	img_iface_act(IMG_IFACE_ACT_PIXEL_SET, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_PIXEL_SET, (const void *)&data);
 
 	proc_show_img();
 }
@@ -146,13 +156,14 @@ void	proc_ROI		(int x, int y, int w, int h)
 	data.rect.y		= y;
 	data.rect.width		= w;
 	data.rect.height	= h;
-	img_iface_act(IMG_IFACE_ACT_SET_ROI, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_SET_ROI, (const void *)&data);
 
 	proc_show_img();
 }
 
 void	proc_and_2ref		(void)
 {
+
 	img_iface_act(USER_IFACE_ACT_AND_2REF, NULL);
 
 	proc_show_img();
@@ -160,6 +171,7 @@ void	proc_and_2ref		(void)
 
 void	proc_not		(void)
 {
+
 	img_iface_act(USER_IFACE_ACT_NOT, NULL);
 
 	proc_show_img();
@@ -167,6 +179,7 @@ void	proc_not		(void)
 
 void	proc_or_2ref		(void)
 {
+
 	img_iface_act(USER_IFACE_ACT_OR_2REF, NULL);
 
 	proc_show_img();
@@ -177,7 +190,7 @@ void	proc_cmp		(int cmp)
 	struct Img_Iface_Data_Component		data;
 
 	data.cmp	= cmp;
-	img_iface_act(IMG_IFACE_ACT_COMPONENT, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_COMPONENT, (const void *)&data);
 
 	proc_show_img();
 }
@@ -187,7 +200,7 @@ void	proc_dilate		(int size)
 	struct Img_Iface_Data_Dilate_Erode	data;
 
 	data.i	= size;
-	img_iface_act(IMG_IFACE_ACT_DILATE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_DILATE, (const void *)&data);
 
 	proc_show_img();
 }
@@ -197,7 +210,7 @@ void	proc_erode		(int size)
 	struct Img_Iface_Data_Dilate_Erode	data;
 
 	data.i	= size;
-	img_iface_act(IMG_IFACE_ACT_ERODE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_ERODE, (const void *)&data);
 
 	proc_show_img();
 }
@@ -207,7 +220,7 @@ void	proc_dilate_erode	(int size)
 	struct Img_Iface_Data_Dilate_Erode	data;
 
 	data.i	= size;
-	img_iface_act(IMG_IFACE_ACT_DILATE_ERODE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_DILATE_ERODE, (const void *)&data);
 
 	proc_show_img();
 }
@@ -217,7 +230,7 @@ void	proc_erode_dilate	(int size)
 	struct Img_Iface_Data_Dilate_Erode	data;
 
 	data.i	= size;
-	img_iface_act(IMG_IFACE_ACT_ERODE_DILATE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_ERODE_DILATE, (const void *)&data);
 
 	proc_show_img();
 }
@@ -228,7 +241,7 @@ void	proc_smooth		(int method, int ksize)
 
 	data.method	= method;
 	data.ksize	= ksize;
-	img_iface_act(IMG_IFACE_ACT_SMOOTH, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_SMOOTH, (const void *)&data);
 
 	proc_show_img();
 }
@@ -238,7 +251,7 @@ void	proc_border		(int size)
 	struct Img_Iface_Data_Border		data;
 
 	data.size	= size;
-	img_iface_act(IMG_IFACE_ACT_BORDER, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_BORDER, (const void *)&data);
 
 	proc_show_img();
 }
@@ -250,7 +263,7 @@ void	proc_rotate		(double center_x, double center_y, double angle)
 	data.center.x	= center_x;
 	data.center.y	= center_y;
 	data.angle	= angle;
-	img_iface_act(IMG_IFACE_ACT_ROTATE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_ROTATE, (const void *)&data);
 
 	proc_show_img();
 }
@@ -272,7 +285,7 @@ void	proc_cvt_color		(int method)
 	struct Img_Iface_Data_Cvt_Color		data;
 
 	data.method	= method;
-	img_iface_act(IMG_IFACE_ACT_CVT_COLOR, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_CVT_COLOR, (const void *)&data);
 
 	proc_show_img();
 }
@@ -283,13 +296,14 @@ void	proc_threshold		(int type, int size)
 
 	data.thr_typ	= type;
 	data.thr_val	= size;
-	img_iface_act(IMG_IFACE_ACT_THRESHOLD, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_THRESHOLD, (const void *)&data);
 
 	proc_show_img();
 }
 
 void	proc_distance_transform	(void)
 {
+
 	img_iface_act(IMG_IFACE_ACT_DISTANCE_TRANSFORM, NULL);
 
 	proc_show_img();
@@ -305,13 +319,13 @@ void	proc_contours		(
 	data.contours	= contours;
 	data.hierarchy	= hierarchy;
 
-	img_iface_act(IMG_IFACE_ACT_CONTOURS, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_CONTOURS, (const void *)&data);
 
 	proc_show_img();
 }
 
 void	proc_contours_size	(
-	class std::vector <class std::vector <class cv::Point_ <int>>>  *contours,
+	const class std::vector <class std::vector <class cv::Point_ <int>>>  *contours,
 	double  *area,
 	double  *perimeter
 )
@@ -321,11 +335,11 @@ void	proc_contours_size	(
 	data.contours	= contours;
 	data.area	= area;
 	data.perimeter	= perimeter;
-	img_iface_act(IMG_IFACE_ACT_CONTOURS_SIZE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_CONTOURS_SIZE, (const void *)&data);
 }
 
 void	proc_bounding_rect	(
-	class std::vector <class cv::Point_ <int>>  *contour,
+	const class std::vector <class cv::Point_ <int>>  *contour,
 	class cv::Rect_ <int>  *rect,
 	bool  show
 )
@@ -335,7 +349,7 @@ void	proc_bounding_rect	(
 	data.contour	= contour;
 	data.rect	= rect;
 	data.show	= show;
-	img_iface_act(IMG_IFACE_ACT_BOUNDING_RECT, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_BOUNDING_RECT, (const void *)&data);
 
 	if (show) {
 		proc_show_img();
@@ -343,7 +357,7 @@ void	proc_bounding_rect	(
 }
 
 void	proc_fit_ellipse	(
-	class std::vector <class cv::Point_ <int>>  *contour,
+	const class std::vector <class cv::Point_ <int>>  *contour,
 	class cv::RotatedRect  *rect,
 	bool show
 )
@@ -353,7 +367,7 @@ void	proc_fit_ellipse	(
 	data.contour	= contour;
 	data.rect	= rect;
 	data.show	= show;
-	img_iface_act(IMG_IFACE_ACT_FIT_ELLIPSE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_FIT_ELLIPSE, (const void *)&data);
 
 
 	if (show) {
@@ -362,7 +376,7 @@ void	proc_fit_ellipse	(
 }
 
 void	proc_min_area_rect	(
-	class std::vector <class cv::Point_ <int>>  *contour,
+	const class std::vector <class cv::Point_ <int>>  *contour,
 	class cv::RotatedRect  *rect,
 	bool  show
 )
@@ -372,7 +386,7 @@ void	proc_min_area_rect	(
 	data.contour	= contour;
 	data.rect	= rect;
 	data.show	= show;
-	img_iface_act(IMG_IFACE_ACT_MIN_AREA_RECT, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_MIN_AREA_RECT, (const void *)&data);
 
 	if (show) {
 		proc_show_img();
@@ -385,7 +399,7 @@ void	proc_OCR		(int lang, int conf)
 
 	data.lang	= lang;	/* eng=0, spa=1, cat=2 */
 	data.conf	= conf;	/* none=0, price=1 */
-	img_iface_act(IMG_IFACE_ACT_READ, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_READ, (const void *)&data);
 }
 
 void	proc_zbar		(int type)
@@ -393,11 +407,12 @@ void	proc_zbar		(int type)
 	struct Img_Iface_Data_Decode		data;
 
 	data.code_type	= (enum zbar::zbar_symbol_type_e)type;
-	img_iface_act(IMG_IFACE_ACT_DECODE, (void *)&data);
+	img_iface_act(IMG_IFACE_ACT_DECODE, (const void *)&data);
 }
 
 void	proc_show_img		(void)
 {
+
 	if (proc_debug >= PROC_DBG_DELAY_STEP) {
 		img_iface_show_img();
 
@@ -409,6 +424,7 @@ void	proc_show_img		(void)
 
 void	clock_start		(void)
 {
+
 	clock_0	= clock();
 }
 

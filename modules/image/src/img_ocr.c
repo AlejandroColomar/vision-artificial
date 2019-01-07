@@ -32,13 +32,13 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(void *data);
+static	void	img_ocr_read	(const void *data);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-void	img_ocr_act	(int action, void *data)
+void	img_ocr_act	(int action, const void *data)
 {
 	switch (action) {
 	case IMG_OCR_ACT_READ:
@@ -51,10 +51,10 @@ void	img_ocr_act	(int action, void *data)
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	img_ocr_read	(void *data)
+static	void	img_ocr_read	(const void *data)
 {
-	struct Img_Iface_Data_Read	*data_cast;
-	struct TessBaseAPI		*handle_ocr;
+	const	struct Img_Iface_Data_Read	*data_cast;
+	struct TessBaseAPI			*handle_ocr;
 	int	lang;
 	char	lang_str [20 + 1];
 	int	conf;
@@ -62,7 +62,7 @@ static	void	img_ocr_read	(void *data)
 	char	*txt;
 
 	/* Data */
-	data_cast	= (struct Img_Iface_Data_Read *)data;
+	data_cast	= (const struct Img_Iface_Data_Read *)data;
 
 	/* Language */
 	lang	= data_cast->lang;
@@ -89,7 +89,8 @@ static	void	img_ocr_read	(void *data)
 	switch (conf) {
 	case IMG_IFACE_OCR_CONF_PRICE:
 		if (snprintf(conf_str, FILENAME_MAX, "%s/%s",
-							share_path, "price")) {
+						share_path,
+						"price")  >=  FILENAME_MAX) {
 			printf("Path is too large and has been truncated\n");
 			printf("Price configuration was not possible!\n");
 			conf	= IMG_IFACE_OCR_CONF_NONE;

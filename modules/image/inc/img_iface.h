@@ -168,7 +168,7 @@ extern	struct Img_Iface_ZB_Codes	zb_codes;
 void	img_iface_cleanup_main	(void);
 void	img_iface_load		(const char *fpath, const char *fname);
 void	img_iface_cleanup	(void);
-void	img_iface_act		(int action, void *data);
+void	img_iface_act		(int action, const void *data);
 void	img_iface_show_img	(void);
 void	img_iface_show_hist_c1	(void);
 void	img_iface_show_hist_c3	(void);
