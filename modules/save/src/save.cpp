@@ -12,7 +12,7 @@
 	#include <cerrno>
 		/* fscanf() & fprintf() & FILE & FILENAME_MAX & snprintf() */
 	#include <cstdio>
-		/* getenv() */
+		/* getenv() & exit() */
 	#include <cstdlib>
 
 /* Linux ---------------------------------------------------------------------*/
@@ -34,28 +34,30 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-class cv::Mat	image;
-char		home_path [FILENAME_MAX];
-char		user_prog_path [FILENAME_MAX];
-char		saved_path [FILENAME_MAX];
-char		labels_path [FILENAME_MAX];
-char		labels_fail_path [FILENAME_MAX];
-char		lighters_path [FILENAME_MAX];
-char		lighters_fail_path [FILENAME_MAX];
-char		objects_path [FILENAME_MAX];
-char		objects_fail_path [FILENAME_MAX];
-char		coins_path [FILENAME_MAX];
-char		coins_fail_path [FILENAME_MAX];
-char		resistors_path [FILENAME_MAX];
-char		resistors_fail_path [FILENAME_MAX];
-char		saved_name [FILENAME_MAX];
+	class cv::Mat	image;
+	char		home_path [FILENAME_MAX];
+	char		user_prog_path [FILENAME_MAX];
+	char		saved_path [FILENAME_MAX];
+	char		labels_path [FILENAME_MAX];
+	char		labels_fail_path [FILENAME_MAX];
+	char		lighters_path [FILENAME_MAX];
+	char		lighters_fail_path [FILENAME_MAX];
+	char		objects_path [FILENAME_MAX];
+	char		objects_fail_path [FILENAME_MAX];
+	char		coins_path [FILENAME_MAX];
+	char		coins_fail_path [FILENAME_MAX];
+	char		resistors_path [FILENAME_MAX];
+	char		resistors_fail_path [FILENAME_MAX];
+	char		saved_name [FILENAME_MAX];
 
 
 /******************************************************************************
- ******* main *****************************************************************
+ ******* global functions *****************************************************
  ******************************************************************************/
 void	save_init	(void)
 {
+	int	err;
+
 	if (snprintf(home_path, FILENAME_MAX, "%s/", getenv(ENV_HOME))) {
 		goto err_path;
 	}
@@ -109,10 +111,10 @@ void	save_init	(void)
 	}
 	saved_name[0]	= '\0';
 
-	int	err;
 	err	= mkdir(user_prog_path, 0700);
 
 	if (!err) {
+		;
 	} else {
 
 		switch (errno) {
@@ -145,6 +147,7 @@ err_path:
 
 void	save_clr	(void)
 {
+
 	if (snprintf(saved_path, FILENAME_MAX, "%s/%s/",
 						home_path, USER_SAVED_DIR)) {
 		goto err_path;
@@ -207,7 +210,7 @@ err_path:
 
 void	save_cleanup	(void)
 {
-	/* Free old image */
+
 	image.release();
 }
 
