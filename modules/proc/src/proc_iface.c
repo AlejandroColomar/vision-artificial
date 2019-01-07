@@ -174,7 +174,8 @@ void	proc_iface_series	(void)
 	wh	= true;
 	for (; wh; i++) {
 		if (snprintf(file_name, FILENAME_MAX, "%s%04i%s",
-						file_basename, i, file_ext)) {
+					file_basename,
+					i, file_ext)  >=  FILENAME_MAX) {
 			goto err_path;
 		}
 
@@ -195,10 +196,10 @@ void	proc_iface_series	(void)
 					/* Save failed image into file */
 					proc_show_img();
 					if (snprintf(save_error_as, FILENAME_MAX,
-								"%s%0*i_err%s",
-								file_basename,
-								num_len, i,
-								file_ext)) {
+							"%s%0*i_err%s",
+							file_basename,
+							num_len, i,
+							file_ext)  >=  FILENAME_MAX) {
 						goto err_path;
 					}
 					save_image_file(proc_fail_path,

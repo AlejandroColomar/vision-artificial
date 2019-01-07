@@ -58,55 +58,68 @@ void	save_init	(void)
 {
 	int	err;
 
-	if (snprintf(home_path, FILENAME_MAX, "%s/", getenv(ENV_HOME))) {
+	if (snprintf(home_path, FILENAME_MAX, "%s/",
+				getenv(ENV_HOME))  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(user_prog_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_PROG_DIR)) {
+				home_path,
+				USER_PROG_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(saved_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_SAVED_DIR)) {
+				home_path,
+				USER_SAVED_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(labels_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_LABELS_DIR)) {
+				home_path,
+				USER_LABELS_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(labels_fail_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_LABELS_FAIL_DIR)) {
+				home_path,
+				USER_LABELS_FAIL_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(lighters_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_LIGHTERS_DIR)) {
+				home_path,
+				USER_LIGHTERS_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(lighters_fail_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_LIGHTERS_FAIL_DIR)) {
+				home_path,
+				USER_LIGHTERS_FAIL_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(objects_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_OBJECTS_DIR)) {
+				home_path,
+				USER_OBJECTS_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(objects_fail_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_OBJECTS_FAIL_DIR)) {
+				home_path,
+				USER_OBJECTS_FAIL_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(coins_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_COINS_DIR)) {
+				home_path,
+				USER_COINS_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(coins_fail_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_COINS_FAIL_DIR)) {
+				home_path,
+				USER_COINS_FAIL_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(resistors_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_RESISTORS_DIR)) {
+				home_path,
+				USER_RESISTORS_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	if (snprintf(resistors_fail_path, FILENAME_MAX, "%s/%s/",
-					home_path, USER_RESISTORS_FAIL_DIR)) {
+				home_path,
+				USER_RESISTORS_FAIL_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 	saved_name[0]	= '\0';
@@ -149,7 +162,8 @@ void	save_clr	(void)
 {
 
 	if (snprintf(saved_path, FILENAME_MAX, "%s/%s/",
-						home_path, USER_SAVED_DIR)) {
+					home_path,
+					USER_SAVED_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 
@@ -187,7 +201,9 @@ void	load_image_file	(const char *fpath, const char *fname)
 	}
 
 	/* File name */
-	if (snprintf(file_name, FILENAME_MAX, "%s/%s", file_path, saved_name)) {
+	if (snprintf(file_name, FILENAME_MAX, "%s/%s",
+					file_path,
+					saved_name)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 
@@ -240,7 +256,9 @@ void	save_image_file	(const char *fpath, const char *save_as)
 	}
 
 	/* Prepend the path */
-	if (snprintf(file_name, FILENAME_MAX, "%s/%s", file_path, saved_name)) {
+	if (snprintf(file_name, FILENAME_MAX, "%s/%s",
+					file_path,
+					saved_name)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 
@@ -250,7 +268,8 @@ void	save_image_file	(const char *fpath, const char *save_as)
 		fclose(fp);
 		user_iface_fname(saved_path, saved_name);
 		if (snprintf(file_name, FILENAME_MAX, "%s/%s",
-						file_path, saved_name)) {
+					file_path,
+					saved_name)  >=  FILENAME_MAX) {
 			goto err_path;
 		}
 	}

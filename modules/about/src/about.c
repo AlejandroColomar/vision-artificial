@@ -41,7 +41,8 @@ char	share_path [FILENAME_MAX];
 void	about_init		(void)
 {
 	if (snprintf(share_path, FILENAME_MAX, "%s/%s/",
-						INSTALL_SHARE_DIR, SHARE_DIR)) {
+					INSTALL_SHARE_DIR,
+					SHARE_DIR)  >=  FILENAME_MAX) {
 		goto err_path;
 	}
 
@@ -60,31 +61,36 @@ void	snprint_share_file	(char *dest, int destsize, int share_file)
 	switch (share_file) {
 	case SHARE_COPYRIGHT:
 		if (snprintf(file_name, FILENAME_MAX, "%s/%s",
-						share_path, "COPYRIGHT.txt")) {
+					share_path,
+					"COPYRIGHT.txt")  >=  FILENAME_MAX) {
 			goto err_path;
 		}
 		break;
 	case SHARE_DISCLAIMER:
 		if (snprintf(file_name, FILENAME_MAX, "%s/%s",
-						share_path, "DISCLAIMER.txt")) {
+					share_path,
+					"DISCLAIMER.txt")  >=  FILENAME_MAX) {
 			goto err_path;
 		}
 		break;
 	case SHARE_HELP:
 		if (snprintf(file_name, FILENAME_MAX, "%s/%s",
-						share_path, "HELP.txt")) {
+					share_path,
+					"HELP.txt")  >=  FILENAME_MAX) {
 			goto err_path;
 		}
 		break;
 	case SHARE_LICENSE:
 		if (snprintf(file_name, FILENAME_MAX, "%s/%s",
-						share_path, "LICENSE.txt")) {
+					share_path,
+					"LICENSE.txt")  >=  FILENAME_MAX) {
 			goto err_path;
 		}
 		break;
 	case SHARE_USAGE:
 		if (snprintf(file_name, FILENAME_MAX, "%s/%s",
-						share_path, "USAGE.txt")) {
+					share_path,
+					"USAGE.txt")  >=  FILENAME_MAX) {
 			goto err_path;
 		}
 		break;
