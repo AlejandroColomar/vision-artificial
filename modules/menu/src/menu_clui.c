@@ -38,28 +38,32 @@ static	void	menu_clui_start		(void);
 void	menu_clui	(void)
 {
 	char	buff [BUFF_SIZE];
-	char	ch;
+	char	c;
 
-	ch	= 'n';
+	c	= 'n';
 	printf("Read 'Disclaimer of warranty'? (yes/NO): ");
-	fgets(buff, BUFF_SIZE, stdin);
-	if (sscanf(buff, " %c", &ch)) {
+	if (!fgets(buff, BUFF_SIZE, stdin)) {
 		return;
 	}
-	if (ch == 'y' || ch == 'Y') {
+	if (sscanf(buff, " %c", &c)  !=  1) {
+		return;
+	}
+	if (c == 'y' || c == 'Y') {
 		printf(" >yes\n");
 		print_share_file(SHARE_DISCLAIMER);
 	} else {
 		printf(" >NO\n");
 	}
 
-	ch	= 'n';
+	c	= 'n';
 	printf("Read 'License'? (yes/NO): ");
-	fgets(buff, BUFF_SIZE, stdin);
-	if (sscanf(buff, " %c", &ch)) {
+	if (!fgets(buff, BUFF_SIZE, stdin)) {
 		return;
 	}
-	if (ch == 'y' || ch == 'Y') {
+	if (sscanf(buff, " %c", &c)  !=  1) {
+		return;
+	}
+	if (c == 'y' || c == 'Y') {
 		printf(" >yes\n");
 		print_share_file(SHARE_LICENSE);
 	} else {
@@ -67,10 +71,13 @@ void	menu_clui	(void)
 	}
 #if 0
 	printf("Game interface? (NCURSES/text): ");
-	if (sscanf(buff, " %c", &ch)) {
+	if (!fgets(buff, BUFF_SIZE, stdin)) {
 		return;
 	}
-	if (ch == 't' || ch == 'T') {
+	if (sscanf(buff, " %c", &c)  !=  1) {
+		return;
+	}
+	if (c == 't' || c == 'T') {
 		printf(" >text\n");
 		// FIXME
 	} else {
@@ -100,18 +107,20 @@ static	void	menu_clui_start		(void)
 	start_switch();
 
 	char	buff [BUFF_SIZE];
-	char	ch;
+	char	c;
 
-	ch	= 'm';
+	c	= 'm';
 	printf("Load again? (MENU/load/exit): ");
-	fgets(buff, BUFF_SIZE, stdin);
-	if (sscanf(buff, " %c", &ch)) {
+	if (!fgets(buff, BUFF_SIZE, stdin)) {
 		return;
 	}
-	if (ch == 'p' || ch == 'P') {
+	if (sscanf(buff, " %c", &c)  !=  1) {
+		return;
+	}
+	if (c == 'p' || c == 'P') {
 		printf(" >load\n");
 		menu_clui_start();
-	} else if (ch == 'e' || ch == 'E') {
+	} else if (c == 'e' || c == 'E') {
 		printf(" >exit!\n");
 	} else {
 		printf(" >MENU\n");

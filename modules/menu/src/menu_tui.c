@@ -134,7 +134,7 @@ static	void	menu_tui_continue	(void)
 	/* Input box */
 	w2	= w - 8;
 	r2	= r + h - 5;
-	static const char	*txt[]	= {"File name:"};
+	static const char  *const txt[]	= {"File name:"};
 
 	/* Menu */
 	wh	= true;
@@ -292,7 +292,7 @@ static	void	menu_tui_devel		(void)
 	/* Input box */
 	w2	= w - 8;
 	r2	= r + h - 5;
-	static const char	*txt[]	= {
+	static const char  *const txt[]	= {
 		"Modes: 0=Auto; 1=Stop@prod; 2=Delay@step; 3=Stop@step",
 		"Modes: 0=Results; 1=Operations; 2=All",
 		"Modes: 1=CLUI; 2=TUI"

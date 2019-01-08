@@ -31,7 +31,7 @@ all: $(ALL)
 save_mod.o: $(_ALL)
 	$(Q)$(LD) -r $^ -o $@
 	@echo  "	LD	$@"
-	
+
 
 save.s: $(SAVE_DEPS)
 	$(Q)$(CXX) $(CXXFLAGS) $(SAVE_INC_DIRS) -S $< -o $@

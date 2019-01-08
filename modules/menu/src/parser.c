@@ -50,7 +50,7 @@ void	parser	(int argc, char *argv[])
 	int	opt		= 0;
 	int	opt_index	= 0;
 
-	struct option	long_options[]	= {
+	const	struct option	long_options[]	= {
 		/* Standard */
 		{"help",		no_argument,		0,	'h'},
 		{"license",		no_argument,		0,	'L'},

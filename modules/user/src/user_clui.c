@@ -54,6 +54,7 @@ static	void	show_help	(void);
  ******************************************************************************/
 void	user_clui_init		(void)
 {
+
 	log_pos	= 0;
 }
 
@@ -71,6 +72,7 @@ int	user_clui		(const char *title, const char *subtitle)
 
 void	user_clui_fname		(const char *filepath, char *filename)
 {
+
 	printf("File name:\n");
 	printf("Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff\n");
 	fgets(filename, FILENAME_MAX, stdin);
@@ -79,14 +81,13 @@ void	user_clui_fname		(const char *filepath, char *filename)
 
 void	user_clui_show_log	(const char *title, const char *subtitle)
 {
-	printf("________________________________________________________________________________\n");
 
-	/* Board */
+	printf("________________________________________"
+		"________________________________________\n");
 	log_loop();
-
-	/* Subtitle & title */
 	printf("%s	-	%s\n", subtitle, title);
-	printf("--------------------------------------------------------------------------------\n");
+	printf("----------------------------------------"
+		"----------------------------------------\n");
 
 }
 
@@ -115,24 +116,23 @@ static	void	log_loop	(void)
 static	int	usr_input	(void)
 {
 	int	action;
-
 	char	buff [BUFF_SIZE];
 	char	ch [10];
-
 	int	i;
+
 	for (i = 0; i < 10; i++) {
 		ch[i]	= '\0';
 	}
 	buff[0]	= '\0';
-
-	/* Wait for input */
-	fgets(buff, BUFF_SIZE, stdin);
-
-	/* Interpret input */
-	if (sscanf(buff, " %c%c%c%c%c", &ch[0], &ch[1], &ch[2], &ch[3], &ch[4])) {
-		ch[0]	= '\0';
-	}
 	action	= USER_IFACE_ACT_FOO;
+
+	if (!fgets(buff, BUFF_SIZE, stdin)) {
+		goto err_fgets;
+	}
+	if (!sscanf(buff, " %c%c%c%c%c", &ch[0], &ch[1], &ch[2], &ch[3], &ch[4])) {
+		goto err_sscanf;
+	}
+
 	switch (ch[0]) {
 	case '+':
 		action	= USER_IFACE_ACT_APPLY;
@@ -560,6 +560,8 @@ static	int	usr_input	(void)
 		break;
 	}
 
+err_fgets:
+err_sscanf:
 	return	action;
 }
 
@@ -568,7 +570,7 @@ static	int	usr_input	(void)
  *	*	*	*	*	*	*	*	*	*/
 static	void	show_help	(void)
 {
-	// FIXME
+
 	printf("Apply:			%s\n",	"Space");
 	printf("Discard:		%s\n",	"Backspace");
 	printf("Save to mem:		%c\n",	'm');
