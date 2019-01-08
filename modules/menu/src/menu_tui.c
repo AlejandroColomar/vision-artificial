@@ -11,22 +11,14 @@
 	#include <ncurses.h>
 	#include <stdbool.h>
 	#include <stddef.h>
-
 /* libalx --------------------------------------------------------------------*/
-	#include "alx_ncur.h"
-
+	#include "libalx/alx_ncur.h"
 /* Project -------------------------------------------------------------------*/
-		/* printf_share_file() */
 	#include "about.h"
-		/* proc_debug */
 	#include "proc_iface.h"
-		/* saved_name */
 	#include "save.h"
-		/* start_switch() */
 	#include "start.h"
-		/* user_iface_log */
 	#include "user_iface.h"
-
 /* Module --------------------------------------------------------------------*/
 	#include "menu_tui.h"
 

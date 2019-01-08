@@ -11,11 +11,9 @@
 		/* printf() */
 	#include <stdio.h>
 	#include <stdlib.h>
-
 /* libalx --------------------------------------------------------------------*/
 		/* alx_snprint_file() */
-	#include "alx_file.h"
-
+	#include "libalx/alx_file.h"
 /* Module --------------------------------------------------------------------*/
 	#include "about.h"
 

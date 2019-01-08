@@ -9,25 +9,15 @@
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
 	#include <cstddef>
-		/* snprintf() & fflush() */
 	#include <cstdio>
-		/* clock_t & clock() & CLOCKS_PER_SEC */
 	#include <ctime>
-
 /* Packages ------------------------------------------------------------------*/
-		/* openCV */
 	#include <opencv2/opencv.hpp>
-		/* enum zbar::zbar_symbol_type_e */
 	#include <zbar.h>
-
 /* Project -------------------------------------------------------------------*/
-		/* img_iface_act() */
 	#include "img_iface.hpp"
-		/* user_iface_log */
 	#include "user_iface.hpp"
-
 /* Module --------------------------------------------------------------------*/
-		/* enum Proc_DBG */
 	#include "proc_iface.hpp"
 
 	#include "proc_common.hpp"

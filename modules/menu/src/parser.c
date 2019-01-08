@@ -9,21 +9,13 @@
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
 	#include <getopt.h>
-		/* FILE & fopen() & snprintf() & FILENAME_MAX */
 	#include <stdio.h>
-		/* exit() */
 	#include <stdlib.h>
-
 /* Project -------------------------------------------------------------------*/
-		/* print_share_...() */
 	#include "about.h"
-		/* user_iface_mode */
 	#include "user_iface.h"
-		/* saved_name */
 	#include "save.h"
-
 /* Module --------------------------------------------------------------------*/
-		/* menu_iface_mode */
 	#include "menu_iface.h"
 
 	#include "parser.h"

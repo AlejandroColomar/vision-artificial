@@ -8,28 +8,17 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
-		/* errno */
 	#include <errno.h>
 	#include <stdbool.h>
-		/* snprintf() & fflush() */
 	#include <stdio.h>
-		/* exit() */
 	#include <stdlib.h>
-		/* clock_t & clock() & CLOCKS_PER_SEC */
 	#include <time.h>
-
 /* libalx -------------------------------------------------------------------*/
-		/* alx_sscan_fname() */
-	#include "alx_input.h"
-
+	#include "libalx/alx_input.h"
 /* Project -------------------------------------------------------------------*/
-		/* img_iface_load() */
 	#include "img_iface.h"
-		/* user_iface_log */
 	#include "user_iface.h"
-		/* saved_path */
 	#include "save.h"
-
 /* Module --------------------------------------------------------------------*/
 	#include "proc_label.h"
 	#include "proc_lighters.h"

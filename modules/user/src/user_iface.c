@@ -8,21 +8,13 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
-		/* intX_t */
 	#include <stdint.h>
-		/* snprintf() & fflush() */
 	#include <stdio.h>
-
 /* Project -------------------------------------------------------------------*/
-		/* img_iface_act_nodata() */
 	#include "img_iface.h"
-		/* proc_iface() */
 	#include "proc_iface.h"
-
 /* Module --------------------------------------------------------------------*/
-		/* user_clui() & ...save_name() */
 	#include "user_clui.h"
-		/* user_tui() & ...init() & ...cleanup() & ...save_name() */
 	#include "user_tui.h"
 
 	#include "user_iface.h"

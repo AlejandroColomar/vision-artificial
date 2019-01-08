@@ -13,7 +13,6 @@
 	#include <stddef.h>
 		/* printf() */
 	#include <stdio.h>
-
 /* Project -------------------------------------------------------------------*/
 		/* img_iface_load() */
 	#include "img_iface.h"
@@ -23,7 +22,6 @@
 	#include "save.h"
 		/* user_iface() */
 	#include "user_iface.h"
-
 /* Module --------------------------------------------------------------------*/
 	#include "start.h"
 

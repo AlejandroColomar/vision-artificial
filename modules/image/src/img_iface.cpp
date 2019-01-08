@@ -8,40 +8,23 @@
  ******* headers **************************************************************
  ******************************************************************************/
 /* Standard C ----------------------------------------------------------------*/
-		/* errno */
 	#include <cerrno>
-		/* INFINITY */
 	#include <cmath>
 	#include <cstddef>
-		/* snprintf() */
 	#include <cstdio>
-
 /* Standard C++ --------------------------------------------------------------*/
-		/* class std::vector */
 	#include <vector>
-
 /* Packages ------------------------------------------------------------------*/
-		/* openCV */
 	#include <opencv2/opencv.hpp>
-
 /* Project -------------------------------------------------------------------*/
-		/* load_image_file() */
 	#include "save.hpp"
-		/* user_iface_log */
 	#include "user_iface.hpp"
-
 /* Module --------------------------------------------------------------------*/
-		/* img_alx_act() */
 	#include "img_alx.hpp"
-		/* img_cv_act() */
 	#include "img_cv.hpp"
-		/* img_orb_act() */
 	#include "img_orb.hpp"
-		/* img_calib3d_act() */
 	#include "img_calib3d.hpp"
-		/* img_zb_act() */
 	#include "img_zbar.hpp"
-		/* img_ocr_act() */
 	#include "img_ocr.hpp"
 
 	#include "img_iface.hpp"

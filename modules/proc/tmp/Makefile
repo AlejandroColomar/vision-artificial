@@ -31,7 +31,7 @@ PROC_LAB_INC_DIRS	= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
 				-I $(USR_INC_DIR)
 
-PROC_LGHT_INC_LIBALX	= alx_math.hpp
+PROC_LGHT_INC_LIBALX	= libalx/alx_math.hpp
 PROC_LGHT_INC_IMG	= img_iface.hpp
 PROC_LGHT_INC_USR	= user_iface.hpp
 PROC_LGHT_INC		= proc_lighters.hpp	proc_common.hpp
@@ -45,7 +45,7 @@ PROC_LGHT_INC_DIRS	= -I $(INC_DIR) \
 				-I $(USR_INC_DIR) \
 				-I $(LIBALX_INC_DIR)
 
-PROC_OBJS_INC_LIBALX	= alx_math.hpp
+PROC_OBJS_INC_LIBALX	= libalx/alx_math.hpp
 PROC_OBJS_INC_IMG	= img_iface.hpp
 PROC_OBJS_INC_USR	= user_iface.hpp
 PROC_OBJS_INC		= proc_objects.hpp	proc_common.hpp
@@ -59,7 +59,7 @@ PROC_OBJS_INC_DIRS	= -I $(INC_DIR) \
 				-I $(USR_INC_DIR) \
 				-I $(LIBALX_INC_DIR)
 
-PROC_COIN_INC_LIBALX	= alx_math.hpp
+PROC_COIN_INC_LIBALX	= libalx/alx_math.hpp
 PROC_COIN_INC_IMG	= img_iface.hpp
 PROC_COIN_INC_USR	= user_iface.hpp
 PROC_COIN_INC		= proc_coins.hpp	proc_common.hpp
@@ -95,7 +95,7 @@ PROC_CMN_INC_DIRS	= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
 				-I $(USR_INC_DIR)
 
-PROC_IFACE_INC_LIBALX	= alx_input.h
+PROC_IFACE_INC_LIBALX	= libalx/alx_input.h
 PROC_IFACE_INC_IMG	= img_iface.h
 PROC_IFACE_INC_SAVE	= save.h
 PROC_IFACE_INC_USR	= user_iface.h

@@ -19,7 +19,7 @@ _ALL			= img_alx.o img_cv.o img_orb.o img_calib3d.o \
 			img_zbar.o img_ocr.o img_iface.o
 ALL			= $(_ALL) img_mod.o
 
-IMGALX_INC_LIBALX	= alx_math.hpp
+IMGALX_INC_LIBALX	= libalx/alx_math.hpp
 IMGALX_INC		= img_alx.hpp	img_iface.hpp
 IMGALX_DEPS		= $(SRC_DIR)/img_alx.cpp \
 			$(patsubst %,$(INC_DIR)/%,$(IMGALX_INC)) \
