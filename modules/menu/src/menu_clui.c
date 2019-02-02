@@ -7,7 +7,7 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-	#include "libalx/alx_input.h"
+	#include "libalx/io/alx_input.h"
 
 	#include "about.h"
 //	#include "save.h"
@@ -41,12 +41,10 @@ void	menu_clui	(void)
 
 	c	= 'n';
 	printf("Read 'Disclaimer of warranty'? (yes/NO): ");
-	if (!fgets(buff, BUFF_SIZE, stdin)) {
+	if (!fgets(buff, BUFF_SIZE, stdin))
 		return;
-	}
-	if (sscanf(buff, " %c", &c)  !=  1) {
+	if (sscanf(buff, " %c", &c)  !=  1)
 		return;
-	}
 	if (c == 'y' || c == 'Y') {
 		printf(" >yes\n");
 		print_share_file(SHARE_DISCLAIMER);
@@ -56,12 +54,10 @@ void	menu_clui	(void)
 
 	c	= 'n';
 	printf("Read 'License'? (yes/NO): ");
-	if (!fgets(buff, BUFF_SIZE, stdin)) {
+	if (!fgets(buff, BUFF_SIZE, stdin))
 		return;
-	}
-	if (sscanf(buff, " %c", &c)  !=  1) {
+	if (sscanf(buff, " %c", &c)  !=  1)
 		return;
-	}
 	if (c == 'y' || c == 'Y') {
 		printf(" >yes\n");
 		print_share_file(SHARE_LICENSE);
@@ -70,12 +66,10 @@ void	menu_clui	(void)
 	}
 #if 0
 	printf("Game interface? (NCURSES/text): ");
-	if (!fgets(buff, BUFF_SIZE, stdin)) {
+	if (!fgets(buff, BUFF_SIZE, stdin))
 		return;
-	}
-	if (sscanf(buff, " %c", &c)  !=  1) {
+	if (sscanf(buff, " %c", &c)  !=  1)
 		return;
-	}
 	if (c == 't' || c == 'T') {
 		printf(" >text\n");
 		// FIXME
@@ -110,12 +104,10 @@ static	void	menu_clui_start		(void)
 
 	c	= 'm';
 	printf("Load again? (MENU/load/exit): ");
-	if (!fgets(buff, BUFF_SIZE, stdin)) {
+	if (!fgets(buff, BUFF_SIZE, stdin))
 		return;
-	}
-	if (sscanf(buff, " %c", &c)  !=  1) {
+	if (sscanf(buff, " %c", &c)  !=  1)
 		return;
-	}
 	if (c == 'p' || c == 'P') {
 		printf(" >load\n");
 		menu_clui_start();

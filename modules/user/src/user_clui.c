@@ -7,13 +7,11 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/* Standard C ----------------------------------------------------------------*/
 	#include <stdio.h>
-/* libalx --------------------------------------------------------------------*/
-	#include "libalx/alx_input.h"
-/* Project -------------------------------------------------------------------*/
+
+	#include "libalx/io/alx_input.h"
+
 	#include "img_iface.h"
-/* Module --------------------------------------------------------------------*/
 	#include "user_iface.h"
 
 	#include "user_clui.h"
@@ -75,12 +73,10 @@ void	user_clui_fname		(const char *filepath, char *filename)
 void	user_clui_show_log	(const char *title, const char *subtitle)
 {
 
-	printf("________________________________________"
-		"________________________________________\n");
+	printf("________________________________________________________________________________\n");
 	log_loop();
 	printf("%s	-	%s\n", subtitle, title);
-	printf("----------------------------------------"
-		"----------------------------------------\n");
+	printf("--------------------------------------------------------------------------------\n");
 
 }
 
@@ -96,9 +92,8 @@ static	void	log_loop	(void)
 	putchar('\n');
 	for (; log_pos < user_iface_log.len; log_pos++) {
 		if (user_iface_log.lvl[log_pos] <= user_iface_log.visible) {
-			for (lvl = 0; lvl < user_iface_log.lvl[log_pos]; lvl++) {
+			for (lvl = 0; lvl < user_iface_log.lvl[log_pos]; lvl++)
 				printf("\t");
-			}
 			printf("%s\n", user_iface_log.line[log_pos]);
 		}
 	}
@@ -113,18 +108,15 @@ static	int	usr_input	(void)
 	char	ch [10];
 	int	i;
 
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < 10; i++)
 		ch[i]	= '\0';
-	}
 	buff[0]	= '\0';
 	action	= USER_IFACE_ACT_FOO;
 
-	if (!fgets(buff, BUFF_SIZE, stdin)) {
+	if (!fgets(buff, BUFF_SIZE, stdin))
 		goto err_fgets;
-	}
-	if (!sscanf(buff, " %c%c%c%c%c", &ch[0], &ch[1], &ch[2], &ch[3], &ch[4])) {
+	if (sscanf(buff, " %5c", ch) <= 0)
 		goto err_sscanf;
-	}
 
 	switch (ch[0]) {
 	case '+':
@@ -144,9 +136,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_LABEL_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '2':
@@ -158,9 +147,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_OBJECTS_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '3':
@@ -168,9 +154,6 @@ static	int	usr_input	(void)
 			switch (ch[2]) {
 			case '1':
 				action	= USER_IFACE_ACT_PROC_COINS_SERIES;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -180,9 +163,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_RESISTOR_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '5':
@@ -191,13 +171,7 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_LIGHTERS_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
-			break;
-		default:
-			action	= USER_IFACE_ACT_FOO;
 			break;
 		}
 		break;
@@ -217,9 +191,6 @@ static	int	usr_input	(void)
 				case '1':
 					action	= USER_IFACE_ACT_SKELETON;
 					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
 				}
 				break;
 			case '1':
@@ -230,9 +201,6 @@ static	int	usr_input	(void)
 					break;
 				case '1':
 					action	= USER_IFACE_ACT_LINES_VERTICAL;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
 					break;
 				}
 				break;
@@ -251,13 +219,7 @@ static	int	usr_input	(void)
 				case '3':
 					action	= USER_IFACE_ACT_MEDIAN_VERTICAL;
 					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
 				}
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -276,9 +238,6 @@ static	int	usr_input	(void)
 					case '1':
 						action	= USER_IFACE_ACT_PIXEL_SET;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '1':
@@ -289,9 +248,6 @@ static	int	usr_input	(void)
 						break;
 					case '1':
 						action	= USER_IFACE_ACT_SET_ROI_2RECT;
-						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
 						break;
 					}
 					break;
@@ -310,13 +266,7 @@ static	int	usr_input	(void)
 					case '3':
 						action	= USER_IFACE_ACT_COMPONENT;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
 					break;
 				}
 				break;
@@ -347,9 +297,6 @@ static	int	usr_input	(void)
 					case '6':
 						action	= USER_IFACE_ACT_BORDER;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '1':
@@ -366,9 +313,6 @@ static	int	usr_input	(void)
 						break;
 					case '3':
 						action	= USER_IFACE_ACT_ROTATE_2RECT;
-						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
 						break;
 					}
 					break;
@@ -387,9 +331,6 @@ static	int	usr_input	(void)
 					case '3':
 						action	= USER_IFACE_ACT_THRESHOLD;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '3':
@@ -400,9 +341,6 @@ static	int	usr_input	(void)
 						break;
 					case '1':
 						action	= USER_IFACE_ACT_HISTOGRAM_C3;
-						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
 						break;
 					}
 					break;
@@ -424,9 +362,6 @@ static	int	usr_input	(void)
 					case '4':
 						action	= USER_IFACE_ACT_MIN_AREA_RECT;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '5':
@@ -435,18 +370,9 @@ static	int	usr_input	(void)
 					case '0':
 						action	= USER_IFACE_ACT_HOUGH_CIRCLES;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
 				}
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -455,9 +381,6 @@ static	int	usr_input	(void)
 			switch (ch[2]) {
 			case '0':
 				action	= USER_IFACE_ACT_ALIGN;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -470,9 +393,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_UNDISTORT;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '4':
@@ -480,9 +400,6 @@ static	int	usr_input	(void)
 			switch (ch[2]) {
 			case '0':
 				action	= USER_IFACE_ACT_DECODE;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -492,13 +409,7 @@ static	int	usr_input	(void)
 			case '0':
 				action	= USER_IFACE_ACT_READ;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
-			break;
-		default:
-			action	= USER_IFACE_ACT_FOO;
 			break;
 		}
 		break;
@@ -529,9 +440,6 @@ static	int	usr_input	(void)
 		case '1':
 			action	= USER_IFACE_ACT_SHOW_OCR;
 			break;
-		default:
-			action	= USER_IFACE_ACT_FOO;
-			break;
 		}
 		break;
 
@@ -546,10 +454,6 @@ static	int	usr_input	(void)
 			}
 			}
 		}
-		break;
-
-	default:
-		action	= USER_IFACE_ACT_FOO;
 		break;
 	}
 

@@ -12,7 +12,7 @@
 	#include <stdbool.h>
 	#include <stddef.h>
 /* libalx --------------------------------------------------------------------*/
-	#include "libalx/alx_ncur.h"
+	#include "libalx/curses/alx_ncur.h"
 /* Project -------------------------------------------------------------------*/
 	#include "about.h"
 	#include "proc_iface.h"

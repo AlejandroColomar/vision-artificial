@@ -13,7 +13,7 @@
 	#include <stdlib.h>
 /* libalx --------------------------------------------------------------------*/
 		/* alx_snprint_file() */
-	#include "libalx/alx_file.h"
+	#include "libalx/io/alx_file.h"
 /* Module --------------------------------------------------------------------*/
 	#include "about.h"
 

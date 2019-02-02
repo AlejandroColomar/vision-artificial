@@ -7,14 +7,12 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-/* Standard C ----------------------------------------------------------------*/
 	#include <inttypes.h>
 	#include <ncurses.h>
-/* libalx --------------------------------------------------------------------*/
-	#include "libalx/alx_ncur.h"
-/* Project -------------------------------------------------------------------*/
+
+	#include "libalx/curses/alx_ncur.h"
+
 	#include "img_iface.h"
-/* Module --------------------------------------------------------------------*/
 	#include "user_iface.h"
 
 	#include "user_tui.h"
@@ -212,7 +210,7 @@ static	int	usr_input	(void)
 	int	action;
 	wchar_t	ch;
 
-	/* Interpret input */
+	action	= USER_IFACE_ACT_FOO;
 	ch = wgetch(win_log);
 	switch (ch) {
 	case ' ':
@@ -238,9 +236,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_LABEL_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '2':
@@ -254,9 +249,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_OBJECTS_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '3':
@@ -266,9 +258,6 @@ static	int	usr_input	(void)
 			switch (ch) {
 			case '1':
 				action	= USER_IFACE_ACT_PROC_COINS_SERIES;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -280,9 +269,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_RESISTOR_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '5':
@@ -293,13 +279,7 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_PROC_LIGHTERS_SERIES;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
-			break;
-		default:
-			action	= USER_IFACE_ACT_FOO;
 			break;
 		}
 		break;
@@ -325,9 +305,6 @@ static	int	usr_input	(void)
 				case '1':
 					action	= USER_IFACE_ACT_SKELETON;
 					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
 				}
 				break;
 			case '1':
@@ -340,9 +317,6 @@ static	int	usr_input	(void)
 					break;
 				case '1':
 					action	= USER_IFACE_ACT_LINES_VERTICAL;
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
 					break;
 				}
 				break;
@@ -363,13 +337,7 @@ static	int	usr_input	(void)
 				case '3':
 					action	= USER_IFACE_ACT_MEDIAN_VERTICAL;
 					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
 				}
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -394,9 +362,6 @@ static	int	usr_input	(void)
 					case '1':
 						action	= USER_IFACE_ACT_PIXEL_SET;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '1':
@@ -409,9 +374,6 @@ static	int	usr_input	(void)
 						break;
 					case '1':
 						action	= USER_IFACE_ACT_SET_ROI_2RECT;
-						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
 						break;
 					}
 					break;
@@ -432,13 +394,7 @@ static	int	usr_input	(void)
 					case '3':
 						action	= USER_IFACE_ACT_COMPONENT;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
-					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
 					break;
 				}
 				break;
@@ -473,9 +429,6 @@ static	int	usr_input	(void)
 					case '6':
 						action	= USER_IFACE_ACT_BORDER;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '1':
@@ -494,9 +447,6 @@ static	int	usr_input	(void)
 						break;
 					case '3':
 						action	= USER_IFACE_ACT_ROTATE_2RECT;
-						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
 						break;
 					}
 					break;
@@ -517,9 +467,6 @@ static	int	usr_input	(void)
 					case '3':
 						action	= USER_IFACE_ACT_THRESHOLD;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '3':
@@ -532,9 +479,6 @@ static	int	usr_input	(void)
 						break;
 					case '1':
 						action	= USER_IFACE_ACT_HISTOGRAM_C3;
-						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
 						break;
 					}
 					break;
@@ -558,9 +502,6 @@ static	int	usr_input	(void)
 					case '4':
 						action	= USER_IFACE_ACT_MIN_AREA_RECT;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
 				case '5':
@@ -571,18 +512,9 @@ static	int	usr_input	(void)
 					case '0':
 						action	= USER_IFACE_ACT_HOUGH_CIRCLES;
 						break;
-					default:
-						action	= USER_IFACE_ACT_FOO;
-						break;
 					}
 					break;
-				default:
-					action	= USER_IFACE_ACT_FOO;
-					break;
 				}
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -593,9 +525,6 @@ static	int	usr_input	(void)
 			switch (ch) {
 			case '0':
 				action	= USER_IFACE_ACT_ALIGN;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -610,9 +539,6 @@ static	int	usr_input	(void)
 			case '1':
 				action	= USER_IFACE_ACT_UNDISTORT;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
 			break;
 		case '4':
@@ -622,9 +548,6 @@ static	int	usr_input	(void)
 			switch (ch) {
 			case '0':
 				action	= USER_IFACE_ACT_DECODE;
-				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
 				break;
 			}
 			break;
@@ -636,13 +559,7 @@ static	int	usr_input	(void)
 			case '0':
 				action	= USER_IFACE_ACT_READ;
 				break;
-			default:
-				action	= USER_IFACE_ACT_FOO;
-				break;
 			}
-			break;
-		default:
-			action	= USER_IFACE_ACT_FOO;
 			break;
 		}
 		break;
@@ -675,9 +592,6 @@ static	int	usr_input	(void)
 		case '1':
 			action	= USER_IFACE_ACT_SHOW_OCR;
 			break;
-		default:
-			action	= USER_IFACE_ACT_FOO;
-			break;
 		}
 		break;
 
@@ -700,10 +614,6 @@ static	int	usr_input	(void)
 			}
 			}
 		}
-		break;
-
-	default:
-		action	= USER_IFACE_ACT_FOO;
 		break;
 	}
 

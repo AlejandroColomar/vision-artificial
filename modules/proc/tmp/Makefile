@@ -95,7 +95,7 @@ PROC_CMN_INC_DIRS	= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
 				-I $(USR_INC_DIR)
 
-PROC_IFACE_INC_LIBALX	= libalx/alx_input.h
+PROC_IFACE_INC_LIBALX	= libalx/io/alx_input.h
 PROC_IFACE_INC_IMG	= img_iface.h
 PROC_IFACE_INC_SAVE	= save.h
 PROC_IFACE_INC_USR	= user_iface.h

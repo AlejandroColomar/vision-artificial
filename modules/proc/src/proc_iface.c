@@ -14,7 +14,7 @@
 	#include <stdlib.h>
 	#include <time.h>
 /* libalx -------------------------------------------------------------------*/
-	#include "libalx/alx_input.h"
+	#include "libalx/io/alx_input.h"
 /* Project -------------------------------------------------------------------*/
 	#include "img_iface.h"
 	#include "user_iface.h"
@@ -107,7 +107,6 @@ void	proc_iface_series	(void)
 	char	file_basename [FILENAME_MAX];
 	char	file_ext [FILENAME_MAX];
 	char	file_name [FILENAME_MAX];
-	bool	proc_error;
 	char	save_error_as [FILENAME_MAX];
 	bool	wh;
 		/* if i starts being 0, the camera needs calibration */
@@ -177,39 +176,36 @@ void	proc_iface_series	(void)
 			errno	= 0;
 			img_iface_load(proc_path, file_name);
 
-			if (!errno) {
-				/* Process */
-				proc_error	= proc_iface_single(proc_mode);
-
-				if (proc_error) {
-					/* Save failed image into file */
-					proc_show_img();
-					if (snprintf(save_error_as, FILENAME_MAX,
-							"%s%0*i_err%s",
-							file_basename,
-							num_len, i,
-							file_ext)  >=  FILENAME_MAX) {
-						goto err_path;
-					}
-					save_image_file(proc_fail_path,
-								save_error_as);
-				}
-
-				/* Show log */
-				snprintf(txt_tmp, FILENAME_MAX, "%04i", i);
-				user_iface_show_log(txt_tmp, "Item");
-
-				if (proc_debug >= PROC_DBG_STOP_ITEM) {
-					getchar();
-				}
-			} else {
+			if (errno) {
 				printf("errno:%i\n", errno);
+				goto err_load;
 			}
-		}
 
-		if (!i) {
-			proc_mode--;
+			/* Process */
+			if (proc_iface_single(proc_mode)) {
+				/* Save failed image into file */
+				proc_show_img();
+				if (snprintf(save_error_as, FILENAME_MAX,
+						"%s%0*i_err%s",
+						file_basename,
+						num_len, i,
+						file_ext)  >=  FILENAME_MAX) {
+					goto err_path;
+				}
+				save_image_file(proc_fail_path,
+							save_error_as);
+			}
+
+			/* Show log */
+			snprintf(txt_tmp, FILENAME_MAX, "%04i", i);
+			user_iface_show_log(txt_tmp, "Item");
+
+			if (proc_debug >= PROC_DBG_STOP_ITEM)
+				getchar();
 		}
+err_load:
+		if (!i)
+			proc_mode--;
 	}
 
 	return;

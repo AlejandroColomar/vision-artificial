@@ -30,7 +30,7 @@ SRC_DIR		= $(MAIN_DIR)/src/
 
 ALL	= main.o
 
-MAIN_INC_LIBALX	= libalx/alx_ncur.hpp
+MAIN_INC_LIBALX	= libalx/curses/alx_ncur.hpp
 MAIN_INC_ABOUT	= about.hpp
 MAIN_INC_IMG	= img_iface.hpp
 MAIN_INC_MENU	= parser.hpp menu_iface.hpp

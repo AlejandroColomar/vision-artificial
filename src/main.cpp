@@ -10,7 +10,7 @@
 /* Standard C ----------------------------------------------------------------*/
 	#include <cstdio>
 /* libalx --------------------------------------------------------------------*/
-	#include "libalx/alx_ncur.hpp"
+	#include "libalx/curses/alx_ncur.hpp"
 /* Project -------------------------------------------------------------------*/
 	#include "about.hpp"
 	#include "img_iface.hpp"

@@ -39,7 +39,7 @@ MENUI_DEPS	= $(SRC_DIR)/menu_iface.c \
 			$(patsubst %,$(INC_DIR)/%,$(MENUI_INC))
 MENUI_INC_DIRS	= -I $(INC_DIR)
 
-MENUCLUI_INC_LIBALX	= libalx/alx_input.h
+MENUCLUI_INC_LIBALX	= libalx/io/alx_input.h
 MENUCLUI_INC_ABOUT	= about.h
 MENUCLUI_INC_CTRL	= start.h
 MENUCLUI_INC_SAVE	= save.h
@@ -56,7 +56,7 @@ MENUCLUI_INC_DIRS	= -I $(INC_DIR) \
 			-I $(CTRL_INC_DIR) \
 			-I $(SAVE_INC_DIR)
 
-MENUTUI_INC_LIBALX	= libalx/alx_ncur.h
+MENUTUI_INC_LIBALX	= libalx/curses/alx_ncur.h
 MENUTUI_INC_ABOUT	= about.h
 MENUTUI_INC_CTRL	= start.h
 MENUTUI_INC_PROC	= proc_iface.h

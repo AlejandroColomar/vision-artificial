@@ -30,7 +30,7 @@ UI_INC_DIRS		= -I $(INC_DIR) \
 				-I $(IMG_INC_DIR) \
 				-I $(PROC_INC_DIR)
 
-UCLUI_INC_LIBALX	= libalx/alx_ncur.h
+UCLUI_INC_LIBALX	= libalx/curses/alx_ncur.h
 UCLUI_INC_IMG		= img_iface.h
 UCLUI_INC		= user_clui.h	user_iface.h
 UCLUI_DEPS		= $(SRC_DIR)/user_clui.c \
@@ -41,7 +41,7 @@ UCLUI_INC_DIRS		= -I $(INC_DIR) \
 				-I $(LIBALX_INC_DIR) \
 				-I $(IMG_INC_DIR)
 
-UTUI_INC_LIBALX		= libalx/alx_ncur.h
+UTUI_INC_LIBALX		= libalx/curses/alx_ncur.h
 UTUI_INC_IMG		= img_iface.h
 UTUI_INC		= user_tui.h	user_iface.h
 UTUI_DEPS		= $(SRC_DIR)/user_tui.c \
