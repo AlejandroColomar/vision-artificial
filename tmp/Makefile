@@ -19,11 +19,11 @@ MAIN_INC	=							\
 		$(LIBALX_INC_DIR)/libalx/base/stdio/wait.hpp		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.hpp	\
 		$(INC_DIR)/vision-artificial/about/about.hpp		\
-		$(INC_DIR)/vision-artificial/image/iface.h		\
-		$(INC_DIR)/vision-artificial/menu/iface.h		\
-		$(INC_DIR)/vision-artificial/menu/parse.h		\
-		$(INC_DIR)/vision-artificial/user/iface.h		\
-		$(INC_DIR)/vision-artificial/save/save.h
+		$(INC_DIR)/vision-artificial/image/iface.hpp		\
+		$(INC_DIR)/vision-artificial/menu/iface.hpp		\
+		$(INC_DIR)/vision-artificial/menu/parse.hpp		\
+		$(INC_DIR)/vision-artificial/user/iface.hpp		\
+		$(INC_DIR)/vision-artificial/save/save.hpp
 MAIN_SRC	=							\
 		$(SRC_DIR)/main.cpp
 
