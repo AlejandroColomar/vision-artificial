@@ -15,7 +15,8 @@
 
 #include <sys/stat.h>
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include "libalx/base/errno/errno_str.hpp"
 #include "libalx/base/stddef/restrict.hpp"

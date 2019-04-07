@@ -13,7 +13,7 @@
 #include <cstddef>
 #include <cstdio>
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #include <zbar.h>
 
 #include "vision-artificial/image/iface.hpp"

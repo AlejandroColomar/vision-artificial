@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 
 #include "libalx/base/math/arithmetic_mean.hpp"
 #include "libalx/base/math/median.hpp"
