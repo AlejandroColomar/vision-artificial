@@ -1,4 +1,4 @@
 *.o
 *.s
 *.a
-bin/vision-artificial2
+bin/vision-artificial*

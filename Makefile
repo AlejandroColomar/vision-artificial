@@ -1,7 +1,7 @@
-#!/usr/bin/make -f
+#! /usr/bin/make -f
 VERSION		= 2
-PATCHLEVEL	= ~b5
-SUBLEVEL	= 
+PATCHLEVEL	= 1
+SUBLEVEL	= 0
 EXTRAVERSION	=
 NAME		=
 
@@ -66,7 +66,7 @@ export	BUILD_VERBOSE
 MAKEFLAGS += --no-print-directory
 
 ################################################################################
-PROGRAMVERSION	= $(VERSION)$(if $(PATCHLEVEL),$(PATCHLEVEL)$(if $(SUBLEVEL),$(SUBLEVEL)))$(EXTRAVERSION)
+PROGRAMVERSION	= $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 export	PROGRAMVERSION
 
 ################################################################################
@@ -75,68 +75,76 @@ export	PROGRAMVERSION
 MAIN_DIR	= $(CURDIR)
 
 LIBALX_DIR	= $(CURDIR)/libalx/
-MODULES_DIR	= $(CURDIR)/modules/
-TMP_DIR		= $(CURDIR)/tmp/
+LIBALX_INC_DIR	= $(LIBALX_DIR)/inc/
+LIBALX_LIB_DIR	= $(LIBALX_DIR)/lib/libalx/
+
 BIN_DIR		= $(CURDIR)/bin/
+INC_DIR		= $(CURDIR)/inc/
+SRC_DIR		= $(CURDIR)/src/
+TMP_DIR		= $(CURDIR)/tmp/
 
 export	MAIN_DIR
 export	LIBALX_DIR
-export	MODULES_DIR
+export	LIBALX_INC_DIR
+export	LIBALX_LIB_DIR
+export	BIN_DIR
+export	INC_DIR
+export	SRC_DIR
+export	TMP_DIR
 
 # FIXME: Set local or not local when building a package
 INSTALL_BIN_DIR		= /usr/local/bin/
 #INSTALL_BIN_DIR	= /usr/bin/
 INSTALL_SHARE_DIR	= /usr/local/share/
 #INSTALL_SHARE_DIR	= /usr/share/
-SHARE_DIR		= vision-artificial/
 INSTALL_VAR_DIR		= /var/local/
 #INSTALL_VAR_DIR	= /var/lib/
-VAR_DIR			= vision-artificial/
 
 export	INSTALL_DIR
 export	INSTALL_SHARE_DIR
-export	SHARE_DIR
-
-################################################################################
-# executables
-
-BIN_NAME	= vision-artificial2
-
-export	BIN_NAME
 
 ################################################################################
 # Make variables (CC, etc...)
-  CC		= gcc
-  CXX		= g++
-  AS		= as
-  LD		= ld
+  CC	= gcc
+  CXX	= g++
+  AS	= as
+  AR	= ar
+  LD	= ld
+  SZ	= size
 
 export	CC
 export	CXX
 export	AS
+export	AR
 export	LD
+export	SZ
 
 ################################################################################
 # cflags
-CFLAGS_STD	= -std=c11
+CFLAGS_STD	= -std=c17
+CFLAGS_STD     += -Wpedantic
 
 CFLAGS_OPT	= -O3
 CFLAGS_OPT     += -march=native
 
-CFLAGS_W	= -Wno-format-truncation
-CFLAGS_W       += -Wno-format-zero-length
+CFLAGS_W	= -Wall
+CFLAGS_W       += -Wextra
+CFLAGS_W       += -Wstrict-prototypes
+CFLAGS_W       += -Werror
+#CFLAGS_W       += -Wno-error=format-truncation
+#CFLAGS_W       += -Wno-error=unused-function
+#CFLAGS_W       += -Wno-error=unused-parameter
 
 CFLAGS_PKG	= `pkg-config --cflags ncurses`
 CFLAGS_PKG     += `pkg-config --cflags opencv`
 CFLAGS_PKG     += `pkg-config --cflags zbar`
 CFLAGS_PKG     += `pkg-config --cflags tesseract`
 CFLAGS_PKG     += `pkg-config --cflags lept`
+CFLAGS_PKG     += -I $(LIBALX_INC_DIR)
 
-CFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
-CFLAGS_D       += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
-CFLAGS_D       += -D 'SHARE_DIR="$(SHARE_DIR)"'
-CFLAGS_D       += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
-CFLAGS_D       += -D 'VAR_DIR="$(VAR_DIR)"'
+CFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
+CFLAGS_D       += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
 
 CFLAGS		= $(CFLAGS_STD)
 CFLAGS         += $(CFLAGS_OPT)
@@ -153,20 +161,23 @@ CXXFLAGS_STD	= -std=c++17
 CXXFLAGS_OPT	= -O3
 CXXFLAGS_OPT   += -march=native
 
-CXXFLAGS_W	= -Wno-format-truncation
-CXXFLAGS_W     += -Wno-format-zero-length
+CXXFLAGS_W	= -Wall
+CXXFLAGS_W     += -Wextra
+CXXFLAGS_W     += -Werror
+CXXFLAGS_W     += -Wno-error=format-truncation
+CXXFLAGS_W     += -Wno-error=unused-function
+CXXFLAGS_W     += -Wno-error=unused-parameter
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv`
 CXXFLAGS_PKG   += `pkg-config --cflags zbar`
 CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
 CXXFLAGS_PKG   += `pkg-config --cflags lept`
+CXXFLAGS_PKG   += -I $(LIBALX_INC_DIR)
 
-CXXFLAGS_D	= -D 'PROG_VERSION="$(PROGRAMVERSION)"'
-CXXFLAGS_D     += -D 'INSTALL_SHARE_DIR="$(INSTALL_SHARE_DIR)"'
-CXXFLAGS_D     += -D 'SHARE_DIR="$(SHARE_DIR)"'
-CXXFLAGS_D     += -D 'INSTALL_VAR_DIR="$(INSTALL_VAR_DIR)"'
-CXXFLAGS_D     += -D 'VAR_DIR="$(VAR_DIR)"'
+CXXFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CXXFLAGS_D     += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
+CXXFLAGS_D     += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
 
 CXXFLAGS	= $(CXXFLAGS_STD)
 CXXFLAGS       += $(CXXFLAGS_OPT)
@@ -189,85 +200,104 @@ LIBS		= $(LIBS_PKG)
 export	LIBS
 
 ################################################################################
+# executables
+
+BIN_NAME	= vision-artificial2
+
+export	BIN_NAME
+
+################################################################################
 # target: dependencies
 #	action
 
 # That's the default target when none is given on the command line
 PHONY := all
-all: binary
+all: bin
 
 
 PHONY += libalx
 libalx:
-	$(Q)cd $(LIBALX_DIR) && $(MAKE) && cd ..
+	@echo	"	MAKE	$@"
+	$(Q)$(MAKE) errno	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) math	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) stdio	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) stdlib	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) string	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) ncurses	-C $(LIBALX_DIR)
+	@echo
 
-PHONY += modules
-modules: libalx
-	$(Q)cd $(MODULES_DIR) && $(MAKE) && cd ..
+PHONY += tmp
+tmp:
+	@echo	"	MAKE	$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)
+	@echo
 
-PHONY += object
-object: modules libalx
-	$(Q)cd $(TMP_DIR) && $(MAKE) && cd ..
-
-PHONY += binary
-binary: object
-	$(Q)cd $(BIN_DIR) && $(MAKE) && cd ..
+PHONY += bin
+bin: tmp libalx
+	@echo	"	MAKE	$@"
+	$(Q)$(MAKE)	-C $(BIN_DIR)
+	@echo
 
 PHONY += install
 install: uninstall
-	@echo  "Create $(INSTALL_BIN_DIR)/"
+	@echo	"	Install:"
+	@echo	"	MKDIR	$(INSTALL_BIN_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_BIN_DIR)/
-	@echo "Copy $(BIN_NAME)"
-	$(Q)cp			$(BIN_DIR)/$(BIN_NAME)	$(DESTDIR)/$(INSTALL_BIN_DIR)/
-	@echo  ""
-	
-	@echo  "Create $(INSTALL_SHARE_DIR)/$(SHARE_DIR)/"
-	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo "Copy share/*"
-	$(Q)cp -r		./share/*		$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo  ""
-	
-	@echo  "Done"
-	@echo  ""
+	@echo	"	CP	$(BIN_NAME)"
+	$(Q)cp -v		$(BIN_DIR)/$(BIN_NAME)	$(DESTDIR)/$(INSTALL_BIN_DIR)/
+	@echo	"	MKDIR	$(INSTALL_SHARE_DIR)/vision-artificial/"
+	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/
+	@echo	"	CP -r	share/vision-artificial/*"
+	$(Q)cp -r -v		./share/vision-artificial/*		$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/
+	@echo	"	Done"
+	@echo
 
 PHONY += uninstall
 uninstall:
-	$(Q)rm -f	$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
-	$(Q)rm -f -r	$(DESTDIR)/$(INSTALL_SHARE_DIR)/$(SHARE_DIR)/
-	@echo  "Clean old installations"
-	@echo  ""
+	@echo	"	Clean old installations:"
+	@echo	"	RM	bin"
+	$(Q)rm -f		$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
+	@echo	"	RM -r	$(INSTALL_SHARE_DIR)/vision-artificial/"
+	$(Q)rm -f -r		$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/
+	@echo	"	Done"
+	@echo
 
 PHONY += clean
 clean:
-	$(Q)cd $(LIBALX_DIR) && $(MAKE) clean && cd ..
-	$(Q)cd $(MODULES_DIR) && $(MAKE) clean && cd ..
-	$(Q)cd $(TMP_DIR) && $(MAKE) clean && cd ..
-	$(Q)cd $(BIN_DIR) && $(MAKE) clean && cd ..
+	@echo	"	RM	*.o *.s *.a $(BIN_NAME)"
+	$(Q)find $(TMP_DIR) -type f -name '*.o' -exec rm '{}' '+'
+	$(Q)find $(TMP_DIR) -type f -name '*.s' -exec rm '{}' '+'
+	$(Q)find $(BIN_DIR) -type f -name '*$(BIN_NAME)' -exec rm '{}' '+'
+	@echo
+
+PHONY += distclean
+distclean: clean
+	@echo	"	CLEAN	libalx"
+	$(Q)$(MAKE) clean	-C $(LIBALX_DIR)
+	@echo
 
 PHONY += help
 help:
 	@echo  'Cleaning targets:'
 	@echo  '  clean		  - Remove all generated files'
-	@echo  ''
+	@echo  '  distclean	  - Remove all generated files (including libraries)'
+	@echo
 	@echo  'Other generic targets:'
 	@echo  '  all		  - Build all targets marked with [*]'
 	@echo  '* libalx	  - Build the libalx library'
-	@echo  '* modules	  - Build all modules'
-	@echo  '* object	  - Build the main object'
-	@echo  '* binary	  - Build the binary'
+	@echo  '* tmp		  - Compile all files'
+	@echo  '* bin		  - Build the binary'
 	@echo  '  install	  - Install the program into the filesystem'
 	@echo  '  uninstall	  - Uninstall the program off the filesystem'
-	@echo  ''
+	@echo
 	@echo  '  make V=0|1 [targets] 0 => quiet build (default), 1 => verbose build'
-	@echo  ''
+	@echo
 	@echo  'Execute "make" or "make all" to build all targets marked with [*] '
 	@echo  'For further info see the ./README file'
 
 ################################################################################
 # Declare the contents of the .PHONY variable as phony.
 .PHONY: $(PHONY)
-
-
 
 
 ################################################################################

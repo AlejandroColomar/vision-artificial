@@ -7,71 +7,91 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-#include <cstdio>
+#include "vision-artificial/ctrl/start.h"
 
-#include "libalx/base/stdio/wait.hpp"
-#include "libalx/extra/ncurses/common.hpp"
+#include <errno.h>
+#include <stddef.h>
+#include <stdio.h>
 
-#include "vision-artificial/about/about.hpp"
-#include "vision-artificial/image/iface.hpp"
-#include "vision-artificial/menu/iface.hpp"
-#include "vision-artificial/menu/parse.hpp"
-#include "vision-artificial/save/save.hpp"
-#include "vision-artificial/user/iface.hpp"
+#include "vision-artificial/image/iface.h"
+#include "vision-artificial/proc/iface.h"
+#include "vision-artificial/save/save.h"
+#include "vision-artificial/user/iface.h"
+
+
+/******************************************************************************
+ ******* variables ************************************************************
+ ******************************************************************************/
+int	start_mode;
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	init	(int *argc, char *(*argv[]));
-static	void	deinit	(void);
+static	void	start_foo	(void);
+static	void	start_single	(void);
+static	void	start_series	(void);
 
 
 /******************************************************************************
  ******* main *****************************************************************
  ******************************************************************************/
-int	main	(int argc, char *argv[])
+void	start_switch	(void)
 {
 
-	init(&argc, &argv);
+	switch (start_mode) {
+	case START_FOO:
+		start_foo();
+		break;
 
-	print_share_file(SHARE_COPYRIGHT);
-	alx_wait4enter();
+	case START_SINGLE:
+		start_single();
+		break;
 
-	menu_iface();
-
-	deinit();
-
-	return	0;
+	case START_SERIES:
+		start_series();
+		break;
+	}
 }
 
 
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	init	(int *argc, char *(*argv[]))
+static	void	start_foo	(void)
 {
-
-	alx_ncurses_init();
-	alx_ncurses_pause();
-
-	about_init();
-	save_init();
-
-	menu_iface_mode		= MENU_IFACE_TUI;
-	user_iface_mode		= USER_IFACE_TUI;
-	user_iface_log.visible	= 2;
-
-	parse(*argc, *argv);
 }
 
-static	void	deinit	(void)
+static	void	start_single	(void)
 {
 
-	img_iface_deinit();
+	img_iface_init();
+	errno	= 0;
+	img_iface_load(NULL, saved_name);
 
-	alx_ncurses_resume();
-	alx_ncurses_deinit();
+	if (!errno) {
+		user_iface_init();
+		user_iface();
+		user_iface_cleanup();
+	} else {
+		printf("errno:%i\n", errno);
+	}
+
+	img_iface_cleanup();
+}
+
+static	void	start_series	(void)
+{
+	int	tmp;
+
+	tmp		= user_iface_mode;
+	user_iface_mode	= USER_IFACE_CLUI;
+
+	user_iface_init();
+	proc_iface_series();
+	user_iface_cleanup();
+
+	user_iface_mode	= tmp;
 }
 
 
