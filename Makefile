@@ -110,7 +110,7 @@ export	INSTALL_SHARE_DIR
   AS	= as
   AR	= ar
   LD	= ld
-  SZ	= size
+  SZ	= size --format=SysV
 
 export	CC
 export	CXX
@@ -126,6 +126,7 @@ CFLAGS_STD     += -Wpedantic
 
 CFLAGS_OPT	= -O3
 CFLAGS_OPT     += -march=native
+CFLAGS_OPT     += -flto
 
 CFLAGS_W	= -Wall
 CFLAGS_W       += -Wextra
@@ -160,6 +161,7 @@ CXXFLAGS_STD	= -std=c++17
 
 CXXFLAGS_OPT	= -O3
 CXXFLAGS_OPT   += -march=native
+CXXFLAGS_OPT   += -flto
 
 CXXFLAGS_W	= -Wall
 CXXFLAGS_W     += -Wextra
@@ -189,13 +191,22 @@ export	CXXFLAGS
 
 ################################################################################
 # libs
+LIBS_STD	=
+
+LIBS_OPT	= -O3
+LIBS_OPT       += -march=native
+LIBS_OPT       += -flto
+LIBS_OPT       += -fuse-linker-plugin
+
 LIBS_PKG	= `pkg-config --libs ncurses`
 LIBS_PKG       += `pkg-config --libs opencv`
 LIBS_PKG       += `pkg-config --libs zbar`
 LIBS_PKG       += `pkg-config --libs tesseract`
 LIBS_PKG       += `pkg-config --libs lept`
 
-LIBS		= $(LIBS_PKG)
+LIBS		= $(LIBS_STD)
+LIBS           += $(LIBS_OPT)
+LIBS           += $(LIBS_PKG)
 
 export	LIBS
 

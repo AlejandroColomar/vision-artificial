@@ -40,7 +40,7 @@ enum	Lighter_Hood {
 /******************************************************************************
  ******* structs / unions *****************************************************
  ******************************************************************************/
-struct	Point {
+struct	Lighter_Point {
 	uint16_t	x;
 	uint16_t	y;
 };
@@ -51,9 +51,9 @@ struct	Size {
 };
 
 struct	Lighter_Properties {
-	struct Point	pos;
-	struct Size	size;
-	double		angle;
+	struct Lighter_Point	pos;
+	struct Size		size;
+	double			angle;
 
 	bool	fork;
 	bool	valve;
