@@ -12,13 +12,13 @@
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 #include <sys/stat.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "libalx/base/errno/errno_str.hpp"
 #include "libalx/base/stddef/restrict.hpp"
 
 #include "vision-artificial/user/iface.hpp"
@@ -42,21 +42,21 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-	class cv::Mat	image;
-	char		home_path[FILENAME_MAX];
-	char		user_prog_path[FILENAME_MAX];
-	char		saved_path[FILENAME_MAX];
-	char		labels_path[FILENAME_MAX];
-	char		labels_fail_path[FILENAME_MAX];
-	char		lighters_path[FILENAME_MAX];
-	char		lighters_fail_path[FILENAME_MAX];
-	char		objects_path[FILENAME_MAX];
-	char		objects_fail_path[FILENAME_MAX];
-	char		coins_path[FILENAME_MAX];
-	char		coins_fail_path[FILENAME_MAX];
-	char		resistors_path[FILENAME_MAX];
-	char		resistors_fail_path[FILENAME_MAX];
-	char		saved_name[FILENAME_MAX];
+class cv::Mat	image;
+char		home_path[FILENAME_MAX];
+char		user_prog_path[FILENAME_MAX];
+char		saved_path[FILENAME_MAX];
+char		labels_path[FILENAME_MAX];
+char		labels_fail_path[FILENAME_MAX];
+char		lighters_path[FILENAME_MAX];
+char		lighters_fail_path[FILENAME_MAX];
+char		objects_path[FILENAME_MAX];
+char		objects_fail_path[FILENAME_MAX];
+char		coins_path[FILENAME_MAX];
+char		coins_fail_path[FILENAME_MAX];
+char		resistors_path[FILENAME_MAX];
+char		resistors_fail_path[FILENAME_MAX];
+char		saved_name[FILENAME_MAX];
 
 
 /******************************************************************************
@@ -137,13 +137,10 @@ void	save_init	(void)
 	saved_name[0]	= '\0';
 
 	if (mkdir(user_prog_path, 0700)) {
-		switch (errno) {
-		case EEXIST:
-			/* OK */
-			break;
-		default:
-			printf("%s: %s\n", errno_str[errno][0],
-							errno_str[errno][1]);
+		if (errno != EEXIST) {
+			fprintf(stderr, "%s[%i]: %s(): %s", __FILE__, __LINE__,
+						__func__, strerror(errno));
+			exit(EXIT_FAILURE);
 		}
 	}
 

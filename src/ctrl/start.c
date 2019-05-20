@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/proc/iface.h"
@@ -43,11 +44,9 @@ void	start_switch	(void)
 	case START_FOO:
 		start_foo();
 		break;
-
 	case START_SINGLE:
 		start_single();
 		break;
-
 	case START_SERIES:
 		start_series();
 		break;
@@ -69,14 +68,16 @@ static	void	start_single	(void)
 	errno	= 0;
 	img_iface_load(NULL, saved_name);
 
-	if (!errno) {
-		user_iface_init();
-		user_iface();
-		user_iface_cleanup();
-	} else {
-		printf("errno:%i\n", errno);
+	if (errno) {
+		fprintf(stderr, "%s[%i]: %s(): %s", __FILE__, __LINE__,
+						__func__, strerror(errno));
+		goto err;
 	}
 
+	user_iface_init();
+	user_iface();
+	user_iface_cleanup();
+err:
 	img_iface_cleanup();
 }
 

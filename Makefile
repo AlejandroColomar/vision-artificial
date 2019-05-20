@@ -229,7 +229,6 @@ all: bin
 PHONY += libalx
 libalx:
 	@echo	"	MAKE	$@"
-	$(Q)$(MAKE) errno	-C $(LIBALX_DIR)
 	$(Q)$(MAKE) math	-C $(LIBALX_DIR)
 	$(Q)$(MAKE) stdio	-C $(LIBALX_DIR)
 	$(Q)$(MAKE) stdlib	-C $(LIBALX_DIR)
