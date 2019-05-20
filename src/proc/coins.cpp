@@ -176,7 +176,7 @@ static	void	coins_segmentate	(void)
 	proc_threshold(cv::THRESH_BINARY_INV, IMG_IFACE_THR_OTSU);
 	proc_distance_transform();
 	proc_local_max();
-	proc_dilate(6);
+	proc_dilate(1);
 	proc_save_mem(1);
 }
 

@@ -106,9 +106,9 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 	const ptrdiff_t	cols = imgptr->cols;
 	const ptrdiff_t	step = imgptr->step;
 	/* Minimum distance between local maxima */
-	const int	dist = 4;
+	const int	dist = 2;
 	/* Minimum value of local maxima */
-	const uint8_t	val_min = 16;
+	const uint8_t	val_min = 1;
 	class cv::Mat	imgtmp;
 	int		arr_tmp[rows][cols];
 	bool		wh;
@@ -129,11 +129,10 @@ static	void	img_alx_local_max		(class cv::Mat  *imgptr)
 		img_pix		= imgptr->data + i*step + j;
 		if (*img_pix < val_min)
 			continue;
-
-		for (ptrdiff_t k = (i + dist + 1); k >= (i - dist - 1); k--) {
-		for (ptrdiff_t l = (j + dist + 1); l >= (j - dist - 1); l--) {
-			if ((k > 0) && (k < rows)) {
-			if ((l > 0) && (l < cols)) {
+		for (ptrdiff_t k = (i + dist); k >= (i - dist); k--) {
+		for (ptrdiff_t l = (j + dist); l >= (j - dist); l--) {
+			if ((k >= 0) && (k < rows)) {
+			if ((l >= 0) && (l < cols)) {
 				near_pix	= imgptr->data + k*step + l;
 				if (*near_pix > *img_pix)
 					goto not_maxima;
@@ -158,10 +157,10 @@ not_maxima:
 			img_pix		= imgptr->data + i*step + j;
 			if (arr_tmp[i][j] != MAYBE_LOCAL_MAX)
 				continue;
-			for (ptrdiff_t k = (i+dist+1); k >= (i-dist-1); k--) {
-			for (ptrdiff_t l = (j+dist+1); l >= (j-dist-1); l--) {
-				if ((k > 0) && (k < rows)) {
-				if ((l > 0) && (l < cols)) {
+			for (ptrdiff_t k = (i+dist); k >= (i-dist); k--) {
+			for (ptrdiff_t l = (j+dist); l >= (j-dist); l--) {
+				if ((k >= 0) && (k < rows)) {
+				if ((l >= 0) && (l < cols)) {
 					near_pix = imgptr->data + k*step + l;
 					if (*near_pix == *img_pix) {
 						if (!arr_tmp[k][l])
