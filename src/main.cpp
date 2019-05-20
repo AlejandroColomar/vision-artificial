@@ -12,6 +12,10 @@
 #include "libalx/base/stdio/wait.hpp"
 #include "libalx/extra/ncurses/common.hpp"
 
+/* Workaround <ncurses.h> naming collision */
+#undef LINES
+#undef COLS
+
 #include "vision-artificial/about/about.hpp"
 #include "vision-artificial/image/iface.hpp"
 #include "vision-artificial/menu/iface.hpp"
@@ -23,7 +27,7 @@
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	init	(int *argc, char *(*argv[]));
+static	void	init	(int argc, char *argv[]);
 static	void	deinit	(void);
 
 
@@ -33,7 +37,7 @@ static	void	deinit	(void);
 int	main	(int argc, char *argv[])
 {
 
-	init(&argc, &argv);
+	init(argc, argv);
 
 	print_share_file(SHARE_COPYRIGHT);
 	alx_wait4enter();
@@ -49,7 +53,7 @@ int	main	(int argc, char *argv[])
 /******************************************************************************
  ******* static functions *****************************************************
  ******************************************************************************/
-static	void	init	(int *argc, char *(*argv[]))
+static	void	init	(int argc, char *argv[])
 {
 
 	alx_ncurses_init();
@@ -62,7 +66,7 @@ static	void	init	(int *argc, char *(*argv[]))
 	user_iface_mode		= USER_IFACE_TUI;
 	user_iface_log.visible	= 2;
 
-	parse(*argc, *argv);
+	parse(argc, argv);
 }
 
 static	void	deinit	(void)
