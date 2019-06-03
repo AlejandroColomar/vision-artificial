@@ -45,15 +45,13 @@ enum	Share_File {
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-extern	char	share_path [FILENAME_MAX];
+extern	char	share_path[FILENAME_MAX];
 
 
 /******************************************************************************
  ******* extern functions *****************************************************
  ******************************************************************************/
 void	about_init		(void);
-void	snprint_share_file	(ptrdiff_t size, char buff[restrict size],
-				int file);
 void	print_share_file	(int share_file);
 void	print_version		(void);
 

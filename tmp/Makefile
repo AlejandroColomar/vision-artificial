@@ -37,38 +37,38 @@ all: $(OBJ) about ctrl image menu proc save user
 
 PHONY += about
 about:
-	@echo	"	MAKE	tmp/about"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/about/
+	@echo	"	MAKE	tmp/$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 
 PHONY += ctrl
 ctrl:
-	@echo	"	MAKE	tmp/ctrl"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/ctrl/
+	@echo	"	MAKE	tmp/$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 
 PHONY += image
 image:
-	@echo	"	MAKE	tmp/image"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/image/
+	@echo	"	MAKE	tmp/$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 
 PHONY += menu
 menu:
-	@echo	"	MAKE	tmp/menu"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/menu/
+	@echo	"	MAKE	tmp/$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 
 PHONY += proc
 proc:
-	@echo	"	MAKE	tmp/proc"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/proc/
+	@echo	"	MAKE	tmp/$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 
 PHONY += save
 save:
-	@echo	"	MAKE	tmp/save"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/save/
+	@echo	"	MAKE	tmp/$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 
 PHONY += user
 user:
-	@echo	"	MAKE	tmp/user"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/user/
+	@echo	"	MAKE	tmp/$@"
+	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 
 
 main.s: $(MAIN_SRC) $(MAIN_INC)
@@ -87,8 +87,6 @@ clean:
 ################################################################################
 # Declare the contents of the .PHONY variable as phony.
 .PHONY: $(PHONY)
-
-
 
 
 ################################################################################

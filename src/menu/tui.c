@@ -92,15 +92,11 @@ void	menu_tui		(void)
 		case 2:
 			alx_ncurses_pause();
 			print_share_file(SHARE_DISCLAIMER);
-			printf("Press ENTER to continue");
-			alx_wait4enter();
 			alx_ncurses_resume();
 			break;
 		case 3:
 			alx_ncurses_pause();
 			print_share_file(SHARE_LICENSE);
-			printf("Press ENTER to continue");
-			alx_wait4enter();
 			alx_ncurses_resume();
 			break;
 		}
@@ -146,8 +142,7 @@ static	void	menu_continue	(void)
 		win	= newwin(h, w, r, c);
 		mvwprintw(win, mnu[1].r, mnu[1].c, "%s (File: \"%s\")",
 							mnu[1].t, saved_name);
-		sw	= alx_ncurses_w_menu(win, ARRAY_SIZE(mnu), mnu,
-								"CONTINUE:");
+		sw = alx_ncurses_w_menu(win, ARRAY_SIZE(mnu), mnu, "CONTINUE:");
 
 		switch (sw) {
 		case 0:
@@ -157,6 +152,8 @@ static	void	menu_continue	(void)
 			alx_ncurses_delwin(win);
 			alx_ncurses_pause();
 			start_switch();
+			printf("Press ENTER to continue");
+			alx_wait4enter();
 			alx_ncurses_resume();
 			break;
 		case 2:
@@ -201,11 +198,11 @@ static	void	menu_select	(void)
 
 	switch (sw) {
 	case 1:
-		start_mode =	START_SINGLE;
+		start_mode	= START_SINGLE;
 		break;
 
 	case 2:
-		start_mode =	START_SERIES;
+		start_mode	= START_SERIES;
 		break;
 	}
 

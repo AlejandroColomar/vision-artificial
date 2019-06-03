@@ -40,7 +40,6 @@ int	main	(int argc, char *argv[])
 	init(argc, argv);
 
 	print_share_file(SHARE_COPYRIGHT);
-	alx_wait4enter();
 
 	menu_iface();
 

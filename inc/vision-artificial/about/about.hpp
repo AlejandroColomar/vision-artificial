@@ -56,8 +56,6 @@ extern	char	share_path [FILENAME_MAX];
 extern	"C"
 {
 void	about_init		(void);
-void	snprint_share_file	(ptrdiff_t size, char *restrict buff,
-				int file);
 void	print_share_file	(int share_file);
 void	print_version		(void);
 }

@@ -10,20 +10,17 @@
 #include "vision-artificial/about/about.h"
 
 #include <errno.h>
-#include <stddef.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "libalx/base/errno/errno_str.h"
-#include "libalx/base/stdio/sprint_file.h"
+#include "libalx/base/stddef/size.h"
 
 
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-#define BUFF_SIZE_TEXT	(0xFFFF)	/* 64 KiB */
-#define BEGINNING	"\n┌──────────────────────────────────────────────────────────────────────────────┐\n"
-#define ENDING		"└──────────────────────────────────────────────────────────────────────────────┘\n\n"
 
 
 /******************************************************************************
@@ -53,8 +50,8 @@ char	share_path [FILENAME_MAX];
 void	about_init		(void)
 {
 
-	if (snprintf(share_path, FILENAME_MAX, "%s/estadistica/",
-					INSTALL_SHARE_DIR)  >=  FILENAME_MAX) {
+	if (snprintf(share_path, FILENAME_MAX, "%s/vision-artificial/",
+					INSTALL_SHARE_DIR)  >=  SSIZEOF(share_path)) {
 		goto err;
 	}
 	return;
@@ -63,74 +60,67 @@ err:
 	exit(EXIT_FAILURE);
 }
 
-void	snprint_share_file	(ptrdiff_t size, char buff[restrict size],
-				int file)
+void	print_share_file	(int file)
 {
-	char	fname [FILENAME_MAX];
+	char	fname[FILENAME_MAX];
+	char	cmd[_POSIX_ARG_MAX];
 
 	switch (file) {
 	case SHARE_COPYRIGHT:
-		if (snprintf(fname, FILENAME_MAX, "%s/%s",
+		if (snprintf(fname, sizeof(fname), "%s/%s",
 					share_path,
-					"COPYRIGHT.txt")  >=  FILENAME_MAX) {
+					"COPYRIGHT.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_DISCLAIMER:
-		if (snprintf(fname, FILENAME_MAX, "%s/%s",
+		if (snprintf(fname, sizeof(fname), "%s/%s",
 					share_path,
-					"DISCLAIMER.txt")  >=  FILENAME_MAX) {
+					"DISCLAIMER.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_HELP:
-		if (snprintf(fname, FILENAME_MAX, "%s/%s",
+		if (snprintf(fname, sizeof(fname), "%s/%s",
 					share_path,
-					"HELP.txt")  >=  FILENAME_MAX) {
+					"HELP.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_LICENSE:
-		if (snprintf(fname, FILENAME_MAX, "%s/%s",
+		if (snprintf(fname, sizeof(fname), "%s/%s",
 					share_path,
-					"LICENSE.txt")  >=  FILENAME_MAX) {
+					"LICENSE.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_USAGE:
-		if (snprintf(fname, FILENAME_MAX, "%s/%s",
+		if (snprintf(fname, sizeof(fname), "%s/%s",
 					share_path,
-					"USAGE.txt")  >=  FILENAME_MAX) {
+					"USAGE.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	}
 
-	if (alx_snprint_file(size, buff, fname) < 0)
-		printf("%s: %s\n", errno_str[errno][0], errno_str[errno][1]);
+	if (snprintf(cmd, sizeof(cmd), "less %s", fname)  >=  SSIZEOF(cmd))
+		goto err;
+	if (system(cmd)) {
+		fprintf(stderr, "%s:%i: %s(): %s", __FILE__, __LINE__, __func__,
+							strerror(errno));
+	}
 
 	return;
 
 err:
-	printf("Path is too large and has been truncated\n");
-	printf("File could not be shown!\n");
-}
-
-void	print_share_file	(int file)
-{
-	char	str [BUFF_SIZE_TEXT];
-
-	snprint_share_file(BUFF_SIZE_TEXT, str, file);
-
-	printf(BEGINNING);
-	printf("%s", str);
-	printf(ENDING);
+	fprintf(stderr, "Path is too large and has been truncated\n");
+	fprintf(stderr, "File could not be shown!\n");
 }
 
 void	print_version		(void)
 {
 
-	printf(""PROG_NAME" "PROG_VERSION"\n\n");
+	printf("%s %s\n\n", PROG_NAME, PROG_VERSION);
 }
 
 
