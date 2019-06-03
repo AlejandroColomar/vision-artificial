@@ -17,7 +17,6 @@ OBJ		=							\
 
 SAVE_INC	=							\
 		$(INC_DIR)/vision-artificial/save/save.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/errno/errno_str.hpp	\
 		$(LIBALX_INC_DIR)/libalx/base/stddef/restrict.hpp	\
 		$(INC_DIR)/vision-artificial/user/iface.hpp
 SAVE_SRC	=							\

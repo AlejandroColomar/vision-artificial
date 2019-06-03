@@ -50,53 +50,48 @@ char	share_path [FILENAME_MAX];
 void	about_init		(void)
 {
 
-	if (snprintf(share_path, FILENAME_MAX, "%s/vision-artificial/",
-					INSTALL_SHARE_DIR)  >=  SSIZEOF(share_path)) {
+	if (snprintf(share_path, sizeof(share_path), "%s/vision-artificial/",
+				INSTALL_SHARE_DIR)  >=  SSIZEOF(share_path)) {
 		goto err;
 	}
 	return;
 err:
-	printf("Path is too large and has been truncated\n");
+	fprintf(stderr, "Path is too large and has been truncated\n");
 	exit(EXIT_FAILURE);
 }
 
 void	print_share_file	(int file)
 {
-	char	fname[FILENAME_MAX];
+	char	fname [FILENAME_MAX];
 	char	cmd[_POSIX_ARG_MAX];
 
 	switch (file) {
 	case SHARE_COPYRIGHT:
-		if (snprintf(fname, sizeof(fname), "%s/%s",
-					share_path,
+		if (snprintf(fname, sizeof(fname), "%s/%s", share_path,
 					"COPYRIGHT.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_DISCLAIMER:
-		if (snprintf(fname, sizeof(fname), "%s/%s",
-					share_path,
+		if (snprintf(fname, sizeof(fname), "%s/%s", share_path,
 					"DISCLAIMER.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_HELP:
-		if (snprintf(fname, sizeof(fname), "%s/%s",
-					share_path,
+		if (snprintf(fname, sizeof(fname), "%s/%s", share_path,
 					"HELP.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_LICENSE:
-		if (snprintf(fname, sizeof(fname), "%s/%s",
-					share_path,
+		if (snprintf(fname, sizeof(fname), "%s/%s", share_path,
 					"LICENSE.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}
 		break;
 	case SHARE_USAGE:
-		if (snprintf(fname, sizeof(fname), "%s/%s",
-					share_path,
+		if (snprintf(fname, sizeof(fname), "%s/%s", share_path,
 					"USAGE.txt")  >=  SSIZEOF(fname)) {
 			goto err;
 		}

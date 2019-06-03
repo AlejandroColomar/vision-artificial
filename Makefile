@@ -229,7 +229,6 @@ all: bin
 PHONY += libalx
 libalx:
 	@echo	"	MAKE	$@"
-	$(Q)$(MAKE) errno	-C $(LIBALX_DIR)
 	$(Q)$(MAKE) math	-C $(LIBALX_DIR)
 	$(Q)$(MAKE) stdio	-C $(LIBALX_DIR)
 	$(Q)$(MAKE) stdlib	-C $(LIBALX_DIR)
@@ -252,11 +251,11 @@ bin: tmp libalx
 PHONY += install
 install: uninstall
 	@echo	"	Install:"
-	@echo	"	MKDIR	$(INSTALL_BIN_DIR)/"
+	@echo	"	MKDIR	$(DESTDIR)/$(INSTALL_BIN_DIR)/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_BIN_DIR)/
 	@echo	"	CP	$(BIN_NAME)"
 	$(Q)cp -v		$(BIN_DIR)/$(BIN_NAME)	$(DESTDIR)/$(INSTALL_BIN_DIR)/
-	@echo	"	MKDIR	$(INSTALL_SHARE_DIR)/vision-artificial/"
+	@echo	"	MKDIR	$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/"
 	$(Q)mkdir -p		$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/
 	@echo	"	CP -r	share/vision-artificial/*"
 	$(Q)cp -r -v		./share/vision-artificial/*		$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/
@@ -268,7 +267,7 @@ uninstall:
 	@echo	"	Clean old installations:"
 	@echo	"	RM	bin"
 	$(Q)rm -f		$(DESTDIR)/$(INSTALL_BIN_DIR)/$(BIN_NAME)
-	@echo	"	RM -r	$(INSTALL_SHARE_DIR)/vision-artificial/"
+	@echo	"	RM -r	$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/"
 	$(Q)rm -f -r		$(DESTDIR)/$(INSTALL_SHARE_DIR)/vision-artificial/
 	@echo	"	Done"
 	@echo
