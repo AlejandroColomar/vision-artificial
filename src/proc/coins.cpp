@@ -255,19 +255,19 @@ static	double	coin_value		(double diameter_mm)
 
 	if (diameter_mm > (COIN_DIAMETER_2E + 1.5))
 		return	-1;
-	if (diameter_mm > AVGfast(COIN_DIAMETER_2E, COIN_DIAMETER_50c,double_t))
+	if (diameter_mm > AVGfast(COIN_DIAMETER_2E, COIN_DIAMETER_50c))
 		return	2.00;
-	if (diameter_mm > AVGfast(COIN_DIAMETER_50c, COIN_DIAMETER_1E,double_t))
+	if (diameter_mm > AVGfast(COIN_DIAMETER_50c, COIN_DIAMETER_1E))
 		return	0.50;
-	if (diameter_mm > AVGfast(COIN_DIAMETER_1E, COIN_DIAMETER_20c,double_t))
+	if (diameter_mm > AVGfast(COIN_DIAMETER_1E, COIN_DIAMETER_20c))
 		return	1.00;
-	if (diameter_mm > AVGfast(COIN_DIAMETER_20c, COIN_DIAMETER_5c,double_t))
+	if (diameter_mm > AVGfast(COIN_DIAMETER_20c, COIN_DIAMETER_5c))
 		return	0.20;
-	if (diameter_mm > AVGfast(COIN_DIAMETER_5c, COIN_DIAMETER_10c,double_t))
+	if (diameter_mm > AVGfast(COIN_DIAMETER_5c, COIN_DIAMETER_10c))
 		return	0.05;
-	if (diameter_mm > AVGfast(COIN_DIAMETER_10c, COIN_DIAMETER_2c,double_t))
+	if (diameter_mm > AVGfast(COIN_DIAMETER_10c, COIN_DIAMETER_2c))
 		return	0.10;
-	if (diameter_mm > AVGfast(COIN_DIAMETER_2c, COIN_DIAMETER_1c, double_t))
+	if (diameter_mm > AVGfast(COIN_DIAMETER_2c, COIN_DIAMETER_1c))
 		return	0.02;
 	if (diameter_mm > (COIN_DIAMETER_1c - 1.5))
 		return	0.01;
