@@ -31,7 +31,6 @@ OBJS		=							\
 DEPS_LIBS	= 							\
 		$(LIBALX_LIB_DIR)/libalx-ncurses.a			\
 		$(LIBALX_LIB_DIR)/libalx-stdio.a			\
-		$(LIBALX_LIB_DIR)/libalx-errno.a			\
 		$(LIBALX_LIB_DIR)/libalx-math.a				\
 		$(LIBALX_LIB_DIR)/libalx-stdlib.a			\
 		$(LIBALX_LIB_DIR)/libalx-string.a
@@ -44,7 +43,6 @@ STATIC_LIBS	= -L $(LIBALX_LIB_DIR)					\
 		-l alx-ncurses						\
 		-l alx-stdio						\
 		-l alx-string						\
-		-l alx-errno						\
 		-l alx-math						\
 		-l alx-stdlib
 
