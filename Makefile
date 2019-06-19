@@ -143,7 +143,8 @@ CFLAGS_PKG     += `pkg-config --cflags tesseract`
 CFLAGS_PKG     += `pkg-config --cflags lept`
 CFLAGS_PKG     += -I $(LIBALX_INC_DIR)
 
-CFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CFLAGS_D	= -D _POSIX_C_SOURCE=200809L
+CFLAGS_D       += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
 CFLAGS_D       += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
 
