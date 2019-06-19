@@ -14,8 +14,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "libalx/base/math/arithmetic_mean.hpp"
 #include "libalx/base/stddef/size.hpp"
+#include "libalx/base/stdlib/average.hpp"
 #include "libalx/base/stdlib/maximum.hpp"
 
 #include "vision-artificial/image/iface.hpp"

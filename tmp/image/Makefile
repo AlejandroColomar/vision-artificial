@@ -23,8 +23,8 @@ OBJ		=							\
 
 ALX_INC		=							\
 		$(INC_DIR)/vision-artificial/image/alx.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/math/arithmetic_mean.hpp	\
-		$(LIBALX_INC_DIR)/libalx/base/math/median.hpp		\
+		$(LIBALX_INC_DIR)/libalx/extra/gsl/rstat/median.hpp	\
+		$(LIBALX_INC_DIR)/libalx/extra/gsl/statistics/mean.hpp	\
 		$(INC_DIR)/vision-artificial/image/iface.hpp
 ALX_SRC		=							\
 		$(SRC_DIR)/image/alx.cpp

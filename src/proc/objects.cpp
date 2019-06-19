@@ -15,7 +15,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "libalx/base/math/median.hpp"
+#include "libalx/extra/gsl/rstat/median.hpp"
 
 #include "vision-artificial/image/iface.hpp"
 #include "vision-artificial/proc/common.hpp"
@@ -372,7 +372,7 @@ static	void	pattern_calib_mm_pix	(void)
 
 	for (ptrdiff_t i = 0; i < squares_n; i++)
 		pattern_len[i]	= pattern.square[i].len;
-	median_size	= alx_median_u8(squares_n, pattern_len);
+	median_size	= alx_gsl_rstat_median_u8(squares_n, pattern_len);
 	ratio_mm_pix	= PATTERN_SQUARE_LEN_MM / median_size;
 
 	snprintf(txt, LOG_LINE_LEN, "mm/pix	= %lf", ratio_mm_pix);

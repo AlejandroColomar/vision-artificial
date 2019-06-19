@@ -23,8 +23,8 @@ OBJ		=							\
 
 COINS_INC	=							\
 		$(INC_DIR)/vision-artificial/proc/coins.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/math/arithmetic_mean.hpp	\
 		$(LIBALX_INC_DIR)/libalx/base/stddef/size.hpp		\
+		$(LIBALX_INC_DIR)/libalx/base/stdlib/average.hpp	\
 		$(LIBALX_INC_DIR)/libalx/base/stdlib/maximum.hpp	\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
 		$(INC_DIR)/vision-artificial/proc/common.hpp		\
@@ -78,7 +78,7 @@ LIGHTERS_SRC	=							\
 
 OBJECTS_INC	=							\
 		$(INC_DIR)/vision-artificial/proc/objects.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/math/median.hpp		\
+		$(LIBALX_INC_DIR)/libalx/extra/gsl/rstat/median.hpp	\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
 		$(INC_DIR)/vision-artificial/proc/common.hpp		\
 		$(INC_DIR)/vision-artificial/user/iface.hpp

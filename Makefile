@@ -204,6 +204,7 @@ LIBS_PKG       += `pkg-config --libs opencv`
 LIBS_PKG       += `pkg-config --libs zbar`
 LIBS_PKG       += `pkg-config --libs tesseract`
 LIBS_PKG       += `pkg-config --libs lept`
+LIBS_PKG       += -l gsl -l cblas -l atlas
 
 LIBS		= $(LIBS_STD)
 LIBS           += $(LIBS_OPT)
@@ -230,10 +231,8 @@ all: bin
 PHONY += libalx
 libalx:
 	@echo	"	MAKE	$@"
-	$(Q)$(MAKE) math	-C $(LIBALX_DIR)
-	$(Q)$(MAKE) stdio	-C $(LIBALX_DIR)
-	$(Q)$(MAKE) stdlib	-C $(LIBALX_DIR)
-	$(Q)$(MAKE) string	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) base	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) gsl		-C $(LIBALX_DIR)
 	$(Q)$(MAKE) ncurses	-C $(LIBALX_DIR)
 	@echo
 

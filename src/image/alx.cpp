@@ -16,8 +16,8 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "libalx/base/math/arithmetic_mean.hpp"
-#include "libalx/base/math/median.hpp"
+#include "libalx/extra/gsl/rstat/median.hpp"
+#include "libalx/extra/gsl/statistics/mean.hpp"
 
 #include "vision-artificial/image/iface.hpp"
 
@@ -342,7 +342,7 @@ static	void	img_alx_mean_horizontal		(class cv::Mat  *imgptr)
 			img_pix		= imgptr->data + i * step + j;
 			row[j]		= *img_pix;
 		}
-		mean	= alx_arithmetic_mean_u8(cols, row);
+		mean	= alx_gsl_stats_mean_u8(cols, row);
 
 		for (ptrdiff_t j = 0; j < cols; j++) {
 			img_pix		= imgptr->data + i * step + j;
@@ -366,7 +366,7 @@ static	void	img_alx_mean_vertical		(class cv::Mat  *imgptr)
 			img_pix		= imgptr->data + j * step + i;
 			col[j]		= *img_pix;
 		}
-		mean	= alx_arithmetic_mean_u8(rows, col);
+		mean	= alx_gsl_stats_mean_u8(rows, col);
 
 		for (ptrdiff_t j = 0; j < rows; j++) {
 			img_pix		= imgptr->data + j * step + i;
@@ -390,7 +390,7 @@ static	void	img_alx_median_horizontal	(class cv::Mat  *imgptr)
 			img_pix	= imgptr->data + i * step + j;
 			row[j]	= *img_pix;
 		}
-		median	= alx_median_u8(cols, row);
+		median	= alx_gsl_rstat_median_u8(cols, row);
 
 		for (ptrdiff_t j = 0; j < cols; j++) {
 			img_pix		= imgptr->data + i * step + j;
@@ -414,7 +414,7 @@ static	void	img_alx_median_vertical		(class cv::Mat  *imgptr)
 			img_pix	= imgptr->data + j * step + i;
 			col[j]	= *img_pix;
 		}
-		median	= alx_median_u8(rows, col);
+		median	= alx_gsl_rstat_median_u8(rows, col);
 
 		for (ptrdiff_t j = 0; j < rows; j++) {
 			img_pix		= imgptr->data + j * step + i;
