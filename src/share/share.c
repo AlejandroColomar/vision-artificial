@@ -20,7 +20,6 @@
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-#define SHARE_DIR		"" INSTALL_SHARE_DIR "/vision-artificial/"
 #define SHARE_COPYRIGHT_FILE	"" SHARE_DIR "/COPYRIGHT.txt"
 #define SHARE_DISCLAIMER_FILE	"" SHARE_DIR "/DISCLAIMER.txt"
 #define SHARE_HELP_FILE		"" SHARE_DIR "/HELP.txt"
@@ -77,7 +76,7 @@ void	print_share_file	(int file)
 	if (snprintf(cmd, sizeof(cmd), "less %s", fname)  >=  SSIZEOF(cmd))
 		goto err;
 	if (system(cmd))
-		alx_perror(cmd);
+		goto err;
 
 	return;
 err:
