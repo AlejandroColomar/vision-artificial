@@ -14,8 +14,8 @@
 
 #include "libalx/base/stdio/get.h"
 
-#include "vision-artificial/about/about.h"
 #include "vision-artificial/ctrl/start.h"
+#include "vision-artificial/share/share.h"
 
 
 /******************************************************************************

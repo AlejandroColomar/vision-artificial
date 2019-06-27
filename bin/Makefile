@@ -4,7 +4,6 @@
 
 OBJS		=							\
 		$(TMP_DIR)/main.o					\
-		$(TMP_DIR)/about/about.o				\
 		$(TMP_DIR)/ctrl/start.o					\
 		$(TMP_DIR)/image/alx.o					\
 		$(TMP_DIR)/image/calib3d.o				\
@@ -25,13 +24,14 @@ OBJS		=							\
 		$(TMP_DIR)/proc/objects.o				\
 		$(TMP_DIR)/proc/resistor.o				\
 		$(TMP_DIR)/save/save.o					\
+		$(TMP_DIR)/share/share.o				\
 		$(TMP_DIR)/user/clui.o					\
 		$(TMP_DIR)/user/iface.o					\
 		$(TMP_DIR)/user/tui.o
 DEPS_LIBS	= 							\
-		$(LIBALX_LIB_DIR)/libalx-base.a				\
 		$(LIBALX_LIB_DIR)/libalx-gsl.a				\
-		$(LIBALX_LIB_DIR)/libalx-ncurses.a
+		$(LIBALX_LIB_DIR)/libalx-ncurses.a			\
+		$(LIBALX_LIB_DIR)/libalx-base.a
 
 ALL	= $(BIN_NAME) size
 

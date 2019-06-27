@@ -16,11 +16,11 @@
 #undef LINES
 #undef COLS
 
-#include "vision-artificial/about/about.hpp"
 #include "vision-artificial/image/iface.hpp"
 #include "vision-artificial/menu/iface.hpp"
 #include "vision-artificial/menu/parse.hpp"
 #include "vision-artificial/save/save.hpp"
+#include "vision-artificial/share/share.hpp"
 #include "vision-artificial/user/iface.hpp"
 
 
@@ -58,7 +58,6 @@ static	void	init	(int argc, char *argv[])
 	alx_ncurses_init();
 	alx_ncurses_pause();
 
-	about_init();
 	save_init();
 
 	menu_iface_mode		= MENU_IFACE_TUI;

@@ -18,12 +18,12 @@ OBJ		=							\
 MAIN_INC	=							\
 		$(LIBALX_INC_DIR)/libalx/base/stdio/wait.hpp		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.hpp	\
-		$(INC_DIR)/vision-artificial/about/about.hpp		\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
 		$(INC_DIR)/vision-artificial/menu/iface.hpp		\
 		$(INC_DIR)/vision-artificial/menu/parse.hpp		\
-		$(INC_DIR)/vision-artificial/user/iface.hpp		\
-		$(INC_DIR)/vision-artificial/save/save.hpp
+		$(INC_DIR)/vision-artificial/save/save.hpp		\
+		$(INC_DIR)/vision-artificial/share/share.hpp		\
+		$(INC_DIR)/vision-artificial/user/iface.hpp
 MAIN_SRC	=							\
 		$(SRC_DIR)/main.cpp
 
@@ -32,11 +32,11 @@ MAIN_SRC	=							\
 #	action
 
 PHONY := all
-all: $(OBJ) about ctrl image menu proc save user
+all: $(OBJ) share ctrl image menu proc save user
 
 
-PHONY += about
-about:
+PHONY += share
+share:
 	@echo	"	MAKE	tmp/$@"
 	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 

@@ -15,7 +15,10 @@
 
 #include <tesseract/capi.h>
 
-#include "vision-artificial/about/about.h"
+#include "libalx/base/errno/perror.h"
+#include "libalx/base/stddef/size.h"
+
+#include "vision-artificial/share/share.h"
 #include "vision-artificial/image/iface.h"
 
 
@@ -99,11 +102,9 @@ static	void	img_ocr_read	(const void *data)
 	conf	= data_cast->conf;
 	switch (conf) {
 	case IMG_IFACE_OCR_CONF_PRICE:
-		if (snprintf(conf_str, FILENAME_MAX, "%s/%s",
-						share_path,
-						"price")  >=  FILENAME_MAX) {
-			printf("Path is too large and has been truncated\n");
-			printf("Price configuration was not possible!\n");
+		if (snprintf(conf_str, sizeof(conf_str), "%s/%s", SHARE_DIR,
+					"price")  >=  SSIZEOF(conf_str)) {
+			alx_perror(conf_str);
 			conf	= IMG_IFACE_OCR_CONF_NONE;
 		}
 		break;

@@ -13,13 +13,13 @@
 # dependencies
 
 OBJ		=							\
-		about.o
+		share.o
 
-ABOUT_INC	=							\
-		$(INC_DIR)/vision-artificial/about/about.h		\
+SHARE_INC	=							\
+		$(INC_DIR)/vision-artificial/share/share.h		\
 		$(LIBALX_INC_DIR)/libalx/base/stddef/size.h
-ABOUT_SRC	=							\
-		$(SRC_DIR)/about/about.c
+SHARE_SRC	=							\
+		$(SRC_DIR)/share/share.c
 
 ################################################################################
 # target: dependencies
@@ -29,11 +29,11 @@ PHONY := all
 all: $(OBJ)
 
 
-about.s: $(ABOUT_SRC) $(ABOUT_INC)
-	@echo	"	CC	vision-artificial/about/$@"
-	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
-about.o: about.s
-	@echo	"	AS	vision-artificial/about/$@"
+share.s: $(SHARE_SRC) $(SHARE_INC)
+	@echo	"	CC	vision-artificial/share/$@"
+	$(Q)$(CC) $(CFLAGS) -S $< -o $@
+share.o: share.s
+	@echo	"	AS	vision-artificial/share/$@"
 	$(Q)$(AS) $< -o $@
 
 

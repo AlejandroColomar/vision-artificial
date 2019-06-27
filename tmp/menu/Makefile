@@ -21,8 +21,8 @@ OBJ		=							\
 CLUI_INC	=							\
 		$(INC_DIR)/vision-artificial/menu/clui.h		\
 		$(LIBALX_INC_DIR)/libalx/base/stdio/get.h		\
-		$(INC_DIR)/vision-artificial/about/about.h		\
-		$(INC_DIR)/vision-artificial/ctrl/start.h
+		$(INC_DIR)/vision-artificial/ctrl/start.h		\
+		$(INC_DIR)/vision-artificial/share/share.h
 CLUI_SRC	=							\
 		$(SRC_DIR)/menu/clui.c
 
@@ -36,9 +36,9 @@ IFACE_SRC	=							\
 PARSE_INC	=							\
 		$(INC_DIR)/vision-artificial/menu/parse.h		\
 		$(LIBALX_INC_DIR)/libalx/base/stdio/sscan.h		\
-		$(INC_DIR)/vision-artificial/about/about.h		\
 		$(INC_DIR)/vision-artificial/menu/iface.h		\
 		$(INC_DIR)/vision-artificial/save/save.h		\
+		$(INC_DIR)/vision-artificial/share/share.h		\
 		$(INC_DIR)/vision-artificial/user/iface.h
 PARSE_SRC	=							\
 		$(SRC_DIR)/menu/parse.c
@@ -50,10 +50,10 @@ TUI_INC	=								\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/get.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/menu.h		\
-		$(INC_DIR)/vision-artificial/about/about.h		\
 		$(INC_DIR)/vision-artificial/ctrl/start.h		\
 		$(INC_DIR)/vision-artificial/proc/iface.h		\
 		$(INC_DIR)/vision-artificial/save/save.h		\
+		$(INC_DIR)/vision-artificial/share/share.h		\
 		$(INC_DIR)/vision-artificial/user/iface.h
 TUI_SRC	=								\
 		$(SRC_DIR)/menu/tui.c

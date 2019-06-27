@@ -16,9 +16,9 @@
 
 #include "libalx/base/stdio/sscan.h"
 
-#include "vision-artificial/about/about.h"
 #include "vision-artificial/menu/iface.h"
 #include "vision-artificial/save/save.h"
+#include "vision-artificial/share/share.h"
 #include "vision-artificial/user/iface.h"
 
 

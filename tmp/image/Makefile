@@ -56,8 +56,10 @@ IFACE_SRC	=							\
 
 OCR_INC		=							\
 		$(INC_DIR)/vision-artificial/image/ocr.h		\
-		$(INC_DIR)/vision-artificial/about/about.h		\
-		$(INC_DIR)/vision-artificial/image/iface.h
+		$(LIBALX_INC_DIR)/libalx/base/errno/perror.hpp		\
+		$(LIBALX_INC_DIR)/libalx/base/stddef/size.hpp		\
+		$(INC_DIR)/vision-artificial/image/iface.h		\
+		$(INC_DIR)/vision-artificial/share/share.h
 OCR_SRC		=							\
 		$(SRC_DIR)/image/ocr.c
 
