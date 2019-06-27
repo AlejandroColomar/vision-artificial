@@ -105,8 +105,8 @@ void	user_tui_fname		(const char *restrict fpath,
 	w	= 75;
 	r	= 10;
 
-	alx_w_get_fname(fpath, fname, false, w, r, "File name:", "Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff",
-									2);
+	alx_ncurses_get_fname(fpath, fname, false, w, r, "File name:",
+	"Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff", 2);
 }
 
 void	user_tui_show_log	(const char *restrict title,
@@ -132,7 +132,7 @@ double	user_tui_getdbl		(double m, double def, double M,
 	w	= 75;
 	r	= 10;
 
-	return	alx_w_get_dbl(m, def, M, w, r, title, help, 2);
+	return	alx_ncurses_get_dbl(m, def, M, w, r, title, help, 2);
 }
 
 int	user_tui_getint		(int m, int def, int M,
@@ -144,7 +144,7 @@ int	user_tui_getint		(int m, int def, int M,
 	w	= 75;
 	r	= 10;
 
-	return	alx_w_get_int(m, def, M, w, r, title, help, 2);
+	return	alx_ncurses_get_int(m, def, M, w, r, title, help, 2);
 }
 
 void	user_tui_show_ocr	(void)
