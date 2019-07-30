@@ -15,8 +15,8 @@
 
 #include <tesseract/capi.h>
 
-#include "libalx/base/errno/perror.h"
-#include "libalx/base/stddef/size.h"
+#include "libalx/base/errno/error.h"
+#include "libalx/base/compiler/size.h"
 
 #include "vision-artificial/share/share.h"
 #include "vision-artificial/image/iface.h"

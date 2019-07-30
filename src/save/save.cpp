@@ -19,7 +19,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "libalx/base/stddef/restrict.hpp"
+#include "libalx/base/compiler/restrict.hpp"
 
 #include "vision-artificial/user/iface.hpp"
 

@@ -15,7 +15,7 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "libalx/base/stdio/wait.hpp"
+#include "libalx/base/stdio/seekc.hpp"
 
 #include "vision-artificial/image/iface.hpp"
 #include "vision-artificial/proc/iface.hpp"

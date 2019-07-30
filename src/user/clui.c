@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libalx/base/stddef/size.h"
+#include "libalx/base/compiler/size.h"
 #include "libalx/base/stdio/get.h"
-#include "libalx/base/stdio/wait.h"
+#include "libalx/base/stdio/seekc.h"
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/user/iface.h"

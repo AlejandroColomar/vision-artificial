@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include <ncurses.h>
 
-#include "libalx/base/stdio/wait.h"
+#include "libalx/base/stdio/seekc.h"
 #include "libalx/extra/ncurses/common.h"
 #include "libalx/extra/ncurses/get.h"
 

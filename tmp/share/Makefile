@@ -17,7 +17,7 @@ OBJ		=							\
 
 SHARE_INC	=							\
 		$(INC_DIR)/vision-artificial/share/share.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stddef/size.h
+		$(LIBALX_INC_DIR)/libalx/base/compiler/size.h
 SHARE_SRC	=							\
 		$(SRC_DIR)/share/share.c
 

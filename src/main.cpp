@@ -9,7 +9,7 @@
  ******************************************************************************/
 #include <cstdio>
 
-#include "libalx/base/stdio/wait.hpp"
+#include "libalx/base/stdio/seekc.hpp"
 #include "libalx/extra/ncurses/common.hpp"
 
 /* Workaround <ncurses.h> naming collision */

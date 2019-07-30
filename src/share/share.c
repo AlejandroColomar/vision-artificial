@@ -13,8 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "libalx/base/errno/perror.h"
-#include "libalx/base/stddef/size.h"
+#include "libalx/base/errno/error.h"
+#include "libalx/base/compiler/size.h"
 
 
 /******************************************************************************

@@ -16,7 +16,6 @@ OBJS		=							\
 		$(TMP_DIR)/menu/iface.o					\
 		$(TMP_DIR)/menu/parse.o					\
 		$(TMP_DIR)/menu/tui.o					\
-		$(TMP_DIR)/proc/coins.o					\
 		$(TMP_DIR)/proc/common.o				\
 		$(TMP_DIR)/proc/iface.o					\
 		$(TMP_DIR)/proc/label.o					\

@@ -21,7 +21,7 @@ CLUI_INC	=							\
 		$(INC_DIR)/vision-artificial/user/clui.h		\
 		$(LIBALX_INC_DIR)/libalx/base/stdlib/swap.h		\
 		$(LIBALX_INC_DIR)/libalx/base/stdio/get.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/wait.h		\
+		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
 		$(INC_DIR)/vision-artificial/image/iface.h		\
 		$(INC_DIR)/vision-artificial/user/iface.h
 CLUI_SRC	=							\
@@ -39,7 +39,7 @@ IFACE_SRC	=							\
 
 TUI_INC	=								\
 		$(INC_DIR)/vision-artificial/user/tui.h			\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/wait.h		\
+		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/get.h		\
 		$(INC_DIR)/vision-artificial/image/iface.h		\

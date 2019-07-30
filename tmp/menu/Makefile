@@ -45,8 +45,8 @@ PARSE_SRC	=							\
 
 TUI_INC	=								\
 		$(INC_DIR)/vision-artificial/menu/tui.h			\
-		$(LIBALX_INC_DIR)/libalx/base/stddef/size.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/wait.h		\
+		$(LIBALX_INC_DIR)/libalx/base/compiler/size.h		\
+		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/get.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/menu.h		\

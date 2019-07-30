@@ -16,12 +16,11 @@
 #include <string.h>
 #include <time.h>
 
-#include "libalx/base/stddef/size.h"
+#include "libalx/base/compiler/size.h"
 #include "libalx/base/stdio/sscan.h"
-#include "libalx/base/stdio/wait.h"
+#include "libalx/base/stdio/seekc.h"
 
 #include "vision-artificial/image/iface.h"
-#include "vision-artificial/proc/coins.h"
 #include "vision-artificial/proc/common.h"
 #include "vision-artificial/proc/label.h"
 #include "vision-artificial/proc/lighters.h"
@@ -85,9 +84,6 @@ int	proc_iface_single	(int action)
 	case PROC_MODE_OBJECTS_SERIES:
 		error	= proc_objects();
 		break;
-	case PROC_MODE_COINS_SERIES:
-		error	= proc_coins();
-		break;
 	case PROC_MODE_RESISTOR_SERIES:
 		error	= proc_resistor();
 		break;
@@ -135,14 +131,6 @@ void	proc_iface_series	(void)
 		snprintf(file_ext, FILENAME_MAX, ".jpeg");
 		i	= 0;
 		proc_mode++;
-		break;
-	case PROC_MODE_COINS_SERIES:
-		snprintf(proc_path, FILENAME_MAX, "%s", coins_path);
-		snprintf(proc_fail_path, FILENAME_MAX, "%s", coins_fail_path);
-		snprintf(file_basename, FILENAME_MAX, "c");
-		num_len	= 4;
-		snprintf(file_ext, FILENAME_MAX, ".jpeg");
-		i	= 1;
 		break;
 	case PROC_MODE_RESISTOR_SERIES:
 		snprintf(proc_path, FILENAME_MAX, "%s", resistors_path);

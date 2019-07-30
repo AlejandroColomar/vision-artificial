@@ -13,7 +13,6 @@
 # dependencies
 
 OBJ		=							\
-		coins.o							\
 		common.o						\
 		iface.o							\
 		label.o							\
@@ -21,20 +20,9 @@ OBJ		=							\
 		objects.o						\
 		resistor.o
 
-COINS_INC	=							\
-		$(INC_DIR)/vision-artificial/proc/coins.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/stddef/size.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/stdlib/average.hpp	\
-		$(LIBALX_INC_DIR)/libalx/base/stdlib/maximum.hpp	\
-		$(INC_DIR)/vision-artificial/image/iface.hpp		\
-		$(INC_DIR)/vision-artificial/proc/common.hpp		\
-		$(INC_DIR)/vision-artificial/user/iface.hpp
-COINS_SRC	=							\
-		$(SRC_DIR)/proc/coins.cpp
-
 COMMON_INC	=							\
 		$(INC_DIR)/vision-artificial/proc/common.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/wait.hpp		\
+		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.hpp		\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
 		$(INC_DIR)/vision-artificial/proc/iface.hpp		\
 		$(INC_DIR)/vision-artificial/user/iface.hpp
@@ -43,11 +31,10 @@ COMMON_SRC	=							\
 
 IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/proc/iface.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stddef/size.h		\
+		$(LIBALX_INC_DIR)/libalx/base/compiler/size.h		\
 		$(LIBALX_INC_DIR)/libalx/base/stdio/sscan.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/wait.h		\
+		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
 		$(INC_DIR)/vision-artificial/image/iface.h		\
-		$(INC_DIR)/vision-artificial/proc/coins.h		\
 		$(INC_DIR)/vision-artificial/proc/common.h		\
 		$(INC_DIR)/vision-artificial/proc/label.h		\
 		$(INC_DIR)/vision-artificial/proc/lighters.h		\
@@ -87,7 +74,7 @@ OBJECTS_SRC	=							\
 
 RESISTOR_INC	=							\
 		$(INC_DIR)/vision-artificial/proc/resistor.hpp		\
-		$(LIBALX_INC_DIR)/libalx/base/stddef/size.hpp		\
+		$(LIBALX_INC_DIR)/libalx/base/compiler/size.hpp		\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
 		$(INC_DIR)/vision-artificial/proc/common.hpp		\
 		$(INC_DIR)/vision-artificial/user/iface.hpp

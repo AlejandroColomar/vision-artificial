@@ -122,8 +122,7 @@ export	SZ
 
 ################################################################################
 # cflags
-CFLAGS_STD	= -std=c17
-CFLAGS_STD     += -Wpedantic
+CFLAGS_STD	= -std=gnu17
 
 CFLAGS_OPT	= -O3
 CFLAGS_OPT     += -march=native
@@ -144,7 +143,8 @@ CFLAGS_PKG     += `pkg-config --cflags tesseract`
 CFLAGS_PKG     += `pkg-config --cflags lept`
 CFLAGS_PKG     += -I $(LIBALX_INC_DIR)
 
-CFLAGS_D	= -D _POSIX_C_SOURCE=200809L
+CFLAGS_D	= -D _GNU_SOURCE
+CFLAGS_D       += -D _POSIX_C_SOURCE=200809L
 CFLAGS_D       += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
 CFLAGS_D       += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
@@ -162,7 +162,7 @@ export	CFLAGS
 
 ################################################################################
 # c++flags
-CXXFLAGS_STD	= -std=c++17
+CXXFLAGS_STD	= -std=gnu++17
 
 CXXFLAGS_OPT	= -O3
 CXXFLAGS_OPT   += -march=native
@@ -182,7 +182,9 @@ CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
 CXXFLAGS_PKG   += `pkg-config --cflags lept`
 CXXFLAGS_PKG   += -I $(LIBALX_INC_DIR)
 
-CXXFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CXXFLAGS_D	= -D _GNU_SOURCE
+CXXFLAGS_D     += -D _POSIX_C_SOURCE=200809L
+CXXFLAGS_D     += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CXXFLAGS_D     += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
 CXXFLAGS_D     += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
 
