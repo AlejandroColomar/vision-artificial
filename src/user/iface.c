@@ -211,7 +211,7 @@ static	void	user_iface_act		(int action)
 	} else if (action & USER_IFACE_ACT_PROC) {
 		proc_iface_single(action);
 	} else {
-		img_iface_act(action, NULL);
+		img_iface_act(action);
 	}
 }
 

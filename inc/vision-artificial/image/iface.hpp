@@ -142,103 +142,6 @@ enum	Img_Iface_OCR_Conf {
  ******* structs / unions *****************************************************
  ******************************************************************************/
 /* cv ------------------------------------------------------------------------*/
-struct	Img_Iface_Data_Pixel_Get {
-	unsigned char	*val;
-	ptrdiff_t	x;
-	ptrdiff_t	y;
-};
-
-struct	Img_Iface_Data_Pixel_Set {
-	unsigned char	val;
-	ptrdiff_t	x;
-	ptrdiff_t	y;
-};
-
-struct	Img_Iface_Data_SetROI {
-	class cv::Rect_ <int>	rect;
-};
-
-struct	Img_Iface_Data_Component {
-	ptrdiff_t	cmp;
-};
-
-struct	Img_Iface_Data_Dilate_Erode {
-	int	i;
-};
-
-struct	Img_Iface_Data_Smooth {
-	int	method;
-	int	ksize;
-};
-
-struct	Img_Iface_Data_Sobel {
-	int	dx;
-	int	dy;
-	int	ksize;
-};
-
-struct	Img_Iface_Data_Border {
-	ptrdiff_t	size;
-};
-
-struct	Img_Iface_Data_Mirror {
-	int	axis;
-};
-
-struct	Img_Iface_Data_Rotate_Orto {
-	int	n;
-};
-
-struct	Img_Iface_Data_Rotate {
-	class cv::Point_ <float>	center;
-	double				angle;
-};
-
-struct	Img_Iface_Data_Adaptive_Thr {
-	int	method;
-	int	thr_typ;
-	int	ksize;
-};
-
-struct	Img_Iface_Data_Cvt_Color {
-	int	method;
-};
-
-struct	Img_Iface_Data_Threshold {
-	int	thr_typ;
-	int	thr_val;
-};
-
-struct	Img_Iface_Data_Histogram {
-	class cv::Mat	*hist_c0;
-	class cv::Mat	*hist_c1;
-	class cv::Mat	*hist_c2;
-	class cv::Mat	*hist_img;
-};
-
-struct	Img_Iface_Data_Contours {
-	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
-	class cv::Mat					*hierarchy;
-};
-
-struct	Img_Iface_Data_Contours_Size {
-	const	class std::vector <class std::vector <class cv::Point_ <int>>>	*contours;
-	double						*area;
-	double						*perimeter;
-};
-
-struct	Img_Iface_Data_Bounding_Rect {
-	const	class std::vector <class cv::Point_ <int>>	*contour;
-	class cv::Rect_ <int>					*rect;
-	bool							show;
-};
-
-struct	Img_Iface_Data_MinARect {
-	const	class std::vector <class cv::Point_ <int>>  *contour;
-	class cv::RotatedRect				*rect;
-	bool						show;
-};
-
 struct	Img_Iface_Data_Hough_Circles {
 	class std::vector <class cv::Vec <float, 3>>	*circles;
 	double						dist_min;
@@ -305,7 +208,7 @@ void	img_iface_init		(void);
 void	img_iface_deinit	(void);
 void	img_iface_load		(const char *fpath, const char *fname);
 void	img_iface_cleanup	(void);
-void	img_iface_act		(int action, const void *data);
+void	img_iface_act		(int action);
 void	img_iface_show_img	(void);
 void	img_iface_show_hist_c1	(void);
 void	img_iface_show_hist_c3	(void);

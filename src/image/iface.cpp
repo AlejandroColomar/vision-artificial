@@ -222,10 +222,8 @@ void	img_iface_cleanup	(void)
 	hist_img_c3.release();
 }
 
-void	img_iface_act		(int action, const void *data)
+void	img_iface_act		(int action)
 {
-
-	UNUSED(data);
 
 	switch (action) {
 	/* img_alx */
