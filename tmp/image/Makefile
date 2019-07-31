@@ -13,21 +13,12 @@
 # dependencies
 
 OBJ		=							\
-		alx.o							\
 		calib3d.o						\
 		cv.o							\
 		iface.o							\
 		ocr.o							\
 		orb.o							\
 		zbar.o
-
-ALX_INC		=							\
-		$(INC_DIR)/vision-artificial/image/alx.hpp		\
-		$(LIBALX_INC_DIR)/libalx/extra/gsl/rstat/median.hpp	\
-		$(LIBALX_INC_DIR)/libalx/extra/gsl/statistics/mean.hpp	\
-		$(INC_DIR)/vision-artificial/image/iface.hpp
-ALX_SRC		=							\
-		$(SRC_DIR)/image/alx.cpp
 
 CALIB3D_INC	=							\
 		$(INC_DIR)/vision-artificial/image/calib3d.hpp		\
@@ -43,7 +34,6 @@ CV_SRC		=							\
 
 IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
-		$(INC_DIR)/vision-artificial/image/alx.hpp		\
 		$(INC_DIR)/vision-artificial/image/calib3d.hpp		\
 		$(INC_DIR)/vision-artificial/image/cv.hpp		\
 		$(INC_DIR)/vision-artificial/image/ocr.hpp		\
@@ -81,13 +71,6 @@ ZBAR_SRC	=							\
 PHONY := all
 all: $(OBJ)
 
-
-alx.s: $(ALX_SRC) $(ALX_INC)
-	@echo	"	CXX	vision-artificial/image/$@"
-	$(Q)$(CXX) $(CXXFLAGS) -I $(INC_DIR) -S $< -o $@
-alx.o: alx.s
-	@echo	"	AS	vision-artificial/image/$@"
-	$(Q)$(AS) $< -o $@
 
 calib3d.s: $(CALIB3D_SRC) $(CALIB3D_INC)
 	@echo	"	CXX	vision-artificial/image/$@"

@@ -241,6 +241,7 @@ PHONY += libalx
 libalx:
 	@echo	"	MAKE	$@"
 	$(Q)$(MAKE) base	-C $(LIBALX_DIR)
+	$(Q)$(MAKE) cv		-C $(LIBALX_DIR)
 	$(Q)$(MAKE) gsl		-C $(LIBALX_DIR)
 	$(Q)$(MAKE) ncurses	-C $(LIBALX_DIR)
 	@echo

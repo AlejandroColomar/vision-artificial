@@ -5,7 +5,6 @@
 OBJS		=							\
 		$(TMP_DIR)/main.o					\
 		$(TMP_DIR)/ctrl/start.o					\
-		$(TMP_DIR)/image/alx.o					\
 		$(TMP_DIR)/image/calib3d.o				\
 		$(TMP_DIR)/image/cv.o					\
 		$(TMP_DIR)/image/iface.o				\
@@ -28,6 +27,7 @@ OBJS		=							\
 		$(TMP_DIR)/user/iface.o					\
 		$(TMP_DIR)/user/tui.o
 DEPS_LIBS	= 							\
+		$(LIBALX_LIB_DIR)/libalx-cv.a				\
 		$(LIBALX_LIB_DIR)/libalx-gsl.a				\
 		$(LIBALX_LIB_DIR)/libalx-ncurses.a			\
 		$(LIBALX_LIB_DIR)/libalx-base.a
@@ -39,6 +39,7 @@ ALL	= $(BIN_NAME) size
 STATIC_LIBS	= -L $(LIBALX_LIB_DIR)					\
 		-l alx-ncurses						\
 		-l alx-gsl						\
+		-l alx-cv						\
 		-l alx-base
 
 
