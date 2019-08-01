@@ -13,22 +13,12 @@
 # dependencies
 
 OBJ		=							\
-		clui.o							\
 		iface.o							\
 		parse.o							\
 		tui.o
 
-CLUI_INC	=							\
-		$(INC_DIR)/vision-artificial/menu/clui.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/get.h		\
-		$(INC_DIR)/vision-artificial/ctrl/start.h		\
-		$(INC_DIR)/vision-artificial/share/share.h
-CLUI_SRC	=							\
-		$(SRC_DIR)/menu/clui.c
-
 IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/menu/iface.h		\
-		$(INC_DIR)/vision-artificial/menu/clui.h		\
 		$(INC_DIR)/vision-artificial/menu/tui.h
 IFACE_SRC	=							\
 		$(SRC_DIR)/menu/iface.c
@@ -65,13 +55,6 @@ TUI_SRC	=								\
 PHONY := all
 all: $(OBJ)
 
-
-clui.s: $(CLUI_SRC) $(CLUI_INC)
-	@echo	"	CC	vision-artificial/menu/$@"
-	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
-clui.o: clui.s
-	@echo	"	AS	vision-artificial/menu/$@"
-	$(Q)$(AS) $< -o $@
 
 iface.s: $(IFACE_SRC) $(IFACE_INC)
 	@echo	"	CXX	vision-artificial/menu/$@"

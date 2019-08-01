@@ -9,7 +9,6 @@
  ******************************************************************************/
 #include "vision-artificial/menu/iface.h"
 
-#include "vision-artificial/menu/clui.h"
 #include "vision-artificial/menu/tui.h"
 
 
@@ -31,7 +30,6 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-int	menu_iface_mode;
 
 
 /******************************************************************************
@@ -45,16 +43,7 @@ int	menu_iface_mode;
 void	menu_iface	(void)
 {
 
-	switch (menu_iface_mode) {
-	case MENU_IFACE_FOO:
-		break;
-	case MENU_IFACE_CLUI:
-		menu_clui();
-		break;
-	case MENU_IFACE_TUI:
-		menu_tui();
-		break;
-	}
+	menu_tui();
 }
 
 

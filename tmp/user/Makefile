@@ -13,26 +13,14 @@
 # dependencies
 
 OBJ		=							\
-		clui.o							\
 		iface.o							\
 		tui.o
-
-CLUI_INC	=							\
-		$(INC_DIR)/vision-artificial/user/clui.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdlib/swap.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/get.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
-		$(INC_DIR)/vision-artificial/image/iface.h		\
-		$(INC_DIR)/vision-artificial/user/iface.h
-CLUI_SRC	=							\
-		$(SRC_DIR)/user/clui.c
 
 IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/user/iface.h		\
 		$(LIBALX_INC_DIR)/libalx/base/stdio/get.h		\
 		$(INC_DIR)/vision-artificial/image/iface.h		\
 		$(INC_DIR)/vision-artificial/proc/iface.h		\
-		$(INC_DIR)/vision-artificial/user/clui.h		\
 		$(INC_DIR)/vision-artificial/user/tui.h
 IFACE_SRC	=							\
 		$(SRC_DIR)/user/iface.c
@@ -54,13 +42,6 @@ TUI_SRC	=								\
 PHONY := all
 all: $(OBJ)
 
-
-clui.s: $(CLUI_SRC) $(CLUI_INC)
-	@echo	"	CC	vision-artificial/user/$@"
-	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
-clui.o: clui.s
-	@echo	"	AS	vision-artificial/user/$@"
-	$(Q)$(AS) $< -o $@
 
 iface.s: $(IFACE_SRC) $(IFACE_INC)
 	@echo	"	CC	vision-artificial/user/$@"

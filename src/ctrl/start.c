@@ -83,16 +83,10 @@ err:
 
 static	void	start_series	(void)
 {
-	int	tmp;
-
-	tmp		= user_iface_mode;
-	user_iface_mode	= USER_IFACE_CLUI;
 
 	user_iface_init();
 	proc_iface_series();
 	user_iface_cleanup();
-
-	user_iface_mode	= tmp;
 }
 
 

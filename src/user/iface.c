@@ -17,7 +17,6 @@
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/proc/iface.h"
-#include "vision-artificial/user/clui.h"
 #include "vision-artificial/user/tui.h"
 
 
@@ -40,10 +39,7 @@
 /******************************************************************************
  ******* variables ************************************************************
  ******************************************************************************/
-/* Global --------------------------------------------------------------------*/
-	int			user_iface_mode;
-	struct User_Iface_Log	user_iface_log;
-/* Static --------------------------------------------------------------------*/
+struct User_Iface_Log	user_iface_log;
 
 
 /******************************************************************************
@@ -62,25 +58,13 @@ void	user_iface_init		(void)
 	user_iface_log.len	= 0;
 	user_iface_log.pos	= -1;
 
-	switch (user_iface_mode) {
-	case USER_IFACE_CLUI:
-		break;
-	case USER_IFACE_TUI:
-		user_tui_init();
-		break;
-	}
+	user_tui_init();
 }
 
 void	user_iface_cleanup	(void)
 {
 
-	switch (user_iface_mode) {
-	case USER_IFACE_CLUI:
-		break;
-	case USER_IFACE_TUI:
-		user_tui_cleanup();
-		break;
-	}
+	user_tui_cleanup();
 	fflush(stdout);
 }
 
@@ -96,16 +80,7 @@ void	user_iface		(void)
 	do {
 		img_iface_show_img();
 
-		switch (user_iface_mode) {
-		case USER_IFACE_CLUI:
-			user_action	= user_clui(title, subtitle);
-			break;
-		case USER_IFACE_TUI:
-			user_action	= user_tui(title, subtitle);
-			break;
-		default:
-			user_action	= USER_IFACE_ACT_FOO;
-		}
+		user_action	= user_tui(title, subtitle);
 		user_iface_act(user_action);
 	} while (user_action != USER_IFACE_ACT_QUIT);
 }
@@ -114,28 +89,14 @@ void	user_iface_show_log	(const char *restrict title,
 				const char *restrict subtitle)
 {
 
-	switch (user_iface_mode) {
-	case USER_IFACE_CLUI:
-		user_clui_show_log(title, subtitle);
-		break;
-	case USER_IFACE_TUI:
-		user_tui_show_log(title, subtitle);
-		break;
-	}
+	user_tui_show_log(title, subtitle);
 }
 
 void	user_iface_fname	(const char *restrict filepath,
 				char *restrict filename)
 {
 
-	switch (user_iface_mode) {
-	case USER_IFACE_CLUI:
-		user_clui_fname(filepath, filename);
-		break;
-	case USER_IFACE_TUI:
-		user_tui_fname(filepath, filename);
-		break;
-	}
+	user_tui_fname(filepath, filename);
 }
 
 double	user_iface_getdbl	(double m, double def, double M,
@@ -143,14 +104,7 @@ double	user_iface_getdbl	(double m, double def, double M,
 				const char *restrict help)
 {
 
-	switch (user_iface_mode) {
-	case USER_IFACE_CLUI:
-		return	alx_get_int(m, def, M, title, help, 2);
-	case USER_IFACE_TUI:
-		return	user_tui_getint(m, def, M, title, help);
-	default:
-		return	1;
-	}
+	return	user_tui_getint(m, def, M, title, help);
 }
 
 int	user_iface_getint	(double m, int64_t def, double M,
@@ -158,14 +112,7 @@ int	user_iface_getint	(double m, int64_t def, double M,
 				const char *restrict help)
 {
 
-	switch (user_iface_mode) {
-	case USER_IFACE_CLUI:
-		return	alx_get_dbl(m, def, M, title, help, 2);
-	case USER_IFACE_TUI:
-		return	user_tui_getdbl(m, def, M, title, help);
-	default:
-		return	1.0;
-	}
+	return	user_tui_getdbl(m, def, M, title, help);
 }
 
 void	user_iface_log_write	(ptrdiff_t lvl, const char *restrict msg)
@@ -218,14 +165,7 @@ static	void	user_iface_act		(int action)
 static	void	user_iface_show_ocr	(void)
 {
 
-	switch (user_iface_mode) {
-	case USER_IFACE_CLUI:
-		user_clui_show_ocr();
-		break;
-	case USER_IFACE_TUI:
-		user_tui_show_ocr();
-		break;
-	}
+	user_tui_show_ocr();
 }
 
 

@@ -25,7 +25,7 @@
 /******************************************************************************
  ******* macros ***************************************************************
  ******************************************************************************/
-#define OPT_LIST	"hLuv""f:i:"
+#define OPT_LIST	"hLuv""f:"
 
 
 /******************************************************************************
@@ -47,7 +47,6 @@
  ******* static functions (prototypes) ****************************************
  ******************************************************************************/
 static	void	parse_file	(char *arg);
-static	void	parse_iface	(char *arg);
 
 
 /******************************************************************************
@@ -66,7 +65,6 @@ void	parse	(int argc, char *argv[])
 		{"version",		no_argument,		0,	'v'},
 		/* Non-standard */
 		{"file",		required_argument,	0,	'f'},
-		{"iface",		required_argument,	0,	'i'},
 		/* Null */
 		{0,			0,			0,	0}
 	};
@@ -91,9 +89,6 @@ void	parse	(int argc, char *argv[])
 		/* Non-standard */
 		case 'f':
 			parse_file(optarg);
-			break;
-		case 'i':
-			parse_iface(optarg);
 			break;
 
 		case '?':
@@ -126,23 +121,6 @@ static	void	parse_file	(char *arg)
 err:
 	printf("--file argument not valid\n");
 	printf("It must be a valid file name (relative to saved dir)\n");
-	exit(EXIT_FAILURE);
-}
-
-static	void	parse_iface	(char *arg)
-{
-
-	if (alx_sscan_int(&menu_iface_mode, MENU_IFACE_CLUI, 0, MENU_IFACE_TUI,
-									arg)) {
-		goto err;
-	}
-	user_iface_mode		= menu_iface_mode;
-
-	return;
-err:
-	printf("--iface argument not valid\n");
-	printf("It must be an integer [%i U %i]\n", MENU_IFACE_CLUI,
-								MENU_IFACE_TUI);
 	exit(EXIT_FAILURE);
 }
 

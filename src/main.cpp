@@ -60,8 +60,6 @@ static	void	init	(int argc, char *argv[])
 
 	save_init();
 
-	menu_iface_mode		= MENU_IFACE_TUI;
-	user_iface_mode		= USER_IFACE_TUI;
 	user_iface_log.visible	= 2;
 
 	parse(argc, argv);

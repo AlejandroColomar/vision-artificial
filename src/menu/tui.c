@@ -245,15 +245,13 @@ static	void	menu_series	(void)
 static	void	menu_devel	(void)
 {
 	static const struct Alx_Ncurses_Menu	mnu[]	= {
-		{6, 4, "[0]	Back"},
+		{5, 4, "[0]	Back"},
 		{2, 4, "[1]	Change process mode"},
-		{3, 4, "[2]	Change log mode"},
-		{4, 4, "[3]	Change user iface mode"}
+		{3, 4, "[2]	Change log mode"}
 	};
 	static const char  *const txt[]	= {
 		"Modes: 0=Auto; 1=Stop@prod; 2=Delay@step; 3=Stop@step",
-		"Modes: 0=Results; 1=Operations; 2=All",
-		"Modes: 1=CLUI; 2=TUI"
+		"Modes: 0=Results; 1=Operations; 2=All"
 	};
 	WINDOW		*win;
 	int_fast8_t	h, w;
@@ -289,10 +287,6 @@ static	void	menu_devel	(void)
 		case 2:
 			user_iface_log.visible = alx_ncurses_get_u8(0, 2, 2,
 						w2, r2, txt[1], NULL, 2);
-			break;
-		case 3:
-			user_iface_mode	= alx_ncurses_get_int(1, 2, 2,
-						w2, r2, txt[2], NULL, 2);
 			break;
 		}
 	}
