@@ -22,7 +22,6 @@
 #include "libalx/extra/ncurses/menu.h"
 
 #include "vision-artificial/ctrl/start.h"
-#include "vision-artificial/proc/iface.h"
 #include "vision-artificial/save/save.h"
 #include "vision-artificial/share/share.h"
 #include "vision-artificial/user/iface.h"
@@ -169,12 +168,10 @@ static	void	menu_continue	(void)
 static	void	menu_devel	(void)
 {
 	static const struct Alx_Ncurses_Menu	mnu[]	= {
-		{5, 4, "[0]	Back"},
-		{2, 4, "[1]	Change process mode"},
-		{3, 4, "[2]	Change log mode"}
+		{4, 4, "[0]	Back"},
+		{2, 4, "[1]	Change log mode"}
 	};
 	static const char  *const txt[]	= {
-		"Modes: 0=Auto; 1=Stop@prod; 2=Delay@step; 3=Stop@step",
 		"Modes: 0=Results; 1=Operations; 2=All"
 	};
 	WINDOW		*win;
@@ -204,13 +201,8 @@ static	void	menu_devel	(void)
 			wh	= false;
 			break;
 		case 1:
-			proc_debug	= alx_ncurses_get_int(PROC_DBG_NO, 0,
-						PROC_DBG_STOP_STEP,
-						w2, r2, txt[0], NULL, 2);
-			break;
-		case 2:
 			user_iface_log.visible = alx_ncurses_get_u8(0, 2, 2,
-						w2, r2, txt[1], NULL, 2);
+						w2, r2, txt[0], NULL, 2);
 			break;
 		}
 	}

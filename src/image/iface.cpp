@@ -199,7 +199,7 @@ void	img_iface_load		(const char *fpath, const char *fname)
 	if (!fname)
 		user_iface_fname(fpath, file_name);
 	else
-		snprintf(file_name, FILENAME_MAX, "%s", fname);
+		UNUSED(alx_sbprintf(file_name, NULL, "%s", fname));
 
 	errno	= 0;
 	load_image_file(path, file_name);

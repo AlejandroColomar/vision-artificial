@@ -11,25 +11,17 @@ OBJS		=							\
 		$(TMP_DIR)/image/ocr.o					\
 		$(TMP_DIR)/image/orb.o					\
 		$(TMP_DIR)/image/zbar.o					\
-		$(TMP_DIR)/menu/clui.o					\
 		$(TMP_DIR)/menu/iface.o					\
 		$(TMP_DIR)/menu/parse.o					\
 		$(TMP_DIR)/menu/tui.o					\
-		$(TMP_DIR)/proc/common.o				\
-		$(TMP_DIR)/proc/iface.o					\
-		$(TMP_DIR)/proc/label.o					\
-		$(TMP_DIR)/proc/lighters.o				\
-		$(TMP_DIR)/proc/objects.o				\
-		$(TMP_DIR)/proc/resistor.o				\
 		$(TMP_DIR)/save/save.o					\
 		$(TMP_DIR)/share/share.o				\
-		$(TMP_DIR)/user/clui.o					\
 		$(TMP_DIR)/user/iface.o					\
 		$(TMP_DIR)/user/tui.o
 DEPS_LIBS	= 							\
 		$(LIBALX_LIB_DIR)/libalx-cv.a				\
-		$(LIBALX_LIB_DIR)/libalx-gsl.a				\
 		$(LIBALX_LIB_DIR)/libalx-ncurses.a			\
+		$(LIBALX_LIB_DIR)/libalx-gsl.a				\
 		$(LIBALX_LIB_DIR)/libalx-base.a
 
 ALL	= $(BIN_NAME) size
@@ -37,9 +29,9 @@ ALL	= $(BIN_NAME) size
 # static libs
 
 STATIC_LIBS	= -L $(LIBALX_LIB_DIR)					\
+		-l alx-cv						\
 		-l alx-ncurses						\
 		-l alx-gsl						\
-		-l alx-cv						\
 		-l alx-base
 
 

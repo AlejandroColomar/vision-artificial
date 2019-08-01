@@ -16,7 +16,6 @@
 #include "libalx/base/stdio/get.h"
 
 #include "vision-artificial/image/iface.h"
-#include "vision-artificial/proc/iface.h"
 #include "vision-artificial/user/tui.h"
 
 
@@ -155,8 +154,6 @@ static	void	user_iface_act		(int action)
 			/* do nothing */
 			break;
 		}
-	} else if (action & USER_IFACE_ACT_PROC) {
-		proc_iface_single(action);
 	} else {
 		img_iface_act(action);
 	}

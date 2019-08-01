@@ -32,7 +32,7 @@ MAIN_SRC	=							\
 #	action
 
 PHONY := all
-all: $(OBJ) share ctrl image menu proc save user
+all: $(OBJ) share ctrl image menu save user
 
 
 PHONY += share
@@ -52,11 +52,6 @@ image:
 
 PHONY += menu
 menu:
-	@echo	"	MAKE	tmp/$@"
-	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
-
-PHONY += proc
-proc:
 	@echo	"	MAKE	tmp/$@"
 	$(Q)$(MAKE)	-C $(TMP_DIR)/$@/
 

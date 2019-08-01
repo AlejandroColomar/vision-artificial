@@ -41,7 +41,6 @@ TUI_INC	=								\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/get.h		\
 		$(LIBALX_INC_DIR)/libalx/extra/ncurses/menu.h		\
 		$(INC_DIR)/vision-artificial/ctrl/start.h		\
-		$(INC_DIR)/vision-artificial/proc/iface.h		\
 		$(INC_DIR)/vision-artificial/save/save.h		\
 		$(INC_DIR)/vision-artificial/share/share.h		\
 		$(INC_DIR)/vision-artificial/user/iface.h
