@@ -16,16 +16,16 @@ OBJ		=							\
 		main.o
 
 MAIN_INC	=							\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.hpp		\
-		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.hpp	\
-		$(INC_DIR)/vision-artificial/image/iface.hpp		\
-		$(INC_DIR)/vision-artificial/menu/iface.hpp		\
-		$(INC_DIR)/vision-artificial/menu/parse.hpp		\
-		$(INC_DIR)/vision-artificial/save/save.hpp		\
-		$(INC_DIR)/vision-artificial/share/share.hpp		\
-		$(INC_DIR)/vision-artificial/user/iface.hpp
+		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
+		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.h		\
+		$(INC_DIR)/vision-artificial/image/iface.h		\
+		$(INC_DIR)/vision-artificial/menu/iface.h		\
+		$(INC_DIR)/vision-artificial/menu/parse.h		\
+		$(INC_DIR)/vision-artificial/save/save.h		\
+		$(INC_DIR)/vision-artificial/share/share.h		\
+		$(INC_DIR)/vision-artificial/user/iface.h
 MAIN_SRC	=							\
-		$(SRC_DIR)/main.cpp
+		$(SRC_DIR)/main.c
 
 
 # target: dependencies
@@ -72,8 +72,8 @@ user:
 
 
 main.s: $(MAIN_SRC) $(MAIN_INC)
-	@echo	"	CXX	vision-artificial/tmp/$@"
-	$(Q)$(CXX) $(CXXFLAGS) -I $(INC_DIR) -S $< -o $@
+	@echo	"	CC	vision-artificial/tmp/$@"
+	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
 main.o: main.s
 	@echo	"	AS	vision-artificial/tmp/$@"
 	$(Q)$(AS) $< -o $@

@@ -7,21 +7,17 @@
 /******************************************************************************
  ******* headers **************************************************************
  ******************************************************************************/
-#include <cstdio>
+#include <stdio.h>
 
-#include "libalx/base/stdio/seekc.hpp"
-#include "libalx/extra/ncurses/common.hpp"
+#include "libalx/base/stdio/seekc.h"
+#include "libalx/extra/ncurses/common.h"
 
-/* Workaround <ncurses.h> naming collision */
-#undef LINES
-#undef COLS
-
-#include "vision-artificial/image/iface.hpp"
-#include "vision-artificial/menu/iface.hpp"
-#include "vision-artificial/menu/parse.hpp"
-#include "vision-artificial/save/save.hpp"
-#include "vision-artificial/share/share.hpp"
-#include "vision-artificial/user/iface.hpp"
+#include "vision-artificial/image/iface.h"
+#include "vision-artificial/menu/iface.h"
+#include "vision-artificial/menu/parse.h"
+#include "vision-artificial/save/save.h"
+#include "vision-artificial/share/share.h"
+#include "vision-artificial/user/iface.h"
 
 
 /******************************************************************************

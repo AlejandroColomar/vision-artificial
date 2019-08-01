@@ -52,8 +52,6 @@
  ******* static functions (prototypes) ****************************************
  ******************************************************************************/
 static	void	menu_continue	(void);
-static	void	menu_select	(void);
-static	void	menu_series	(void);
 static	void	menu_devel	(void);
 
 
@@ -111,12 +109,10 @@ void	menu_tui		(void)
 static	void	menu_continue	(void)
 {
 	static const struct Alx_Ncurses_Menu	mnu[]	= {
-		{8, 4, "[0]	Back"},
+		{6, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
-		{3, 4, "[2]	Select"},
-		{4, 4, "[3]	Series"},
-		{5, 4, "[4]	Change file name"},
-		{6, 4, "[5]	DEVEL"}
+		{3, 4, "[2]	Change file name"},
+		{4, 4, "[3]	DEVEL"}
 	};
 	static const char  *const txt[]	= {"File name:"};
 	WINDOW		*win;
@@ -155,20 +151,12 @@ static	void	menu_continue	(void)
 			alx_ncurses_resume();
 			break;
 		case 2:
-			alx_ncurses_delwin(win);
-			menu_select();
-			break;
-		case 3:
-			alx_ncurses_delwin(win);
-			menu_series();
-			break;
-		case 4:
 			save_reset_fpath();
 			alx_ncurses_get_fname(saved_path, saved_name, true,
 						w2, r2, txt[0], NULL, 2);
 			alx_ncurses_delwin(win);
 			break;
-		case 5:
+		case 3:
 			alx_ncurses_delwin(win);
 			menu_devel();
 			break;
@@ -176,70 +164,6 @@ static	void	menu_continue	(void)
 	}
 
 	alx_ncurses_delwin(win);
-}
-
-static	void	menu_select	(void)
-{
-	static const struct Alx_Ncurses_Menu	mnu[]	= {
-		{6, 4, "[0]	Back"},
-		{2, 4, "[1]	Single image"},
-		{4, 4, "[2]	Series"}
-	};
-	int_fast8_t	h, w;
-	int_fast8_t	sw;
-
-	h	= 23;
-	w	= 80;
-
-
-	sw	= alx_ncurses_menu(h, w, ARRAY_SIZE(mnu), mnu, "SELECT MODE:");
-
-	switch (sw) {
-	case 1:
-		start_mode	= START_SINGLE;
-		break;
-	case 2:
-		start_mode	= START_SERIES;
-		break;
-	}
-}
-
-static	void	menu_series	(void)
-{
-	static const struct Alx_Ncurses_Menu	mnu[]	= {
-		{8, 4, "[0]	Back"},
-		{2, 4, "[1]	Label"},
-		{3, 4, "[2]	Objects"},
-		{4, 4, "[3]	Coins"},
-		{5, 4, "[4]	Resistor"},
-		{6, 4, "[5]	Lighters"}
-	};
-	int_fast8_t	h, w;
-	int_fast8_t	sw;
-
-	h	= 23;
-	w	= 80;
-
-	sw	= alx_ncurses_menu(h, w, ARRAY_SIZE(mnu), mnu, "SELECT LEVEL:");
-
-	switch (sw) {
-	case 1:
-		proc_mode	= PROC_MODE_LABEL_SERIES;
-		break;
-	case 2:
-		proc_mode	= PROC_MODE_OBJECTS_SERIES;
-		break;
-	case 3:
-		proc_mode	= PROC_MODE_COINS_SERIES;
-		break;
-	case 4:
-		proc_mode	= PROC_MODE_RESISTOR_SERIES;
-		break;
-	case 5:
-		proc_mode	= PROC_MODE_LIGHTERS_SERIES;
-		break;
-	}
-
 }
 
 static	void	menu_devel	(void)
