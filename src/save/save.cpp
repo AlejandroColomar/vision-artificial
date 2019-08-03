@@ -49,16 +49,6 @@ class cv::Mat	image;
 char		home_path[FILENAME_MAX];
 char		user_prog_path[FILENAME_MAX];
 char		saved_path[FILENAME_MAX];
-char		labels_path[FILENAME_MAX];
-char		labels_fail_path[FILENAME_MAX];
-char		lighters_path[FILENAME_MAX];
-char		lighters_fail_path[FILENAME_MAX];
-char		objects_path[FILENAME_MAX];
-char		objects_fail_path[FILENAME_MAX];
-char		coins_path[FILENAME_MAX];
-char		coins_fail_path[FILENAME_MAX];
-char		resistors_path[FILENAME_MAX];
-char		resistors_fail_path[FILENAME_MAX];
 char		saved_name[FILENAME_MAX];
 
 
@@ -86,10 +76,7 @@ void	save_init	(void)
 		if (errno != EEXIST)
 			alx_error(EXIT_FAILURE, user_prog_path);
 	}
-
 	mkdir(saved_path, 0700);
-	mkdir(labels_path, 0700);
-	mkdir(labels_fail_path, 0700);
 
 	return;
 err:
