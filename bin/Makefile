@@ -18,21 +18,8 @@ OBJS		=							\
 		$(TMP_DIR)/share/share.o				\
 		$(TMP_DIR)/user/iface.o					\
 		$(TMP_DIR)/user/tui.o
-DEPS_LIBS	= 							\
-		$(LIBALX_LIB_DIR)/libalx-cv.a				\
-		$(LIBALX_LIB_DIR)/libalx-ncurses.a			\
-		$(LIBALX_LIB_DIR)/libalx-gsl.a				\
-		$(LIBALX_LIB_DIR)/libalx-base.a
 
 ALL	= $(BIN_NAME) size
-
-# static libs
-
-STATIC_LIBS	= -L $(LIBALX_LIB_DIR)					\
-		-l alx-cv						\
-		-l alx-ncurses						\
-		-l alx-gsl						\
-		-l alx-base
 
 
 # target: dependencies
@@ -44,7 +31,7 @@ all: $(ALL)
 
 $(BIN_NAME): $(OBJS) $(DEPS_LIBS)
 	@echo	"	CXX	$@"
-	$(Q)$(CXX) $(OBJS) -o $@ $(STATIC_LIBS) $(LIBS)
+	$(Q)$(CXX) $(OBJS) -o $@ $(LIBS)
 
 size: $(BIN_NAME)
 	@echo	"	SZ	$(BIN_NAME)"

@@ -16,8 +16,6 @@ OBJ		=							\
 		main.o
 
 MAIN_INC	=							\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
-		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.h		\
 		$(INC_DIR)/vision-artificial/image/iface.h		\
 		$(INC_DIR)/vision-artificial/menu/iface.h		\
 		$(INC_DIR)/vision-artificial/menu/parse.h		\

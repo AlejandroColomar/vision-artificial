@@ -3,7 +3,7 @@
 VERSION		= 3
 PATCHLEVEL	=
 SUBLEVEL	=
-EXTRAVERSION	= ~b1
+EXTRAVERSION	= ~b2
 NAME		=
 
 export	VERSION
@@ -75,19 +75,12 @@ export	PROGRAMVERSION
 
 MAIN_DIR	= $(CURDIR)
 
-LIBALX_DIR	= $(CURDIR)/libalx/
-LIBALX_INC_DIR	= $(LIBALX_DIR)/inc/
-LIBALX_LIB_DIR	= $(LIBALX_DIR)/lib/libalx/
-
 BIN_DIR		= $(CURDIR)/bin/
 INC_DIR		= $(CURDIR)/inc/
 SRC_DIR		= $(CURDIR)/src/
 TMP_DIR		= $(CURDIR)/tmp/
 
 export	MAIN_DIR
-export	LIBALX_DIR
-export	LIBALX_INC_DIR
-export	LIBALX_LIB_DIR
 export	BIN_DIR
 export	INC_DIR
 export	SRC_DIR
@@ -95,11 +88,8 @@ export	TMP_DIR
 
 # FIXME: Set local or not local when building a package
 INSTALL_BIN_DIR		= /usr/local/bin/
-#INSTALL_BIN_DIR	= /usr/bin/
 INSTALL_SHARE_DIR	= /usr/local/share/
-#INSTALL_SHARE_DIR	= /usr/share/
 INSTALL_VAR_DIR		= /var/local/
-#INSTALL_VAR_DIR	= /var/lib/
 
 export	INSTALL_DIR
 export	INSTALL_SHARE_DIR
@@ -132,20 +122,17 @@ CFLAGS_W	= -Wall
 CFLAGS_W       += -Wextra
 CFLAGS_W       += -Wstrict-prototypes
 CFLAGS_W       += -Werror
-#CFLAGS_W       += -Wno-error=format-truncation
-#CFLAGS_W       += -Wno-error=unused-function
-#CFLAGS_W       += -Wno-error=unused-parameter
 
 CFLAGS_PKG	= `pkg-config --cflags ncurses`
 CFLAGS_PKG     += `pkg-config --cflags opencv`
 CFLAGS_PKG     += `pkg-config --cflags zbar`
 CFLAGS_PKG     += `pkg-config --cflags tesseract`
-CFLAGS_PKG     += `pkg-config --cflags lept`
-CFLAGS_PKG     += -I $(LIBALX_INC_DIR)
+CFLAGS_PKG     += `pkg-config --cflags libalx-base`
+CFLAGS_PKG     += `pkg-config --cflags libalx-ncurses`
+CFLAGS_PKG     += `pkg-config --cflags libalx-cv`
+CFLAGS_PKG     += `pkg-config --cflags libalx-ocr`
 
-CFLAGS_D	= -D _GNU_SOURCE
-CFLAGS_D       += -D _POSIX_C_SOURCE=200809L
-CFLAGS_D       += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
 CFLAGS_D       += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
 
@@ -171,20 +158,17 @@ CXXFLAGS_OPT   += -flto
 CXXFLAGS_W	= -Wall
 CXXFLAGS_W     += -Wextra
 CXXFLAGS_W     += -Werror
-CXXFLAGS_W     += -Wno-error=format-truncation
-CXXFLAGS_W     += -Wno-error=unused-function
-CXXFLAGS_W     += -Wno-error=unused-parameter
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv`
 CXXFLAGS_PKG   += `pkg-config --cflags zbar`
 CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
-CXXFLAGS_PKG   += `pkg-config --cflags lept`
-CXXFLAGS_PKG   += -I $(LIBALX_INC_DIR)
+CXXFLAGS_PKG   += `pkg-config --cflags libalx-base`
+CXXFLAGS_PKG   += `pkg-config --cflags libalx-ncurses`
+CXXFLAGS_PKG   += `pkg-config --cflags libalx-cv`
+CXXFLAGS_PKG   += `pkg-config --cflags libalx-ocr`
 
-CXXFLAGS_D	= -D _GNU_SOURCE
-CXXFLAGS_D     += -D _POSIX_C_SOURCE=200809L
-CXXFLAGS_D     += -D PROG_VERSION=\"$(PROGRAMVERSION)\"
+CXXFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CXXFLAGS_D     += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
 CXXFLAGS_D     += -D INSTALL_VAR_DIR=\"$(INSTALL_VAR_DIR)\"
 
@@ -212,8 +196,10 @@ LIBS_PKG	= `pkg-config --libs ncurses`
 LIBS_PKG       += `pkg-config --libs opencv`
 LIBS_PKG       += `pkg-config --libs zbar`
 LIBS_PKG       += `pkg-config --libs tesseract`
-LIBS_PKG       += `pkg-config --libs lept`
-LIBS_PKG       += -l gsl -l cblas -l atlas
+LIBS_PKG       += `pkg-config --libs libalx-base`
+LIBS_PKG       += `pkg-config --libs libalx-ncurses`
+LIBS_PKG       += `pkg-config --libs libalx-cv`
+LIBS_PKG       += `pkg-config --libs libalx-ocr`
 
 LIBS		= $(LIBS_STD)
 LIBS           += $(LIBS_OPT)
@@ -237,15 +223,6 @@ PHONY := all
 all: bin
 
 
-PHONY += libalx
-libalx:
-	@echo	"	MAKE	$@"
-	$(Q)$(MAKE) base	-C $(LIBALX_DIR)
-	$(Q)$(MAKE) cv		-C $(LIBALX_DIR)
-	$(Q)$(MAKE) gsl		-C $(LIBALX_DIR)
-	$(Q)$(MAKE) ncurses	-C $(LIBALX_DIR)
-	@echo
-
 PHONY += tmp
 tmp:
 	@echo	"	MAKE	$@"
@@ -253,7 +230,7 @@ tmp:
 	@echo
 
 PHONY += bin
-bin: tmp libalx
+bin: tmp
 	@echo	"	MAKE	$@"
 	$(Q)$(MAKE)	-C $(BIN_DIR)
 	@echo
@@ -288,12 +265,6 @@ clean:
 	$(Q)find $(TMP_DIR) -type f -name '*.o' -exec rm '{}' '+'
 	$(Q)find $(TMP_DIR) -type f -name '*.s' -exec rm '{}' '+'
 	$(Q)find $(BIN_DIR) -type f -name '*$(BIN_NAME)' -exec rm '{}' '+'
-	@echo
-
-PHONY += distclean
-distclean: clean
-	@echo	"	CLEAN	libalx"
-	$(Q)$(MAKE) clean	-C $(LIBALX_DIR)
 	@echo
 
 PHONY += help

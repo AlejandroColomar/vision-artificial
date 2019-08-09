@@ -18,7 +18,6 @@ OBJ		=							\
 
 IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/user/iface.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/get.h		\
 		$(INC_DIR)/vision-artificial/image/iface.h		\
 		$(INC_DIR)/vision-artificial/user/tui.h
 IFACE_SRC	=							\
@@ -26,9 +25,6 @@ IFACE_SRC	=							\
 
 TUI_INC	=								\
 		$(INC_DIR)/vision-artificial/user/tui.h			\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
-		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.h		\
-		$(LIBALX_INC_DIR)/libalx/extra/ncurses/get.h		\
 		$(INC_DIR)/vision-artificial/image/iface.h		\
 		$(INC_DIR)/vision-artificial/user/iface.h
 TUI_SRC	=								\

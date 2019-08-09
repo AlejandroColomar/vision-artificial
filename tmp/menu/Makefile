@@ -25,7 +25,6 @@ IFACE_SRC	=							\
 
 PARSE_INC	=							\
 		$(INC_DIR)/vision-artificial/menu/parse.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/sscan.h		\
 		$(INC_DIR)/vision-artificial/menu/iface.h		\
 		$(INC_DIR)/vision-artificial/save/save.h		\
 		$(INC_DIR)/vision-artificial/share/share.h		\
@@ -35,11 +34,6 @@ PARSE_SRC	=							\
 
 TUI_INC	=								\
 		$(INC_DIR)/vision-artificial/menu/tui.h			\
-		$(LIBALX_INC_DIR)/libalx/base/compiler/size.h		\
-		$(LIBALX_INC_DIR)/libalx/base/stdio/seekc.h		\
-		$(LIBALX_INC_DIR)/libalx/extra/ncurses/common.h		\
-		$(LIBALX_INC_DIR)/libalx/extra/ncurses/get.h		\
-		$(LIBALX_INC_DIR)/libalx/extra/ncurses/menu.h		\
 		$(INC_DIR)/vision-artificial/ctrl/start.h		\
 		$(INC_DIR)/vision-artificial/save/save.h		\
 		$(INC_DIR)/vision-artificial/share/share.h		\
