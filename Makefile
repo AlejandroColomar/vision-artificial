@@ -210,7 +210,7 @@ export	LIBS
 ################################################################################
 # executables
 
-BIN_NAME	= vision-artificial2
+BIN_NAME	= vision-artificial
 
 export	BIN_NAME
 
