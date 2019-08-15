@@ -16,7 +16,6 @@ OBJ		=							\
 		calib3d.o						\
 		cv.o							\
 		iface.o							\
-		ocr.o							\
 		orb.o							\
 		zbar.o
 
@@ -36,20 +35,12 @@ IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
 		$(INC_DIR)/vision-artificial/image/calib3d.hpp		\
 		$(INC_DIR)/vision-artificial/image/cv.hpp		\
-		$(INC_DIR)/vision-artificial/image/ocr.hpp		\
 		$(INC_DIR)/vision-artificial/image/orb.hpp		\
 		$(INC_DIR)/vision-artificial/image/zbar.hpp		\
 		$(INC_DIR)/vision-artificial/save/save.hpp		\
 		$(INC_DIR)/vision-artificial/user/iface.hpp
 IFACE_SRC	=							\
 		$(SRC_DIR)/image/iface.cpp
-
-OCR_INC		=							\
-		$(INC_DIR)/vision-artificial/image/ocr.h		\
-		$(INC_DIR)/vision-artificial/image/iface.h		\
-		$(INC_DIR)/vision-artificial/share/share.h
-OCR_SRC		=							\
-		$(SRC_DIR)/image/ocr.c
 
 ORB_INC		=							\
 		$(INC_DIR)/vision-artificial/image/orb.hpp
@@ -88,13 +79,6 @@ iface.s: $(IFACE_SRC) $(IFACE_INC)
 	@echo	"	CXX	vision-artificial/image/$@"
 	$(Q)$(CXX) $(CXXFLAGS) -I $(INC_DIR) -S $< -o $@
 iface.o: iface.s
-	@echo	"	AS	vision-artificial/image/$@"
-	$(Q)$(AS) $< -o $@
-
-ocr.s: $(OCR_SRC) $(OCR_INC)
-	@echo	"	CC	vision-artificial/image/$@"
-	$(Q)$(CC) $(CFLAGS) -I $(INC_DIR) -S $< -o $@
-ocr.o: ocr.s
 	@echo	"	AS	vision-artificial/image/$@"
 	$(Q)$(AS) $< -o $@
 

@@ -31,7 +31,6 @@
 
 #include "vision-artificial/image/calib3d.hpp"
 #include "vision-artificial/image/cv.hpp"
-#include "vision-artificial/image/ocr.hpp"
 #include "vision-artificial/image/orb.hpp"
 #include "vision-artificial/image/zbar.hpp"
 #include "vision-artificial/save/save.hpp"
