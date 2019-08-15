@@ -9,7 +9,6 @@ OBJS		=							\
 		$(TMP_DIR)/image/cv.o					\
 		$(TMP_DIR)/image/iface.o				\
 		$(TMP_DIR)/image/orb.o					\
-		$(TMP_DIR)/image/zbar.o					\
 		$(TMP_DIR)/menu/iface.o					\
 		$(TMP_DIR)/menu/parse.o					\
 		$(TMP_DIR)/menu/tui.o					\

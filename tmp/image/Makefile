@@ -16,8 +16,7 @@ OBJ		=							\
 		calib3d.o						\
 		cv.o							\
 		iface.o							\
-		orb.o							\
-		zbar.o
+		orb.o
 
 CALIB3D_INC	=							\
 		$(INC_DIR)/vision-artificial/image/calib3d.hpp		\
@@ -36,7 +35,6 @@ IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/image/calib3d.hpp		\
 		$(INC_DIR)/vision-artificial/image/cv.hpp		\
 		$(INC_DIR)/vision-artificial/image/orb.hpp		\
-		$(INC_DIR)/vision-artificial/image/zbar.hpp		\
 		$(INC_DIR)/vision-artificial/save/save.hpp		\
 		$(INC_DIR)/vision-artificial/user/iface.hpp
 IFACE_SRC	=							\
@@ -46,12 +44,6 @@ ORB_INC		=							\
 		$(INC_DIR)/vision-artificial/image/orb.hpp
 ORB_SRC		=							\
 		$(SRC_DIR)/image/orb.cpp
-
-ZBAR_INC	=							\
-		$(INC_DIR)/vision-artificial/image/zbar.hpp		\
-		$(INC_DIR)/vision-artificial/image/iface.hpp
-ZBAR_SRC	=							\
-		$(SRC_DIR)/image/zbar.cpp
 
 ################################################################################
 # target: dependencies
@@ -86,13 +78,6 @@ orb.s: $(ORB_SRC) $(ORB_INC)
 	@echo	"	CXX	vision-artificial/image/$@"
 	$(Q)$(CXX) $(CXXFLAGS) -I $(INC_DIR) -S $< -o $@
 orb.o: orb.s
-	@echo	"	AS	vision-artificial/image/$@"
-	$(Q)$(AS) $< -o $@
-
-zbar.s: $(ZBAR_SRC) $(ZBAR_INC)
-	@echo	"	CXX	vision-artificial/image/$@"
-	$(Q)$(CXX) $(CXXFLAGS) -I $(INC_DIR) -S $< -o $@
-zbar.o: zbar.s
 	@echo	"	AS	vision-artificial/image/$@"
 	$(Q)$(AS) $< -o $@
 

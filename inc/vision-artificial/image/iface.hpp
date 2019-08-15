@@ -165,18 +165,6 @@ struct	Img_Iface_Data_Undistort {
 };
 
 /* zbar ----------------------------------------------------------------------*/
-struct	Img_Iface_Data_Decode {
-	int	code_type;
-};
-
-struct	Img_Iface_ZB_Codes {
-	ptrdiff_t	n;
-	struct {
-		int	type;
-		char	sym_name [80];
-		char	data [ZBAR_LEN_MAX];
-	} arr [ZB_CODES_MAX];
-};
 
 /* ocr -----------------------------------------------------------------------*/
 struct	Img_Iface_Data_Read {

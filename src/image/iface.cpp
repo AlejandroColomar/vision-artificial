@@ -28,11 +28,11 @@
 #include "libalx/extra/cv/imgproc.hpp"
 #include "libalx/extra/cv/ximgproc.hpp"
 #include "libalx/extra/ocr/ocr.hpp"
+#include "libalx/extra/zbar/zbar.hpp"
 
 #include "vision-artificial/image/calib3d.hpp"
 #include "vision-artificial/image/cv.hpp"
 #include "vision-artificial/image/orb.hpp"
-#include "vision-artificial/image/zbar.hpp"
 #include "vision-artificial/save/save.hpp"
 #include "vision-artificial/user/iface.hpp"
 
@@ -62,7 +62,6 @@
  ******************************************************************************/
 /* Global --------------------------------------------------------------------*/
 	char				img_ocr_text [OCR_TEXT_MAX];
-	struct Img_Iface_ZB_Codes	zb_codes;
 /* Static --------------------------------------------------------------------*/
 static	class cv::Mat					image_copy_old;
 static	class cv::Mat					image_copy_tmp;
@@ -1131,36 +1130,32 @@ static	void	img_iface_undistort		(void)
 /* zbar ----------------------------------------------------------------------*/
 static	void	img_iface_decode		(void)
 {
-	struct Img_Iface_Data_Decode	data;
-	char	txt[LOG_LINE_LEN];
+	void		*imgdata;
+	ptrdiff_t	rows, cols;
+	int		type;
+	char		bcode_type[BUFSIZ];
+	char		bcode_data[BUFSIZ];
+	char		txt[LOG_LINE_LEN];
 
-	if (image_copy_tmp.channels() != 1)
-		goto err_chan;
-
-	data.code_type	= user_iface_getint(0, 0, INT_MAX,
+	type	= user_iface_getint(0, 0, INT_MAX,
 					"Type of code: (0 for all)", NULL);
 
-	img_zb_act(&image_copy_tmp, IMG_ZB_ACT_DECODE, &data);
+	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, &rows, &cols,
+					NULL, NULL, NULL, NULL);
+	if (alx_zbar_read(ARRAY_SIZE(bcode_data), bcode_data, bcode_type,
+					imgdata, rows, cols, type))
+		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Detect codes c = %i", data.code_type) < 0)
+	if (alx_sbprintf(txt, NULL, "Detect bcodes (type = %i)", type) < 0)
 		return;
 	user_iface_log_write(1, txt);
 
-	if (!zb_codes.n)
-		goto err_zb;
-	for (ptrdiff_t i = 0; i < zb_codes.n; i++) {
-		if (alx_sbprintf(txt, NULL, "%s -- '%s'",
-				zb_codes.arr[i].sym_name,
-				zb_codes.arr[i].data) < 0)
-			return;
-		user_iface_log_write(2, txt);
-	}
+	if (alx_sbprintf(txt, NULL, "%s -- '%s'", bcode_type, bcode_data) < 0)
+		return;
+	user_iface_log_write(2, txt);
 	return;
-err_zb:
+err:
 	user_iface_log_write(2, "! No code detected");
-	return;
-err_chan:
-	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 }
 
 /* ocr -----------------------------------------------------------------------*/
@@ -1178,7 +1173,7 @@ static	void	img_iface_read			(void)
 				alx::ocr::CONF_PRICE_USD,
 				"Config: none = 0, Price = 1", NULL);
 
-	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, &w, &h,
+	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, NULL, NULL, &w, &h,
 					&B_per_pix, &B_per_line);
 	if (alx_ocr_read(ARRAY_SIZE(img_ocr_text), img_ocr_text, imgdata, w, h,
 					B_per_pix, B_per_line, lang, conf))

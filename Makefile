@@ -131,6 +131,7 @@ CFLAGS_PKG     += `pkg-config --cflags libalx-base`
 CFLAGS_PKG     += `pkg-config --cflags libalx-ncurses`
 CFLAGS_PKG     += `pkg-config --cflags libalx-cv`
 CFLAGS_PKG     += `pkg-config --cflags libalx-ocr`
+CFLAGS_PKG     += `pkg-config --cflags libalx-zbar`
 
 CFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CFLAGS_D       += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
@@ -167,6 +168,7 @@ CXXFLAGS_PKG   += `pkg-config --cflags libalx-base`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-cv`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-ocr`
+CXXFLAGS_PKG   += `pkg-config --cflags libalx-zbar`
 
 CXXFLAGS_D	= -D PROG_VERSION=\"$(PROGRAMVERSION)\"
 CXXFLAGS_D     += -D INSTALL_SHARE_DIR=\"$(INSTALL_SHARE_DIR)\"
@@ -200,6 +202,7 @@ LIBS_PKG       += `pkg-config --libs libalx-base`
 LIBS_PKG       += `pkg-config --libs libalx-ncurses`
 LIBS_PKG       += `pkg-config --libs libalx-cv`
 LIBS_PKG       += `pkg-config --libs libalx-ocr`
+LIBS_PKG       += `pkg-config --libs libalx-zbar`
 
 LIBS		= $(LIBS_STD)
 LIBS           += $(LIBS_OPT)
