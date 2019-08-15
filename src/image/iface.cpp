@@ -27,6 +27,7 @@
 #include "libalx/extra/cv/core.hpp"
 #include "libalx/extra/cv/imgproc.hpp"
 #include "libalx/extra/cv/ximgproc.hpp"
+#include "libalx/extra/ocr/ocr.hpp"
 
 #include "vision-artificial/image/calib3d.hpp"
 #include "vision-artificial/image/cv.hpp"
@@ -1166,38 +1167,33 @@ err_chan:
 /* ocr -----------------------------------------------------------------------*/
 static	void	img_iface_read			(void)
 {
-	struct Img_Iface_Data_Read	data;
-	char	txt[LOG_LINE_LEN];
+	void		*imgdata;
+	ptrdiff_t	w, h, B_per_pix, B_per_line;
+	int		lang, conf;
+	char		txt[LOG_LINE_LEN];
 
-	if (image_copy_tmp.channels() != 1)
-		goto err_chan;
-
-	data.lang	= user_iface_getint(0, 1, 2,
+	lang = user_iface_getint(alx::ocr::LANG_ENG, 0,
+				alx::ocr::LANG_DIGITS_COMMA,
 				"Language: ENG = 0, SPA = 1, CAT = 2", NULL);
-	data.conf	= user_iface_getint(0, 1, 2,
+	conf = user_iface_getint(alx::ocr::CONF_NONE, 1,
+				alx::ocr::CONF_PRICE_USD,
 				"Config: none = 0, Price = 1", NULL);
 
-	/* Adapt image data */
-	data.img.data		= image_copy_tmp.data;
-	data.img.width		= image_copy_tmp.size().width;
-	data.img.height		= image_copy_tmp.size().height;
-	data.img.B_per_pix	= image_copy_tmp.channels();
-	data.img.B_per_line	= image_copy_tmp.step1();
+	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, &w, &h,
+					&B_per_pix, &B_per_line);
+	if (alx_ocr_read(ARRAY_SIZE(img_ocr_text), img_ocr_text, imgdata, w, h,
+					B_per_pix, B_per_line, lang, conf))
+		goto err;
 
-	img_ocr_act(IMG_OCR_ACT_READ, &data);
-
-	if (alx_sbprintf(txt, NULL, "OCR (lang = %i) [c = %i]",
-						data.lang, data.conf) < 0)
+	if (alx_sbprintf(txt, NULL, "OCR (lang = %i) [conf = %i]",
+						lang, conf) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	if (img_ocr_text[0] == '\0')
-		goto err_ocr;
+		goto err;
 	return;
-err_ocr:
+err:
 	user_iface_log_write(2, "! No text detected");
-	return;
-err_chan:
-	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 }
 
 /* iface ---------------------------------------------------------------------*/
