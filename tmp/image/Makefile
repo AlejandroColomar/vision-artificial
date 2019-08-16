@@ -15,8 +15,7 @@
 OBJ		=							\
 		calib3d.o						\
 		cv.o							\
-		iface.o							\
-		orb.o
+		iface.o
 
 CALIB3D_INC	=							\
 		$(INC_DIR)/vision-artificial/image/calib3d.hpp		\
@@ -34,7 +33,6 @@ IFACE_INC	=							\
 		$(INC_DIR)/vision-artificial/image/iface.hpp		\
 		$(INC_DIR)/vision-artificial/image/calib3d.hpp		\
 		$(INC_DIR)/vision-artificial/image/cv.hpp		\
-		$(INC_DIR)/vision-artificial/image/orb.hpp		\
 		$(INC_DIR)/vision-artificial/save/save.hpp		\
 		$(INC_DIR)/vision-artificial/user/iface.hpp
 IFACE_SRC	=							\
@@ -71,13 +69,6 @@ iface.s: $(IFACE_SRC) $(IFACE_INC)
 	@echo	"	CXX	vision-artificial/image/$@"
 	$(Q)$(CXX) $(CXXFLAGS) -I $(INC_DIR) -S $< -o $@
 iface.o: iface.s
-	@echo	"	AS	vision-artificial/image/$@"
-	$(Q)$(AS) $< -o $@
-
-orb.s: $(ORB_SRC) $(ORB_INC)
-	@echo	"	CXX	vision-artificial/image/$@"
-	$(Q)$(CXX) $(CXXFLAGS) -I $(INC_DIR) -S $< -o $@
-orb.o: orb.s
 	@echo	"	AS	vision-artificial/image/$@"
 	$(Q)$(AS) $< -o $@
 

@@ -25,6 +25,7 @@
 #include "libalx/base/stdio/printf/sbprintf.hpp"
 #include "libalx/extra/cv/alx.hpp"
 #include "libalx/extra/cv/core.hpp"
+#include "libalx/extra/cv/features2d.hpp"
 #include "libalx/extra/cv/imgproc.hpp"
 #include "libalx/extra/cv/ximgproc.hpp"
 #include "libalx/extra/ocr/ocr.hpp"
@@ -32,7 +33,6 @@
 
 #include "vision-artificial/image/calib3d.hpp"
 #include "vision-artificial/image/cv.hpp"
-#include "vision-artificial/image/orb.hpp"
 #include "vision-artificial/save/save.hpp"
 #include "vision-artificial/user/iface.hpp"
 
@@ -1086,7 +1086,7 @@ static	void	img_iface_align			(void)
 	if (image_ref.empty())
 		goto err;
 
-	img_orb_act(&image_ref, &image_copy_tmp, IMG_ORB_ACT_ALIGN);
+	alx::CV::orb_align(&image_ref, &image_copy_tmp, NULL);
 
 	user_iface_log_write(1, "Align to reference");
 	return;
