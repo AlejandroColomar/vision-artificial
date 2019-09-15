@@ -1141,7 +1141,7 @@ static	void	img_iface_decode		(void)
 					"Type of code: (0 for all)", NULL);
 
 	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, &rows, &cols,
-					NULL, NULL, NULL, NULL);
+					NULL, NULL, NULL, NULL, NULL);
 	if (alx_zbar_read(ARRAY_SIZE(bcode_data), bcode_data, bcode_type,
 					imgdata, rows, cols, type))
 		goto err;
@@ -1174,7 +1174,7 @@ static	void	img_iface_read			(void)
 				"Config: none = 0, Price = 1", NULL);
 
 	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, NULL, NULL, &w, &h,
-					&B_per_pix, &B_per_line);
+					&B_per_pix, &B_per_line, NULL);
 	if (alx_ocr_read(ARRAY_SIZE(img_ocr_text), img_ocr_text, imgdata, w, h,
 					B_per_pix, B_per_line, lang, conf))
 		goto err;
