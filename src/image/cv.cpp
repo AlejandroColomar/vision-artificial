@@ -91,7 +91,7 @@ static	void	img_cv_hough_circles	(class cv::Mat *imgptr, const void *data)
 	radius_max	= data_cast->radius_max;
 
 	/* Get circles */
-	cv::HoughCircles(*imgptr, *circles, CV_HOUGH_GRADIENT, 1, dist_min,
+	cv::HoughCircles(*imgptr, *circles, cv::HOUGH_GRADIENT, 1, dist_min,
 				param_1, param_2, radius_min, radius_max);
 
 	/* Set image to black */

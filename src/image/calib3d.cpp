@@ -87,13 +87,13 @@ static	void	img_calib3d_calibrate(class cv::Mat *imgptr, const void *data)
 	}
 
 	found	= cv::findChessboardCorners(*imgptr, pattern_size, corners,
-					CV_CALIB_CB_ADAPTIVE_THRESH |
-					CV_CALIB_CB_FILTER_QUADS);
+					cv::CALIB_CB_ADAPTIVE_THRESH |
+					cv::CALIB_CB_FILTER_QUADS);
 
 	cv::cornerSubPix(*imgptr, corners, cv::Size(11, 11),
 			cv::Size(-1, -1),
-			cv::TermCriteria(CV_TERMCRIT_EPS |
-					CV_TERMCRIT_ITER, 30, 0.1));
+			cv::TermCriteria(cv::TermCriteria::EPS |
+					cv::TermCriteria::MAX_ITER, 30, 0.1));
 	cv::drawChessboardCorners(*imgptr, pattern_size, corners, found);
 
 	image_points.push_back(corners);

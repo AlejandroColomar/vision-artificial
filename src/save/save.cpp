@@ -23,6 +23,7 @@
 #include "libalx/base/compiler/unused.hpp"
 #include "libalx/base/errno/error.hpp"
 #include "libalx/base/stdio/printf/sbprintf.hpp"
+#include "libalx/extra/cv/highgui.hpp"
 
 #include "vision-artificial/user/iface.hpp"
 
@@ -120,7 +121,7 @@ void	load_image_file	(const char *restrict fpath,
 	if (alx_sbprintf(file_name, NULL, "%s/%s", file_path, saved_name))
 		goto err_path;
 
-	image	= cv::imread(file_name, CV_LOAD_IMAGE_COLOR);
+	alx::CV::imread(&image, file_name);
 	if (image.empty())
 		goto err_img;
 

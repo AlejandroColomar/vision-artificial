@@ -125,6 +125,7 @@ CFLAGS_W       += -Werror
 
 CFLAGS_PKG	= `pkg-config --cflags ncurses`
 CFLAGS_PKG     += `pkg-config --cflags opencv`
+CFLAGS_PKG     += `pkg-config --cflags opencv4`
 CFLAGS_PKG     += `pkg-config --cflags zbar`
 CFLAGS_PKG     += `pkg-config --cflags tesseract`
 CFLAGS_PKG     += `pkg-config --cflags libalx-base`
@@ -162,6 +163,7 @@ CXXFLAGS_W     += -Werror
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv`
+CXXFLAGS_PKG   += `pkg-config --cflags opencv4`
 CXXFLAGS_PKG   += `pkg-config --cflags zbar`
 CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-base`
@@ -196,6 +198,7 @@ LIBS_OPT       += -fuse-linker-plugin
 
 LIBS_PKG	= `pkg-config --libs ncurses`
 LIBS_PKG       += `pkg-config --libs opencv`
+LIBS_PKG       += `pkg-config --libs opencv4`
 LIBS_PKG       += `pkg-config --libs zbar`
 LIBS_PKG       += `pkg-config --libs tesseract`
 LIBS_PKG       += `pkg-config --libs libalx-base`
