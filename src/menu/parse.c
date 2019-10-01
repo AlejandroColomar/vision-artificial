@@ -14,8 +14,6 @@
 
 #include <getopt.h>
 
-#include "libalx/base/stdio/sscan.h"
-
 #include "vision-artificial/menu/iface.h"
 #include "vision-artificial/save/save.h"
 #include "vision-artificial/share/share.h"

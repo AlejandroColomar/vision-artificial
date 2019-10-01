@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "libalx/base/stdio/get.h"
+#include <libalx/base/stdio/get.h>
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/user/tui.h"

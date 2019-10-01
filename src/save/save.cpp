@@ -19,11 +19,12 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "libalx/base/compiler/restrict.hpp"
-#include "libalx/base/compiler/unused.hpp"
-#include "libalx/base/errno/error.hpp"
-#include "libalx/base/stdio/printf/sbprintf.hpp"
-#include "libalx/extra/cv/highgui.hpp"
+#define ALX_NO_PREFIX
+#include <libalx/base/compiler/restrict.hpp>
+#include <libalx/base/compiler/unused.hpp>
+#include <libalx/base/errno/error.hpp>
+#include <libalx/base/stdio/printf/sbprintf.hpp>
+#include <libalx/extra/cv/highgui.hpp>
 
 #include "vision-artificial/user/iface.hpp"
 
@@ -64,30 +65,30 @@ char		saved_name[FILENAME_MAX];
 void	save_init	(void)
 {
 
-	if (alx_sbprintf(home_path, NULL, "%s/", getenv(ENV_HOME)))
+	if (sbprintf(home_path, NULL, "%s/", getenv(ENV_HOME)))
 		goto err;
-	if (alx_sbprintf(user_prog_path, NULL, "%s/%s/",
+	if (sbprintf(user_prog_path, NULL, "%s/%s/",
 					home_path, USER_PROG_DIR))
 		goto err;
-	if (alx_sbprintf(saved_path, NULL, "%s/%s/", home_path, USER_SAVED_DIR))
+	if (sbprintf(saved_path, NULL, "%s/%s/", home_path, USER_SAVED_DIR))
 		goto err;
 	saved_name[0]	= '\0';
 
 	if (mkdir(user_prog_path, 0700)) {
 		if (errno != EEXIST)
-			alx_error(EXIT_FAILURE, user_prog_path);
+			errorx(EXIT_FAILURE, user_prog_path);
 	}
 	mkdir(saved_path, 0700);
 
 	return;
 err:
-	alx_error(EXIT_FAILURE, "Path is too large and has been truncated\n");
+	errorx(EXIT_FAILURE, "Path is too large and has been truncated\n");
 }
 
 void	save_reset_fpath(void)
 {
 
-	if (alx_sbprintf(saved_path, NULL, "%s/%s/", home_path, USER_SAVED_DIR))
+	if (sbprintf(saved_path, NULL, "%s/%s/", home_path, USER_SAVED_DIR))
 		goto err;
 	return;
 err:
@@ -106,19 +107,19 @@ void	load_image_file	(const char *restrict fpath,
 	if (!fpath) {
 		/* Default path */
 		save_reset_fpath();
-		UNUSED(alx_sbprintf(file_path, NULL, "%s", saved_path));
+		UNUSED(sbprintf(file_path, NULL, "%s", saved_path));
 	} else {
-		UNUSED(alx_sbprintf(file_path, NULL, "%s", fpath));
+		UNUSED(sbprintf(file_path, NULL, "%s", fpath));
 	}
 
 	/* Set file_name */
 	if (!fname)
 		user_iface_fname(file_path, saved_name);
 	else
-		UNUSED(alx_sbprintf(saved_name, NULL, "%s", fname));
+		UNUSED(sbprintf(saved_name, NULL, "%s", fname));
 
 	/* File name */
-	if (alx_sbprintf(file_name, NULL, "%s/%s", file_path, saved_name))
+	if (sbprintf(file_name, NULL, "%s/%s", file_path, saved_name))
 		goto err_path;
 
 	alx::CV::imread(&image, file_name);
@@ -150,21 +151,21 @@ void	save_image_file	(const char *restrict fpath,
 	if (!fpath) {
 		/* Default path */
 		save_reset_fpath();
-		UNUSED(alx_sbprintf(file_path, NULL, "%s", saved_path));
+		UNUSED(sbprintf(file_path, NULL, "%s", saved_path));
 	} else {
-		UNUSED(alx_sbprintf(file_path, NULL, "%s", fpath));
+		UNUSED(sbprintf(file_path, NULL, "%s", fpath));
 	}
 
 	/* Set file_name */
 	if (!save_as) {
-		UNUSED(alx_sbprintf(saved_name,NULL, "%s", SAVED_NAME_DEFAULT));
+		UNUSED(sbprintf(saved_name,NULL, "%s", SAVED_NAME_DEFAULT));
 		user_iface_fname(saved_path, saved_name);
 	} else {
-		UNUSED(alx_sbprintf(saved_name, NULL, "%s", save_as));
+		UNUSED(sbprintf(saved_name, NULL, "%s", save_as));
 	}
 
 	/* Prepend the path */
-	if (alx_sbprintf(file_name, NULL, "%s/%s", file_path, saved_name))
+	if (sbprintf(file_name, NULL, "%s/%s", file_path, saved_name))
 		goto err_path;
 
 	fp =	fopen(file_name, "r");
@@ -172,7 +173,7 @@ void	save_image_file	(const char *restrict fpath,
 		/* Name in use;  ask once more */
 		fclose(fp);
 		user_iface_fname(saved_path, saved_name);
-		if (alx_sbprintf(file_name,NULL,"%s/%s", file_path, saved_name))
+		if (sbprintf(file_name,NULL,"%s/%s", file_path, saved_name))
 			goto err_path;
 	}
 

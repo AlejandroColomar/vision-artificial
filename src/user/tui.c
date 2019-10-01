@@ -12,9 +12,9 @@
 #include <inttypes.h>
 #include <ncurses.h>
 
-#include "libalx/base/stdio/seekc.h"
-#include "libalx/extra/ncurses/common.h"
-#include "libalx/extra/ncurses/get.h"
+#include <libalx/base/stdio/seekc.h>
+#include <libalx/extra/ncurses/common.h>
+#include <libalx/extra/ncurses/get.h>
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/user/iface.h"

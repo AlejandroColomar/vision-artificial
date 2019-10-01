@@ -15,11 +15,11 @@
 
 #include <ncurses.h>
 
-#include "libalx/base/compiler/size.h"
-#include "libalx/base/stdio/seekc.h"
-#include "libalx/extra/ncurses/common.h"
-#include "libalx/extra/ncurses/get.h"
-#include "libalx/extra/ncurses/menu.h"
+#include <libalx/base/compiler/size.h>
+#include <libalx/base/stdio/seekc.h>
+#include <libalx/extra/ncurses/common.h>
+#include <libalx/extra/ncurses/get.h>
+#include <libalx/extra/ncurses/menu.h>
 
 #include "vision-artificial/ctrl/start.h"
 #include "vision-artificial/save/save.h"

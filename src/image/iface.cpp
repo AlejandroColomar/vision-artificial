@@ -21,15 +21,16 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/ximgproc.hpp>
 
-#include "libalx/base/compiler/unused.hpp"
-#include "libalx/base/stdio/printf/sbprintf.hpp"
-#include "libalx/extra/cv/alx.hpp"
-#include "libalx/extra/cv/core.hpp"
-#include "libalx/extra/cv/features2d.hpp"
-#include "libalx/extra/cv/imgproc.hpp"
-#include "libalx/extra/cv/ximgproc.hpp"
-#include "libalx/extra/ocr/ocr.hpp"
-#include "libalx/extra/zbar/zbar.hpp"
+#define ALX_NO_PREFIX
+#include <libalx/base/compiler/unused.hpp>
+#include <libalx/base/stdio/printf/sbprintf.hpp>
+#include <libalx/extra/cv/alx.hpp>
+#include <libalx/extra/cv/core.hpp>
+#include <libalx/extra/cv/features2d.hpp>
+#include <libalx/extra/cv/imgproc.hpp>
+#include <libalx/extra/cv/ximgproc.hpp>
+#include <libalx/extra/ocr/ocr.hpp>
+#include <libalx/extra/zbar/zbar.hpp>
 
 #include "vision-artificial/image/calib3d.hpp"
 #include "vision-artificial/image/cv.hpp"
@@ -198,7 +199,7 @@ void	img_iface_load		(const char *fpath, const char *fname)
 	if (!fname)
 		user_iface_fname(fpath, file_name);
 	else
-		UNUSED(alx_sbprintf(file_name, NULL, "%s", fname));
+		UNUSED(sbprintf(file_name, NULL, "%s", fname));
 
 	errno	= 0;
 	load_image_file(path, file_name);
@@ -540,8 +541,7 @@ static	void	img_iface_pixel_get		(void)
 	if (alx::CV::pixel_get_u8(&image_copy_tmp, &val, x, y))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Pixel get:  (%ti, %ti): %hhu",
-							x, y, val) < 0)
+	if (sbprintf(txt, NULL, "Pixel get:  (%ti, %ti): %hhu", x, y, val) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -562,8 +562,7 @@ static	void	img_iface_pixel_set		(void)
 	if (alx::CV::pixel_set_u8(&image_copy_tmp, val, x, y))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Pixel set:  (%ti, %ti): %hhu",
-							x, y, val) < 0)
+	if (sbprintf(txt, NULL, "Pixel set:  (%ti, %ti): %hhu", x, y, val) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -589,7 +588,7 @@ static	void	img_iface_set_ROI		(void)
 
 	alx::CV::roi_set(&image_copy_tmp, &rect);
 
-	if (alx_sbprintf(txt, NULL, "ROI: (%i,%i) w=%i,h=%i",
+	if (sbprintf(txt, NULL, "ROI: (%i,%i) w=%i,h=%i",
 				rect.x, rect.y, rect.width, rect.height) < 0)
 		return;
 	user_iface_log_write(1, txt);
@@ -601,7 +600,7 @@ static	void	img_iface_set_ROI_2rect		(void)
 
 	alx::CV::roi_set(&image_copy_tmp, &rectangle);
 
-	if (alx_sbprintf(txt, NULL, "ROI: (%i,%i) w=%i,h=%i",
+	if (sbprintf(txt, NULL, "ROI: (%i,%i) w=%i,h=%i",
 				rectangle.x, rectangle.y,
 				rectangle.width, rectangle.height) < 0)
 		return;
@@ -652,7 +651,7 @@ static	void	img_iface_component		(void)
 	if (alx::CV::component(&image_copy_tmp, cmp))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Component %ti", cmp) < 0)
+	if (sbprintf(txt, NULL, "Component %ti", cmp) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -672,7 +671,7 @@ static	void	img_iface_dilate		(void)
 	if (alx::CV::dilate(&image_copy_tmp, i))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Dilate i = %ti", i) < 0)
+	if (sbprintf(txt, NULL, "Dilate i = %ti", i) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -690,7 +689,7 @@ static	void	img_iface_erode			(void)
 	if (alx::CV::erode(&image_copy_tmp, i))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Erode i = %ti", i) < 0)
+	if (sbprintf(txt, NULL, "Erode i = %ti", i) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -708,7 +707,7 @@ static	void	img_iface_dilate_erode		(void)
 	if (alx::CV::dilate_erode(&image_copy_tmp, i))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Dilate-erode i = %ti", i) < 0)
+	if (sbprintf(txt, NULL, "Dilate-erode i = %ti", i) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -726,7 +725,7 @@ static	void	img_iface_erode_dilate		(void)
 	if (alx::CV::erode_dilate(&image_copy_tmp, i))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Erode-dilate i = %ti", i) < 0)
+	if (sbprintf(txt, NULL, "Erode-dilate i = %ti", i) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -748,7 +747,7 @@ static	void	img_iface_smooth		(void)
 	if (alx::CV::smooth(&image_copy_tmp, method, ksize))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Smooth mth = %i [%ti x %ti]",
+	if (sbprintf(txt, NULL, "Smooth mth = %i [%ti x %ti]",
 						method, ksize, ksize) < 0)
 		return;
 	user_iface_log_write(1, txt);
@@ -772,7 +771,7 @@ static	void	img_iface_sobel			(void)
 	if (alx::CV::sobel(&image_copy_tmp, dx, dy, ksize))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Sobel dx = %ti; dy = %ti [ks = %ti]",
+	if (sbprintf(txt, NULL, "Sobel dx = %ti; dy = %ti [ks = %ti]",
 						dx, dy, ksize) < 0)
 		return;
 	user_iface_log_write(1, txt);
@@ -791,7 +790,7 @@ static	void	img_iface_border		(void)
 	if (alx::CV::border(&image_copy_tmp, size))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Border size = %ti", size) < 0)
+	if (sbprintf(txt, NULL, "Border size = %ti", size) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -810,7 +809,7 @@ static	void	img_iface_mirror		(void)
 	if (alx::CV::mirror(&image_copy_tmp, axis))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Mirror axis: %i", axis) < 0)
+	if (sbprintf(txt, NULL, "Mirror axis: %i", axis) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -829,7 +828,7 @@ static	void	img_iface_rotate_orto		(void)
 	if (alx::CV::rotate_orto(&image_copy_tmp, n))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Rotate %i * pi/2 rad", n) < 0)
+	if (sbprintf(txt, NULL, "Rotate %i * pi/2 rad", n) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -850,8 +849,7 @@ static	void	img_iface_rotate		(void)
 	if (alx::CV::rotate(&image_copy_tmp, x, y, angle))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Rotate (%.2lf,%.2lf) %lfº",
-						x, y, angle) < 0)
+	if (sbprintf(txt, NULL, "Rotate (%.2lf,%.2lf) %lfº", x, y, angle) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -886,7 +884,7 @@ static	void	img_iface_adaptive_thr		(void)
 	if (alx::CV::adaptive_thr(&image_copy_tmp, method, thr_typ, ksize))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Threshold mth=%i, typ=%i, ks=%ti",
+	if (sbprintf(txt, NULL, "Threshold mth=%i, typ=%i, ks=%ti",
 						method, thr_typ, ksize) < 0)
 		return;
 	user_iface_log_write(1, txt);
@@ -906,7 +904,7 @@ static	void	img_iface_cvt_color		(void)
 	if (alx::CV::cvt_color(&image_copy_tmp, method))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Convert color %i", method) < 0)
+	if (sbprintf(txt, NULL, "Convert color %i", method) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -940,7 +938,7 @@ static	void	img_iface_threshold		(void)
 	if (alx::CV::threshold(&image_copy_tmp, thr_typ, thr_val))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Threshold typ = %i, val = %i",
+	if (sbprintf(txt, NULL, "Threshold typ = %i, val = %i",
 							thr_typ, thr_val) < 0)
 		return;
 	user_iface_log_write(1, txt);
@@ -982,7 +980,7 @@ static	void	img_iface_contours		(void)
 	if (alx::CV::contours(&image_copy_tmp, &contours))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Contours n = %zu", contours.size()) < 0)
+	if (sbprintf(txt, NULL, "Contours n = %zu", contours.size()) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -998,7 +996,7 @@ static	void	img_iface_contours_dimensions	(void)
 	for (size_t i = 0; i < contours.size(); i++) {
 		alx::CV::contour_dimensions(&contours[i],
 						&area[i], &perimeter[i]);
-		if (alx_sbprintf(txt, NULL, "cnt[%zu]: A = %lf; P = %lf;",
+		if (sbprintf(txt, NULL, "cnt[%zu]: A = %lf; P = %lf;",
 						i, area[i], perimeter[i]) < 0)
 			return;
 		user_iface_log_write(2, txt);
@@ -1071,7 +1069,7 @@ static	void	img_iface_hough_circles		(void)
 
 	img_cv_act(&image_copy_tmp, IMG_CV_ACT_HOUGH_CIRCLES, &data);
 
-	if (alx_sbprintf(txt, NULL, "Circles n = %zu",data.circles->size()) < 0)
+	if (sbprintf(txt, NULL, "Circles n = %zu",data.circles->size()) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -1146,11 +1144,11 @@ static	void	img_iface_decode		(void)
 					imgdata, rows, cols, type))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "Detect bcodes (type = %i)", type) < 0)
+	if (sbprintf(txt, NULL, "Detect bcodes (type = %i)", type) < 0)
 		return;
 	user_iface_log_write(1, txt);
 
-	if (alx_sbprintf(txt, NULL, "%s -- '%s'", bcode_type, bcode_data) < 0)
+	if (sbprintf(txt, NULL, "%s -- '%s'", bcode_type, bcode_data) < 0)
 		return;
 	user_iface_log_write(2, txt);
 	return;
@@ -1179,8 +1177,7 @@ static	void	img_iface_read			(void)
 					B_per_pix, B_per_line, lang, conf))
 		goto err;
 
-	if (alx_sbprintf(txt, NULL, "OCR (lang = %i) [conf = %i]",
-						lang, conf) < 0)
+	if (sbprintf(txt, NULL, "OCR (lang = %i) [conf = %i]", lang, conf) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	if (img_ocr_text[0] == '\0')
@@ -1219,7 +1216,7 @@ static	void	img_iface_save_mem		(void)
 	image_mem[m].release();
 	image_copy_tmp.copyTo(image_mem[m]);
 
-	if (alx_sbprintf(txt, NULL, "Save to mem[%ti]", m) < 0)
+	if (sbprintf(txt, NULL, "Save to mem[%ti]", m) < 0)
 		return;
 	user_iface_log_write(1, txt);
 }
@@ -1237,7 +1234,7 @@ static	void	img_iface_load_mem		(void)
 	image_copy_tmp.release();
 	image_mem[m].copyTo(image_copy_tmp);
 
-	if (alx_sbprintf(txt, NULL, "Load from mem[%ti]", m) < 0)
+	if (sbprintf(txt, NULL, "Load from mem[%ti]", m) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;

@@ -9,8 +9,8 @@
  ******************************************************************************/
 #include <stdio.h>
 
-#include "libalx/base/stdio/seekc.h"
-#include "libalx/extra/ncurses/common.h"
+#include <libalx/base/stdio/seekc.h>
+#include <libalx/extra/ncurses/common.h>
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/menu/iface.h"

@@ -14,7 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libalx/base/errno/error.h"
+#define ALX_NO_PREFIX
+#include <libalx/base/errno/error.h>
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/save/save.h"
@@ -51,7 +52,7 @@ void	start_switch	(void)
 	user_iface();
 	user_iface_cleanup();
 err:
-	alx_perror(saved_name);
+	perrorx(saved_name);
 	img_iface_cleanup();
 }
 

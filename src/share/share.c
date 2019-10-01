@@ -14,9 +14,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "libalx/base/errno/error.h"
-#include "libalx/base/compiler/size.h"
-#include "libalx/base/stdio/printf/sbprintf.h"
+#define ALX_NO_PREFIX
+#include <libalx/base/errno/error.h>
+#include <libalx/base/compiler/size.h>
+#include <libalx/base/stdio/printf/sbprintf.h>
 
 
 /******************************************************************************
@@ -77,14 +78,14 @@ void	print_share_file	(int file)
 		break;
 	}
 
-	if (alx_sbprintf(cmd, NULL, "less %s", fname))
+	if (sbprintf(cmd, NULL, "less %s", fname))
 		goto err;
 	if (system(cmd))
 		goto err;
 
 	return;
 err:
-	alx_perror(cmd);
+	perrorx(cmd);
 }
 
 void	print_version		(void)
