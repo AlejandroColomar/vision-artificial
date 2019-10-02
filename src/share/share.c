@@ -16,7 +16,6 @@
 
 #define ALX_NO_PREFIX
 #include <libalx/base/errno/error.h>
-#include <libalx/base/compiler/size.h>
 #include <libalx/base/stdio/printf/sbprintf.h>
 
 
