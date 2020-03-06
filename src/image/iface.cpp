@@ -24,11 +24,25 @@
 #define ALX_NO_PREFIX
 #include <libalx/base/compiler/unused.hpp>
 #include <libalx/base/stdio/printf/sbprintf.hpp>
-#include <libalx/extra/cv/alx.hpp>
-#include <libalx/extra/cv/core.hpp>
-#include <libalx/extra/cv/features2d.hpp>
-#include <libalx/extra/cv/imgproc.hpp>
-#include <libalx/extra/cv/ximgproc.hpp>
+#include <libalx/extra/cv/alx/lines.hpp>
+#include <libalx/extra/cv/alx/max.hpp>
+#include <libalx/extra/cv/alx/mean.hpp>
+#include <libalx/extra/cv/alx/median.hpp>
+#include <libalx/extra/cv/alx/skeleton.hpp>
+#include <libalx/extra/cv/core/array.hpp>
+#include <libalx/extra/cv/core/contours.hpp>
+#include <libalx/extra/cv/core/img.hpp>
+#include <libalx/extra/cv/core/pixel.hpp>
+#include <libalx/extra/cv/core/rect.hpp>
+#include <libalx/extra/cv/core/roi.hpp>
+#include <libalx/extra/cv/features2d/orb.hpp>
+#include <libalx/extra/cv/imgproc/features.hpp>
+#include <libalx/extra/cv/imgproc/filter.hpp>
+#include <libalx/extra/cv/imgproc/geometric.hpp>
+#include <libalx/extra/cv/imgproc/histogram.hpp>
+#include <libalx/extra/cv/imgproc/miscellaneous.hpp>
+#include <libalx/extra/cv/imgproc/shape.hpp>
+#include <libalx/extra/cv/ximgproc/thinning.hpp>
 #include <libalx/extra/ocr/ocr.hpp>
 #include <libalx/extra/zbar/zbar.hpp>
 
@@ -199,7 +213,7 @@ void	img_iface_load		(const char *fpath, const char *fname)
 	if (!fname)
 		user_iface_fname(fpath, file_name);
 	else
-		UNUSED(sbprintf(file_name, NULL, "%s", fname));
+		ALX_UNUSED(sbprintf(file_name, NULL, "%s", fname));
 
 	errno	= 0;
 	load_image_file(path, file_name);

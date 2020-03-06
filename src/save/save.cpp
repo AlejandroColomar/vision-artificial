@@ -24,7 +24,7 @@
 #include <libalx/base/compiler/unused.hpp>
 #include <libalx/base/errno/error.hpp>
 #include <libalx/base/stdio/printf/sbprintf.hpp>
-#include <libalx/extra/cv/highgui.hpp>
+#include <libalx/extra/cv/highgui/file.hpp>
 
 #include "vision-artificial/user/iface.hpp"
 
@@ -107,16 +107,16 @@ void	load_image_file	(const char *restrict fpath,
 	if (!fpath) {
 		/* Default path */
 		save_reset_fpath();
-		UNUSED(sbprintf(file_path, NULL, "%s", saved_path));
+		ALX_UNUSED(sbprintf(file_path, NULL, "%s", saved_path));
 	} else {
-		UNUSED(sbprintf(file_path, NULL, "%s", fpath));
+		ALX_UNUSED(sbprintf(file_path, NULL, "%s", fpath));
 	}
 
 	/* Set file_name */
 	if (!fname)
 		user_iface_fname(file_path, saved_name);
 	else
-		UNUSED(sbprintf(saved_name, NULL, "%s", fname));
+		ALX_UNUSED(sbprintf(saved_name, NULL, "%s", fname));
 
 	/* File name */
 	if (sbprintf(file_name, NULL, "%s/%s", file_path, saved_name))
@@ -151,17 +151,17 @@ void	save_image_file	(const char *restrict fpath,
 	if (!fpath) {
 		/* Default path */
 		save_reset_fpath();
-		UNUSED(sbprintf(file_path, NULL, "%s", saved_path));
+		ALX_UNUSED(sbprintf(file_path, NULL, "%s", saved_path));
 	} else {
-		UNUSED(sbprintf(file_path, NULL, "%s", fpath));
+		ALX_UNUSED(sbprintf(file_path, NULL, "%s", fpath));
 	}
 
 	/* Set file_name */
 	if (!save_as) {
-		UNUSED(sbprintf(saved_name,NULL, "%s", SAVED_NAME_DEFAULT));
+		ALX_UNUSED(sbprintf(saved_name,NULL, "%s", SAVED_NAME_DEFAULT));
 		user_iface_fname(saved_path, saved_name);
 	} else {
-		UNUSED(sbprintf(saved_name, NULL, "%s", save_as));
+		ALX_UNUSED(sbprintf(saved_name, NULL, "%s", save_as));
 	}
 
 	/* Prepend the path */
