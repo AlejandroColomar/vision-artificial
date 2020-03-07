@@ -614,14 +614,16 @@ err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 
 static	void	img_iface_white_mask	(void)
 {
-	uint8_t	tolerance;
+	uint8_t	s_tolerance, l_tolerance;
 	char	txt[LOG_LINE_LEN];
 
-	tolerance	= user_iface_getint(0, 0, UINT8_MAX, "tolerance:", NULL);
-	if (alx::CV::white_mask(&image_copy_tmp, tolerance))
+	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	l_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "L tolerance:", NULL);
+	if (alx::CV::white_mask(&image_copy_tmp, s_tolerance, l_tolerance))
 		goto err;
 
-	if (sbprintf(txt, NULL, "White mask: tol=%" PRIu8 "", tolerance) < 0)
+	if (sbprintf(txt, NULL, "White mask: S_tol=%" PRIu8 "; L_tol=%" PRIu8 "",
+					s_tolerance, l_tolerance) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -630,14 +632,16 @@ err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 
 static	void	img_iface_black_mask	(void)
 {
-	uint8_t	tolerance;
+	uint8_t	s_tolerance, l_tolerance;
 	char	txt[LOG_LINE_LEN];
 
-	tolerance	= user_iface_getint(0, 0, UINT8_MAX, "tolerance:", NULL);
-	if (alx::CV::black_mask(&image_copy_tmp, tolerance))
+	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	l_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "L tolerance:", NULL);
+	if (alx::CV::black_mask(&image_copy_tmp, s_tolerance, l_tolerance))
 		goto err;
 
-	if (sbprintf(txt, NULL, "Black mask: tol=%" PRIu8 "", tolerance) < 0)
+	if (sbprintf(txt, NULL, "Black mask: S_tol=%" PRIu8 "; L_tol=%" PRIu8 "",
+					s_tolerance, l_tolerance) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -646,14 +650,16 @@ err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 
 static	void	img_iface_gray_mask	(void)
 {
-	uint8_t	tolerance;
+	uint8_t	s_tolerance, l_tolerance;
 	char	txt[LOG_LINE_LEN];
 
-	tolerance	= user_iface_getint(0, 0, UINT8_MAX, "tolerance:", NULL);
-	if (alx::CV::gray_mask(&image_copy_tmp, tolerance))
+	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	l_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "L tolerance:", NULL);
+	if (alx::CV::gray_mask(&image_copy_tmp, s_tolerance, l_tolerance))
 		goto err;
 
-	if (sbprintf(txt, NULL, "Gray mask: tol=%" PRIu8 "", tolerance) < 0)
+	if (sbprintf(txt, NULL, "Gray mask: S_tol=%" PRIu8 "; L_tol=%" PRIu8 "",
+					s_tolerance, l_tolerance) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -917,14 +923,17 @@ err:
 static	void	img_iface_border		(void)
 {
 	ptrdiff_t	size;
+	uint8_t		val;
 	char		txt[LOG_LINE_LEN];
 
 	size	= user_iface_getint(1, 1, INT16_MAX, "Size",NULL);
+	val	= user_iface_getint(0, 0, UINT8_MAX, "Value",NULL);
 
-	if (alx::CV::border(&image_copy_tmp, size))
+	if (alx::CV::border(&image_copy_tmp, size, val))
 		goto err;
 
-	if (sbprintf(txt, NULL, "Border size = %ti", size) < 0)
+	if (sbprintf(txt, NULL, "Border size = %ti; val = %" PRIu8 "", size,
+								val) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
