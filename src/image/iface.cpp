@@ -10,8 +10,10 @@
 #include "vision-artificial/image/iface.hpp"
 
 #include <cerrno>
+#include <cinttypes>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 
 #include <vector>
@@ -24,6 +26,8 @@
 #define ALX_NO_PREFIX
 #include <libalx/base/compiler/unused.hpp>
 #include <libalx/base/stdio/printf/sbprintf.hpp>
+#include <libalx/extra/cv/alx/fill.hpp>
+#include <libalx/extra/cv/alx/gray.hpp>
 #include <libalx/extra/cv/alx/lines.hpp>
 #include <libalx/extra/cv/alx/max.hpp>
 #include <libalx/extra/cv/alx/mean.hpp>
@@ -112,6 +116,13 @@ static	void	img_iface_mean_horizontal	(void);
 static	void	img_iface_mean_vertical		(void);
 static	void	img_iface_median_horizontal	(void);
 static	void	img_iface_median_vertical	(void);
+static	void	img_iface_bkgd_mask		(void);
+static	void	img_iface_bkgd_fill		(void);
+static	void	img_iface_holes_mask		(void);
+static	void	img_iface_holes_fill		(void);
+static	void	img_iface_white_mask		(void);
+static	void	img_iface_black_mask		(void);
+static	void	img_iface_gray_mask		(void);
 	/* cv */
 		/* Core: The core functionality */
 			/* Pixel */
@@ -264,6 +275,27 @@ void	img_iface_act		(int action)
 		break;
 	case IMG_IFACE_ACT_MEDIAN_VERTICAL:
 		img_iface_median_vertical();
+		break;
+	case IMG_IFACE_ACT_BKGD_MASK:
+		img_iface_bkgd_mask();
+		break;
+	case IMG_IFACE_ACT_BKGD_FILL:
+		img_iface_bkgd_fill();
+		break;
+	case IMG_IFACE_ACT_HOLES_MASK:
+		img_iface_holes_mask();
+		break;
+	case IMG_IFACE_ACT_HOLES_FILL:
+		img_iface_holes_fill();
+		break;
+	case IMG_IFACE_ACT_WHITE_MASK:
+		img_iface_white_mask();
+		break;
+	case IMG_IFACE_ACT_BLACK_MASK:
+		img_iface_black_mask();
+		break;
+	case IMG_IFACE_ACT_GRAY_MASK:
+		img_iface_gray_mask();
 		break;
 	/* img_cv */
 		/* Core: The core functionality */
@@ -538,6 +570,94 @@ static	void	img_iface_median_vertical	(void)
 	return;
 err:
 	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
+}
+
+static	void	img_iface_bkgd_mask	(void)
+{
+
+	if (alx::CV::bkgd_mask(&image_copy_tmp))
+		goto err;
+	user_iface_log_write(1, "Bkgd mask");
+	return;
+err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
+}
+
+static	void	img_iface_bkgd_fill	(void)
+{
+
+	if (alx::CV::bkgd_fill(&image_copy_tmp))
+		goto err;
+	user_iface_log_write(1, "Bkgd fill");
+	return;
+err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
+}
+
+static	void	img_iface_holes_mask	(void)
+{
+
+	if (alx::CV::holes_mask(&image_copy_tmp))
+		goto err;
+	user_iface_log_write(1, "Holes mask");
+	return;
+err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
+}
+
+static	void	img_iface_holes_fill	(void)
+{
+
+	if (alx::CV::holes_fill(&image_copy_tmp))
+		goto err;
+	user_iface_log_write(1, "Holes fill");
+	return;
+err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
+}
+
+static	void	img_iface_white_mask	(void)
+{
+	uint8_t	tolerance;
+	char	txt[LOG_LINE_LEN];
+
+	tolerance	= user_iface_getint(0, 0, UINT8_MAX, "tolerance:", NULL);
+	if (alx::CV::white_mask(&image_copy_tmp, tolerance))
+		goto err;
+
+	if (sbprintf(txt, NULL, "White mask: tol=%" PRIu8 "", tolerance) < 0)
+		return;
+	user_iface_log_write(1, txt);
+	return;
+err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
+}
+
+static	void	img_iface_black_mask	(void)
+{
+	uint8_t	tolerance;
+	char	txt[LOG_LINE_LEN];
+
+	tolerance	= user_iface_getint(0, 0, UINT8_MAX, "tolerance:", NULL);
+	if (alx::CV::black_mask(&image_copy_tmp, tolerance))
+		goto err;
+
+	if (sbprintf(txt, NULL, "Black mask: tol=%" PRIu8 "", tolerance) < 0)
+		return;
+	user_iface_log_write(1, txt);
+	return;
+err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
+}
+
+static	void	img_iface_gray_mask	(void)
+{
+	uint8_t	tolerance;
+	char	txt[LOG_LINE_LEN];
+
+	tolerance	= user_iface_getint(0, 0, UINT8_MAX, "tolerance:", NULL);
+	if (alx::CV::gray_mask(&image_copy_tmp, tolerance))
+		goto err;
+
+	if (sbprintf(txt, NULL, "Gray mask: tol=%" PRIu8 "", tolerance) < 0)
+		return;
+	user_iface_log_write(1, txt);
+	return;
+err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 }
 
 /* cv ------------------------------------------------------------------------*/
@@ -913,7 +1033,7 @@ static	void	img_iface_cvt_color		(void)
 	char	txt[LOG_LINE_LEN];
 
 	method	= user_iface_getint(0, 0, cv::COLOR_COLORCVT_MAX,
-				"Method: BGR2GRAY = 6, BGR2HSV = 40", NULL);
+				"Method: BGR2GRAY = 6, BGR2HSV = 40, BGR2HLS = 52", NULL);
 
 	if (alx::CV::cvt_color(&image_copy_tmp, method))
 		goto err;

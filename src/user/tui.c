@@ -302,6 +302,34 @@ static	int	usr_input	(void)
 					return	USER_IFACE_ACT_MEDIAN_VERTICAL;
 				}
 				break;
+			case '3':
+				/* Fill */
+				c = wgetch(win_log);
+
+				switch (c) {
+				case '0':
+					return	USER_IFACE_ACT_BKGD_MASK;
+				case '1':
+					return	USER_IFACE_ACT_BKGD_FILL;
+				case '2':
+					return	USER_IFACE_ACT_HOLES_MASK;
+				case '3':
+					return	USER_IFACE_ACT_HOLES_FILL;
+				}
+				break;
+			case '4':
+				/* Gray */
+				c = wgetch(win_log);
+
+				switch (c) {
+				case '0':
+					return	USER_IFACE_ACT_WHITE_MASK;
+				case '1':
+					return	USER_IFACE_ACT_BLACK_MASK;
+				case '2':
+					return	USER_IFACE_ACT_GRAY_MASK;
+				}
+				break;
 			}
 			break;
 		case '1':
@@ -556,6 +584,13 @@ static	void	show_help	(void)
 	mvwprintw(win_help, r++, c, " - Vertical mean:	%s",		"f021");
 	mvwprintw(win_help, r++, c, " - Horizontal median:	%s",	"f022");
 	mvwprintw(win_help, r++, c, " - Vertical median:	%s",	"f023");
+	mvwprintw(win_help, r++, c, " - BKGD mask:		%s",	"f030");
+	mvwprintw(win_help, r++, c, " - BKGD fill:		%s",	"f031");
+	mvwprintw(win_help, r++, c, " - Holes mask:		%s",	"f032");
+	mvwprintw(win_help, r++, c, " - Holes fill:		%s",	"f033");
+	mvwprintw(win_help, r++, c, " - White mask:		%s",	"f040");
+	mvwprintw(win_help, r++, c, " - Black mask:		%s",	"f041");
+	mvwprintw(win_help, r++, c, " - Gray mask:		%s",	"f042");
 	mvwprintw(win_help, r++, c, " - Pixel get:		%s",	"f1000");
 	mvwprintw(win_help, r++, c, " - Pixel set:		%s",	"f1001");
 	mvwprintw(win_help, r++, c, " - Set ROI:		%s",	"f1010");
