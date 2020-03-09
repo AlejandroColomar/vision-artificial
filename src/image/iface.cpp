@@ -40,12 +40,13 @@
 #include <libalx/extra/cv/core/rect.hpp>
 #include <libalx/extra/cv/core/roi.hpp>
 #include <libalx/extra/cv/features2d/orb.hpp>
-#include <libalx/extra/cv/imgproc/features.hpp>
-#include <libalx/extra/cv/imgproc/filter.hpp>
-#include <libalx/extra/cv/imgproc/geometric.hpp>
-#include <libalx/extra/cv/imgproc/histogram.hpp>
-#include <libalx/extra/cv/imgproc/miscellaneous.hpp>
-#include <libalx/extra/cv/imgproc/shape.hpp>
+#include <libalx/extra/cv/imgproc/features/features.hpp>
+#include <libalx/extra/cv/imgproc/filter/filter.hpp>
+#include <libalx/extra/cv/imgproc/geometric/geom.hpp>
+#include <libalx/extra/cv/imgproc/histogram/hist.hpp>
+#include <libalx/extra/cv/imgproc/miscellaneous/misc.hpp>
+#include <libalx/extra/cv/imgproc/shape/contours.hpp>
+#include <libalx/extra/cv/imgproc/shape/rect.hpp>
 #include <libalx/extra/cv/ximgproc/thinning.hpp>
 #include <libalx/extra/ocr/ocr.hpp>
 #include <libalx/extra/zbar/zbar.hpp>
@@ -94,6 +95,8 @@ static	class cv::Mat					hist_img_c3;
 static	class std::vector <class std::vector <cv::Point_ <int>>>  contours;
 static	double						area[CONTOURS_MAX];
 static	double						perimeter[CONTOURS_MAX];
+static	ptrdiff_t					ctr_x[CONTOURS_MAX];
+static	ptrdiff_t					ctr_y[CONTOURS_MAX];
 static	class cv::Mat					hierarchy;
 static	class cv::Rect_ <int>				rectangle;
 static	class cv::RotatedRect				rectangle_rot;
@@ -614,16 +617,17 @@ err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 
 static	void	img_iface_white_mask	(void)
 {
-	uint8_t	s_tolerance, l_tolerance;
+	uint8_t	s_tolerance, l_tolerance, sl_tolerance;
 	char	txt[LOG_LINE_LEN];
 
-	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	sl_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "SL tolerance:", NULL);
 	l_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "L tolerance:", NULL);
-	if (alx::CV::white_mask(&image_copy_tmp, s_tolerance, l_tolerance))
+	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	if (alx::CV::white_mask(&image_copy_tmp, sl_tolerance, l_tolerance, s_tolerance))
 		goto err;
 
-	if (sbprintf(txt, NULL, "White mask: S_tol=%" PRIu8 "; L_tol=%" PRIu8 "",
-					s_tolerance, l_tolerance) < 0)
+	if (sbprintf(txt, NULL, "White mask: SL_tol=%" PRIu8 "; L_tol=%" PRIu8 "; S_tol=%" PRIu8 "",
+					sl_tolerance, l_tolerance, s_tolerance) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -632,16 +636,17 @@ err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 
 static	void	img_iface_black_mask	(void)
 {
-	uint8_t	s_tolerance, l_tolerance;
+	uint8_t	s_tolerance, l_tolerance, sl_tolerance;
 	char	txt[LOG_LINE_LEN];
 
-	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	sl_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "SL tolerance:", NULL);
 	l_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "L tolerance:", NULL);
-	if (alx::CV::black_mask(&image_copy_tmp, s_tolerance, l_tolerance))
+	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	if (alx::CV::black_mask(&image_copy_tmp, sl_tolerance, l_tolerance, s_tolerance))
 		goto err;
 
-	if (sbprintf(txt, NULL, "Black mask: S_tol=%" PRIu8 "; L_tol=%" PRIu8 "",
-					s_tolerance, l_tolerance) < 0)
+	if (sbprintf(txt, NULL, "Black mask: SL_tol=%" PRIu8 "; L_tol=%" PRIu8 "; S_tol=%" PRIu8 "",
+					sl_tolerance, l_tolerance, s_tolerance) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -650,16 +655,17 @@ err:	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 
 static	void	img_iface_gray_mask	(void)
 {
-	uint8_t	s_tolerance, l_tolerance;
+	uint8_t	s_tolerance, l_tolerance, sl_tolerance;
 	char	txt[LOG_LINE_LEN];
 
-	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	sl_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "SL tolerance:", NULL);
 	l_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "L tolerance:", NULL);
-	if (alx::CV::gray_mask(&image_copy_tmp, s_tolerance, l_tolerance))
+	s_tolerance	= user_iface_getint(0, 0, UINT8_MAX, "S tolerance:", NULL);
+	if (alx::CV::gray_mask(&image_copy_tmp, sl_tolerance, l_tolerance, s_tolerance))
 		goto err;
 
-	if (sbprintf(txt, NULL, "Gray mask: S_tol=%" PRIu8 "; L_tol=%" PRIu8 "",
-					s_tolerance, l_tolerance) < 0)
+	if (sbprintf(txt, NULL, "Gray mask: SL_tol=%" PRIu8 "; L_tol=%" PRIu8 "; S_tol=%" PRIu8 "",
+					sl_tolerance, l_tolerance, s_tolerance) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -923,17 +929,14 @@ err:
 static	void	img_iface_border		(void)
 {
 	ptrdiff_t	size;
-	uint8_t		val;
 	char		txt[LOG_LINE_LEN];
 
 	size	= user_iface_getint(1, 1, INT16_MAX, "Size",NULL);
-	val	= user_iface_getint(0, 0, UINT8_MAX, "Value",NULL);
 
-	if (alx::CV::border(&image_copy_tmp, size, val))
+	if (alx::CV::border(&image_copy_tmp, size))
 		goto err;
 
-	if (sbprintf(txt, NULL, "Border size = %ti; val = %" PRIu8 "", size,
-								val) < 0)
+	if (sbprintf(txt, NULL, "Border size = %ti", size) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -1138,9 +1141,9 @@ static	void	img_iface_contours_dimensions	(void)
 	user_iface_log_write(1, "Contours size:");
 	for (size_t i = 0; i < contours.size(); i++) {
 		alx::CV::contour_dimensions(&contours[i],
-						&area[i], &perimeter[i]);
-		if (sbprintf(txt, NULL, "cnt[%zu]: A = %lf; P = %lf;",
-						i, area[i], perimeter[i]) < 0)
+				&area[i], &perimeter[i], &ctr_x[i], &ctr_y[i]);
+		if (sbprintf(txt, NULL, "cnt[%zu]: A = %lf; P = %lf; ctr_x = %ti; ctr_y = %ti",
+				i, area[i], perimeter[i], ctr_x[i], ctr_y[i]) < 0)
 			return;
 		user_iface_log_write(2, txt);
 	}
@@ -1272,7 +1275,7 @@ static	void	img_iface_undistort		(void)
 static	void	img_iface_decode		(void)
 {
 	void		*imgdata;
-	ptrdiff_t	rows, cols;
+	ptrdiff_t	w, h;
 	int		type;
 	char		bcode_type[BUFSIZ];
 	char		bcode_data[BUFSIZ];
@@ -1281,10 +1284,10 @@ static	void	img_iface_decode		(void)
 	type	= user_iface_getint(0, 0, INT_MAX,
 					"Type of code: (0 for all)", NULL);
 
-	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, &rows, &cols,
-					NULL, NULL, NULL, NULL, NULL);
+	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, &w, &h,
+							NULL, NULL, NULL);
 	if (alx_zbar_read(ARRAY_SIZE(bcode_data), bcode_data, bcode_type,
-					imgdata, rows, cols, type))
+							imgdata, h, w, type))
 		goto err;
 
 	if (sbprintf(txt, NULL, "Detect bcodes (type = %i)", type) < 0)
@@ -1314,7 +1317,7 @@ static	void	img_iface_read			(void)
 				alx::ocr::CONF_PRICE_USD,
 				"Config: none = 0, Price = 1", NULL);
 
-	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, NULL, NULL, &w, &h,
+	alx_cv_extract_imgdata(&image_copy_tmp, &imgdata, &w, &h,
 					&B_per_pix, &B_per_line, NULL);
 	if (alx_ocr_read(ARRAY_SIZE(img_ocr_text), img_ocr_text, imgdata, w, h,
 					B_per_pix, B_per_line, lang, conf))
