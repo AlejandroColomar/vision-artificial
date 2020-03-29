@@ -24,30 +24,9 @@
 #include <opencv2/ximgproc.hpp>
 
 #define ALX_NO_PREFIX
-#include <libalx/base/compiler/unused.hpp>
-#include <libalx/base/stdio/printf/sbprintf.hpp>
-#include <libalx/extra/cv/alx/fill.hpp>
-#include <libalx/extra/cv/alx/gray.hpp>
-#include <libalx/extra/cv/alx/lines.hpp>
-#include <libalx/extra/cv/alx/max.hpp>
-#include <libalx/extra/cv/alx/mean.hpp>
-#include <libalx/extra/cv/alx/median.hpp>
-#include <libalx/extra/cv/alx/skeleton.hpp>
-#include <libalx/extra/cv/core/array.hpp>
-#include <libalx/extra/cv/core/contours.hpp>
-#include <libalx/extra/cv/core/img.hpp>
-#include <libalx/extra/cv/core/pixel.hpp>
-#include <libalx/extra/cv/core/rect.hpp>
-#include <libalx/extra/cv/core/roi.hpp>
-#include <libalx/extra/cv/features2d/orb.hpp>
-#include <libalx/extra/cv/imgproc/features/features.hpp>
-#include <libalx/extra/cv/imgproc/filter/filter.hpp>
-#include <libalx/extra/cv/imgproc/geometric/geom.hpp>
-#include <libalx/extra/cv/imgproc/histogram/hist.hpp>
-#include <libalx/extra/cv/imgproc/miscellaneous/misc.hpp>
-#include <libalx/extra/cv/imgproc/shape/contours.hpp>
-#include <libalx/extra/cv/imgproc/shape/rect.hpp>
-#include <libalx/extra/cv/ximgproc/thinning.hpp>
+#include <libalx/base/compiler.hpp>
+#include <libalx/base/stdio.hpp>
+#include <libalx/extra/cv/cv.hpp>
 #include <libalx/extra/ocr/ocr.hpp>
 #include <libalx/extra/zbar/zbar.hpp>
 
@@ -933,15 +912,12 @@ static	void	img_iface_border		(void)
 
 	size	= user_iface_getint(1, 1, INT16_MAX, "Size",NULL);
 
-	if (alx::CV::border(&image_copy_tmp, size))
-		goto err;
+	alx::CV::border_black(&image_copy_tmp, size);
 
 	if (sbprintf(txt, NULL, "Border size = %ti", size) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
-err:
-	user_iface_log_write(1, "! Invalid input (Must be 1 channel)");
 }
 
 /* ----- ------- Geometric image transformations */
@@ -1006,7 +982,7 @@ err:
 static	void	img_iface_rotate_2rect		(void)
 {
 
-	if (alx::CV::rotate_2rect(&image_copy_tmp, &rectangle_rot))
+	if (alx::CV::rotate_2rect(&image_copy_tmp, &rectangle_rot, NULL))
 		goto err;
 
 	user_iface_log_write(1, "Rotate to rectangle");
@@ -1018,7 +994,7 @@ err:
 /* ----- ------- Miscellaneous image transformations */
 static	void	img_iface_adaptive_thr		(void)
 {
-	int		method, thr_typ;
+	int		method, thr_typ, c;
 	ptrdiff_t	ksize;
 	char		txt[LOG_LINE_LEN];
 
@@ -1026,12 +1002,13 @@ static	void	img_iface_adaptive_thr		(void)
 	thr_typ = user_iface_getint(0, 0, 1, "Type: BIN=0, BIN_INV=1", NULL);
 	ksize	= user_iface_getint(3, 3, INFINITY,
 					"Kernel size: 3, 5, 7, ...", NULL);
+	c	= user_iface_getint(-INFINITY, 1, INFINITY, "c:", NULL);
 
-	if (alx::CV::adaptive_thr(&image_copy_tmp, method, thr_typ, ksize))
+	if (alx::CV::adaptive_thr(&image_copy_tmp, method, thr_typ, ksize, c))
 		goto err;
 
-	if (sbprintf(txt, NULL, "Threshold mth=%i, typ=%i, ks=%ti",
-						method, thr_typ, ksize) < 0)
+	if (sbprintf(txt, NULL, "Threshold mth=%i, typ=%i, ks=%ti, c=%i",
+						method, thr_typ, ksize, c) < 0)
 		return;
 	user_iface_log_write(1, txt);
 	return;
@@ -1097,7 +1074,7 @@ err:
 static	void	img_iface_histogram1D		(void)
 {
 
-	if (alx::CV::histogram1D(&hist_img_c1, &image_copy_tmp))
+	if (alx::CV::draw_hist1D(&hist_img_c1, &image_copy_tmp))
 		goto err;
 
 	user_iface_log_write(1, "Histogram");
@@ -1109,7 +1086,7 @@ err:
 static	void	img_iface_histogram3D		(void)
 {
 
-	if (alx::CV::histogram1D(&hist_img_c3, &image_copy_tmp))
+	if (alx::CV::draw_hist3D(&hist_img_c3, &image_copy_tmp))
 		goto err;
 
 	user_iface_log_write(1, "Histogram (3 channels)");

@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "libalx/base/compiler/restrict.hpp"
+#include <libalx/base/compiler.hpp>
 
 
 /******************************************************************************
