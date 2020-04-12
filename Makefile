@@ -198,7 +198,6 @@ LIBS_PKG_A	+= `pkg-config --libs --static libalx-base`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-ncurses`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-zbar`
 
-LIBS_PKG_SO	=
 LIBS_PKG_SO	+= `pkg-config --libs libalx-ocr`
 LIBS_PKG_SO	+= `pkg-config --libs libalx-cv`
 LIBS_PKG_SO	+= `pkg-config --libs opencv4`

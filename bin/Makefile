@@ -32,13 +32,14 @@ $(BIN_NAME): $(OBJS) $(DEPS_LIBS)
 	@echo	"	STRIP	$@"
 	$(Q)strip --strip-all						\
 			-R .comment					\
-			-R .note.gnu.build-id				\
-			-R .note.ABI-tag				\
+			-R .note*					\
 			$(BIN_NAME)
 
-size: $(BIN_NAME)
+size: $(BIN_NAME) | $(BIN_NAME)
 	@echo	"	SZ	$(BIN_NAME)"
 	$(Q)$(SZ) $(BIN_NAME)
+	@echo	"	WC -c	$(BIN_NAME)"
+	$(Q)wc -c $(BIN_NAME)
 
 
 clean:
