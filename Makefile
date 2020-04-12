@@ -127,7 +127,6 @@ CFLAGS_PKG	= `pkg-config --cflags ncurses`
 #CFLAGS_PKG     += `pkg-config --cflags opencv`
 CFLAGS_PKG     += `pkg-config --cflags opencv4`
 CFLAGS_PKG     += `pkg-config --cflags zbar`
-CFLAGS_PKG     += `pkg-config --cflags tesseract`
 CFLAGS_PKG     += `pkg-config --cflags libalx-base`
 CFLAGS_PKG     += `pkg-config --cflags libalx-ncurses`
 CFLAGS_PKG     += `pkg-config --cflags libalx-cv`
@@ -165,7 +164,6 @@ CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 #CXXFLAGS_PKG   += `pkg-config --cflags opencv`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv4`
 CXXFLAGS_PKG   += `pkg-config --cflags zbar`
-CXXFLAGS_PKG   += `pkg-config --cflags tesseract`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-base`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-cv`
@@ -196,21 +194,19 @@ LIBS_OPT       += -march=native
 LIBS_OPT       += -flto
 LIBS_OPT       += -fuse-linker-plugin
 
-LIBS_PKG_A	= `pkg-config --libs --static ncurses`
-LIBS_PKG_A	+= `pkg-config --libs --static zbar`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-base`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-ncurses`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-zbar`
 
-LIBS_PKG_SO	= `pkg-config --libs tesseract`
+LIBS_PKG_SO	=
 LIBS_PKG_SO	+= `pkg-config --libs libalx-ocr`
 LIBS_PKG_SO	+= `pkg-config --libs libalx-cv`
 LIBS_PKG_SO	+= `pkg-config --libs opencv4`
-#zbar
+## zbar
 LIBS_PKG_SO	+= `pkg-config --libs dbus-1` -l pthread
 
 
-LIBS_PKG	= -static $(LIBS_PKG_A) -Wl,-Bdynamic $(LIBS_PKG_SO)
+LIBS_PKG	= -Wl,-Bstatic $(LIBS_PKG_A) -Wl,-Bdynamic $(LIBS_PKG_SO)
 
 LIBS		= $(LIBS_STD)
 LIBS           += $(LIBS_OPT)

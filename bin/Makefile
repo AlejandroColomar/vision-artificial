@@ -29,6 +29,12 @@ all: $(ALL)
 $(BIN_NAME): $(OBJS) $(DEPS_LIBS)
 	@echo	"	CXX	$@"
 	$(Q)$(CXX) $(OBJS) -o $@ $(LIBS)
+	@echo	"	STRIP	$@"
+	$(Q)strip --strip-all						\
+			-R .comment					\
+			-R .note.gnu.build-id				\
+			-R .note.ABI-tag				\
+			$(BIN_NAME)
 
 size: $(BIN_NAME)
 	@echo	"	SZ	$(BIN_NAME)"
