@@ -112,7 +112,7 @@ export	SZ
 
 ################################################################################
 # cflags
-CFLAGS_STD	= -std=gnu17
+CFLAGS_STD	= -std=gnu2x
 
 CFLAGS_OPT	= -O3
 CFLAGS_OPT     += -march=native
@@ -120,6 +120,8 @@ CFLAGS_OPT     += -flto
 
 CFLAGS_W	= -Wall
 CFLAGS_W       += -Wextra
+CFLAGS_W       += -Wpedantic
+CFLAGS_W       += -pedantic-errors
 CFLAGS_W       += -Wstrict-prototypes
 CFLAGS_W       += -Werror
 
@@ -150,7 +152,7 @@ export	CFLAGS
 
 ################################################################################
 # c++flags
-CXXFLAGS_STD	= -std=gnu++17
+CXXFLAGS_STD	= -std=gnu++20
 
 CXXFLAGS_OPT	= -O3
 CXXFLAGS_OPT   += -march=native
@@ -158,6 +160,8 @@ CXXFLAGS_OPT   += -flto
 
 CXXFLAGS_W	= -Wall
 CXXFLAGS_W     += -Wextra
+CXXFLAGS_W     += -Wpedantic
+CXXFLAGS_W     += -pedantic-errors
 CXXFLAGS_W     += -Werror
 
 CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
