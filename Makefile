@@ -201,12 +201,15 @@ LIBS_OPT       += -fuse-linker-plugin
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-base`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-ncurses`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-zbar`
+LIBS_PKG_A	+= `pkg-config --libs libalx-cv`
+## libalx-cv
+LIBS_PKG_A	+= `pkg-config --libs --static libalx-gsl` -lstdc++ -lm	\
+			`pkg-config --libs --static libalx-base`
 
-LIBS_PKG_SO	+= `pkg-config --libs libalx-ocr`
-LIBS_PKG_SO	+= `pkg-config --libs libalx-cv`
+LIBS_PKG_SO	+= `pkg-config --libs --static libalx-ocr`
 LIBS_PKG_SO	+= `pkg-config --libs opencv4`
 ## zbar
-LIBS_PKG_SO	+= `pkg-config --libs dbus-1` -l pthread
+LIBS_PKG_SO	+= `pkg-config --libs dbus-1` -lpthread
 
 
 LIBS_PKG	= -Wl,-Bstatic $(LIBS_PKG_A) -Wl,-Bdynamic $(LIBS_PKG_SO)
