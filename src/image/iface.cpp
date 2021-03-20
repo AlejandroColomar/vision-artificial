@@ -24,11 +24,11 @@
 #include <opencv2/ximgproc.hpp>
 
 #define ALX_NO_PREFIX
-#include <libalx/base/compiler.hpp>
-#include <libalx/base/stdio.hpp>
-#include <libalx/extra/cv/cv.hpp>
-#include <libalx/extra/ocr/ocr.hpp>
-#include <libalx/extra/zbar/zbar.hpp>
+#include <libalx/base/compiler.hxx>
+#include <libalx/base/stdio.hxx>
+#include <libalx/extra/cv/cv.hxx>
+#include <libalx/extra/ocr/ocr.hxx>
+#include <libalx/extra/zbar/zbar.hxx>
 
 #include "vision-artificial/image/calib3d.hpp"
 #include "vision-artificial/image/cv.hpp"
