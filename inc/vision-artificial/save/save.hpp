@@ -17,7 +17,7 @@
 
 #include <opencv2/core/core.hpp>
 
-#include <libalx/base/compiler/restrict.hxx>
+#include <alx/base/compiler/restrict.hxx>
 
 
 /******************************************************************************

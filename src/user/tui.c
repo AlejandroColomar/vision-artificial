@@ -12,8 +12,8 @@
 #include <inttypes.h>
 #include <ncurses.h>
 
-#include <libalx/base/stdio.h>
-#include <libalx/extra/ncurses/ncurses.h>
+#include <alx/base/stdio.h>
+#include <alx/curses/curses.h>
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/user/iface.h"
@@ -57,7 +57,7 @@ void	user_tui_init		(void)
 	int_fast8_t	h1, w1, r1, c1;
 	int_fast8_t	h2, w2, r2, c2;
 
-	alx_ncurses_resume();
+	alx_curses_resume();
 
 	/* Dimensions: log */
 	h1	= 54;
@@ -82,9 +82,9 @@ void	user_tui_cleanup	(void)
 {
 
 	/* Del wins & return to terminal mode */
-	alx_ncurses_delwin(win_log);
-	alx_ncurses_delwin(win_help);
-	alx_ncurses_pause();
+	alx_curses_delwin(win_log);
+	alx_curses_delwin(win_help);
+	alx_curses_pause();
 }
 
 int	user_tui		(const char *restrict title,
@@ -104,7 +104,7 @@ void	user_tui_fname		(const char *restrict fpath,
 	w	= 75;
 	r	= 10;
 
-	alx_ncurses_get_fname(fpath, fname, false, w, r, "File name:",
+	alx_curses_get_fname(fpath, fname, false, w, r, "File name:",
 	"Valid extensions: .bmp .dib .jpeg .png .pbm .pgm .ppm .tiff", 2);
 }
 
@@ -115,8 +115,8 @@ void	user_tui_show_log	(const char *restrict title,
 	werase(win_log);
 	box(win_log, 0, 0);
 
-	alx_ncurses_title(win_log, title);
-	alx_ncurses_subtitle(win_log, subtitle);
+	alx_curses_title(win_log, title);
+	alx_curses_subtitle(win_log, subtitle);
 
 	log_loop();
 	wrefresh(win_log);
@@ -131,7 +131,7 @@ double	user_tui_getdbl		(double m, double def, double M,
 	w	= 75;
 	r	= 10;
 
-	return	alx_ncurses_get_dbl(m, def, M, w, r, title, help, 2);
+	return	alx_curses_get_dbl(m, def, M, w, r, title, help, 2);
 }
 
 int	user_tui_getint		(int m, int def, int M,
@@ -143,18 +143,18 @@ int	user_tui_getint		(int m, int def, int M,
 	w	= 75;
 	r	= 10;
 
-	return	alx_ncurses_get_int(m, def, M, w, r, title, help, 2);
+	return	alx_curses_get_int(m, def, M, w, r, title, help, 2);
 }
 
 void	user_tui_show_ocr	(void)
 {
 
-	alx_ncurses_pause();
+	alx_curses_pause();
 
 	printf("%s", img_ocr_text);
 	alx_wait4enter();
 
-	alx_ncurses_resume();
+	alx_curses_resume();
 }
 
 

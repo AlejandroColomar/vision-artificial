@@ -9,8 +9,8 @@
  ******************************************************************************/
 #include <stdio.h>
 
-#include <libalx/base/stdio.h>
-#include <libalx/extra/ncurses/ncurses.h>
+#include <alx/base/stdio.h>
+#include <alx/curses/curses.h>
 
 #include "vision-artificial/image/iface.h"
 #include "vision-artificial/menu/iface.h"
@@ -51,8 +51,8 @@ int	main	(int argc, char *argv[])
 static	void	init	(int argc, char *argv[])
 {
 
-	alx_ncurses_init();
-	alx_ncurses_pause();
+	alx_curses_init();
+	alx_curses_pause();
 
 	save_init();
 
@@ -66,8 +66,8 @@ static	void	deinit	(void)
 
 	img_iface_deinit();
 
-	alx_ncurses_resume();
-	alx_ncurses_deinit();
+	alx_curses_resume();
+	alx_curses_deinit();
 }
 
 

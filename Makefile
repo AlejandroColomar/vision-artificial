@@ -130,7 +130,7 @@ CFLAGS_PKG	= `pkg-config --cflags ncurses`
 CFLAGS_PKG     += `pkg-config --cflags opencv4`
 CFLAGS_PKG     += `pkg-config --cflags zbar`
 CFLAGS_PKG     += `pkg-config --cflags libalx-base`
-CFLAGS_PKG     += `pkg-config --cflags libalx-ncurses`
+CFLAGS_PKG     += `pkg-config --cflags libalx-curses`
 CFLAGS_PKG     += `pkg-config --cflags libalx-cv`
 CFLAGS_PKG     += `pkg-config --cflags libalx-ocr`
 CFLAGS_PKG     += `pkg-config --cflags libalx-zbar`
@@ -169,7 +169,7 @@ CXXFLAGS_PKG	= `pkg-config --cflags ncurses`
 CXXFLAGS_PKG   += `pkg-config --cflags opencv4`
 CXXFLAGS_PKG   += `pkg-config --cflags zbar`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-base`
-CXXFLAGS_PKG   += `pkg-config --cflags libalx-ncurses`
+CXXFLAGS_PKG   += `pkg-config --cflags libalx-curses`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-cv`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-ocr`
 CXXFLAGS_PKG   += `pkg-config --cflags libalx-zbar`
@@ -199,7 +199,7 @@ LIBS_OPT       += -flto
 LIBS_OPT       += -fuse-linker-plugin
 
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-base`
-LIBS_PKG_A	+= `pkg-config --libs --static libalx-ncurses`
+LIBS_PKG_A	+= `pkg-config --libs --static libalx-curses`
 LIBS_PKG_A	+= `pkg-config --libs --static libalx-zbar`
 LIBS_PKG_A	+= `pkg-config --libs libalx-cv`
 ## libalx-cv

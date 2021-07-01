@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include <libalx/base/compiler.hxx>
+#include <alx/base/compiler.hxx>
 
 
 /******************************************************************************

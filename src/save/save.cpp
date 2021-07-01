@@ -20,10 +20,10 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #define ALX_NO_PREFIX
-#include <libalx/base/compiler.hxx>
-#include <libalx/base/errno.hxx>
-#include <libalx/base/stdio.hxx>
-#include <libalx/extra/cv/cv.hxx>
+#include <alx/base/compiler.hxx>
+#include <alx/base/errno.hxx>
+#include <alx/base/stdio.hxx>
+#include <alx/cv/cv.hxx>
 
 #include "vision-artificial/user/iface.hpp"
 

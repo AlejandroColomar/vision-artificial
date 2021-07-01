@@ -15,9 +15,9 @@
 
 #include <ncurses.h>
 
-#include <libalx/base/compiler.h>
-#include <libalx/base/stdio.h>
-#include <libalx/extra/ncurses/ncurses.h>
+#include <alx/base/compiler.h>
+#include <alx/base/stdio.h>
+#include <alx/curses/curses.h>
 
 #include "vision-artificial/ctrl/start.h"
 #include "vision-artificial/save/save.h"
@@ -57,7 +57,7 @@ static	void	menu_devel	(void);
  ******************************************************************************/
 void	menu_tui		(void)
 {
-	static const struct Alx_Ncurses_Menu	mnu[]	= {
+	static const struct Alx_Curses_Menu	mnu[]	= {
 		{7, 4, "[0]	Exit program"},
 		{2, 4, "[1]	Continue"},
 		{4, 4, "[2]	Disclaimer of warranty"},
@@ -67,14 +67,14 @@ void	menu_tui		(void)
 	bool		wh;
 	int_fast8_t	sw;
 
-	alx_ncurses_resume();
+	alx_curses_resume();
 
 	h	= 23;
 	w	= 80;
 
 	wh	= true;
 	while (wh) {
-		sw	= alx_ncurses_menu(h, w, ARRAY_SIZE(mnu), mnu, "MENU:");
+		sw	= alx_curses_menu(h, w, ARRAY_SIZE(mnu), mnu, "MENU:");
 
 		switch (sw) {
 		case 0:
@@ -84,19 +84,19 @@ void	menu_tui		(void)
 			menu_continue();
 			break;
 		case 2:
-			alx_ncurses_pause();
+			alx_curses_pause();
 			print_share_file(SHARE_DISCLAIMER);
-			alx_ncurses_resume();
+			alx_curses_resume();
 			break;
 		case 3:
-			alx_ncurses_pause();
+			alx_curses_pause();
 			print_share_file(SHARE_LICENSE);
-			alx_ncurses_resume();
+			alx_curses_resume();
 			break;
 		}
 	}
 
-	alx_ncurses_pause();
+	alx_curses_pause();
 }
 
 
@@ -105,7 +105,7 @@ void	menu_tui		(void)
  ******************************************************************************/
 static	void	menu_continue	(void)
 {
-	static const struct Alx_Ncurses_Menu	mnu[]	= {
+	static const struct Alx_Curses_Menu	mnu[]	= {
 		{6, 4, "[0]	Back"},
 		{2, 4, "[1]	Start"},
 		{3, 4, "[2]	Change file name"},
@@ -133,39 +133,39 @@ static	void	menu_continue	(void)
 		win	= newwin(h, w, r, c);
 		mvwprintw(win, mnu[1].r, mnu[1].c, "%s (File: \"%s\")",
 							mnu[1].t, saved_name);
-		sw = alx_ncurses_menu_w(win, ARRAY_SIZE(mnu), mnu, "CONTINUE:");
+		sw = alx_curses_menu_w(win, ARRAY_SIZE(mnu), mnu, "CONTINUE:");
 
 		switch (sw) {
 		case 0:
 			wh	= false;
 			break;
 		case 1:
-			alx_ncurses_delwin(win);
-			alx_ncurses_pause();
+			alx_curses_delwin(win);
+			alx_curses_pause();
 			start_switch();
 			printf("Press ENTER to continue");
 			alx_wait4enter();
-			alx_ncurses_resume();
+			alx_curses_resume();
 			break;
 		case 2:
 			save_reset_fpath();
-			alx_ncurses_get_fname(saved_path, saved_name, true,
+			alx_curses_get_fname(saved_path, saved_name, true,
 						w2, r2, txt[0], NULL, 2);
-			alx_ncurses_delwin(win);
+			alx_curses_delwin(win);
 			break;
 		case 3:
-			alx_ncurses_delwin(win);
+			alx_curses_delwin(win);
 			menu_devel();
 			break;
 		}
 	}
 
-	alx_ncurses_delwin(win);
+	alx_curses_delwin(win);
 }
 
 static	void	menu_devel	(void)
 {
-	static const struct Alx_Ncurses_Menu	mnu[]	= {
+	static const struct Alx_Curses_Menu	mnu[]	= {
 		{4, 4, "[0]	Back"},
 		{2, 4, "[1]	Change log mode"}
 	};
@@ -192,20 +192,20 @@ static	void	menu_devel	(void)
 
 	wh	= true;
 	while (wh) {
-		sw	= alx_ncurses_menu_w(win, ARRAY_SIZE(mnu), mnu,
+		sw	= alx_curses_menu_w(win, ARRAY_SIZE(mnu), mnu,
 							"DEVELOPER OPTIONS:");
 		switch (sw) {
 		case 0:
 			wh	= false;
 			break;
 		case 1:
-			user_iface_log.visible = alx_ncurses_get_u8(0, 2, 2,
+			user_iface_log.visible = alx_curses_get_u8(0, 2, 2,
 						w2, r2, txt[0], NULL, 2);
 			break;
 		}
 	}
 
-	alx_ncurses_delwin(win);
+	alx_curses_delwin(win);
 }
 
 
